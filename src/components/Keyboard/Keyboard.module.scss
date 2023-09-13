@@ -35,6 +35,7 @@
     font-size: inherit;
     position: relative;
     overflow: hidden;
+    flex-shrink: 1;
 
     span {
         position: absolute;

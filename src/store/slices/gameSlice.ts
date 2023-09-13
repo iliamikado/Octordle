@@ -8,7 +8,7 @@ const initialState = {
   day: 0,
   keyboardMask: {} as any,
   currentInput: '',
-  triesCount: 12
+  triesCount: 14
 }
 
 export const gameSlice = createSlice({
