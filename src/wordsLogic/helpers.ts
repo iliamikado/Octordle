@@ -12,7 +12,6 @@ export function getRandomWords(seed: number, count: number) {
         seed = seed * 16807 % 2147483647;
         ans.push(words[seed % words.length]);
     }
-    console.log(ans);
     return ans;
 }
 
