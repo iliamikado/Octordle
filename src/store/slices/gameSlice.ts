@@ -39,9 +39,22 @@ export const gameSlice = createSlice({
 
         for (let i = 0; i < state.words.length; ++i) {
           const rightWord = state.words[i];
+          if (rightWord === word) {
+            for (let j = 0; j < word.length; ++j) {
+              if (!state.keyboardMask[word[j]]) {
+                state.keyboardMask[word[j]] = [];
+              }
+              state.keyboardMask[word[j]][i] = 'notExist';
+            }
+            continue;
+          }
           for (let j = 0; j < word.length; ++j) {
             if (!state.keyboardMask[word[j]]) {
               state.keyboardMask[word[j]] = [];
+            }
+            if (state.tries.includes(rightWord)) {
+              state.keyboardMask[word[j]][i] = 'notExist'
+              continue;
             }
             if (state.keyboardMask[word[j]][i] === 'rightPlace') {
               continue;

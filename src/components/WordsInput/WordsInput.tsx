@@ -69,13 +69,27 @@ const CurrentInput = ({length}: {length: number}) => {
 }
 
 function getMask(rightWord: string, tryWord: string) {
-    return tryWord.split('').map((c, i) => {
-        if (c === rightWord[i]) {
-            return 'rightPlace';
-        } else if (rightWord.indexOf(c) !== -1) {
-            return 'wrongPlace';
-        } else {
-            return 'notExist';
-        }
+    const lettersCount = new Map<string, number>();
+    rightWord.split('').forEach(c => {
+        lettersCount.set(c, (lettersCount.get(c) ?? 0) + 1);
     })
+    const mask = new Array(rightWord.length);
+    for (let i = 0; i < rightWord.length; ++i) {
+        if (rightWord[i] === tryWord[i]) {
+            mask[i] = 'rightPlace';
+            lettersCount.set(rightWord[i], (lettersCount.get(rightWord[i]) ?? 0) - 1)
+        }
+    }
+    for (let i = 0; i < rightWord.length; ++i) {
+        if (mask[i] === 'rightPlace') {
+            continue
+        }
+        if (lettersCount.get(tryWord[i])) {
+            lettersCount.set(tryWord[i], (lettersCount.get(tryWord[i]) ?? 0) - 1);
+            mask[i] = 'wrongPlace';
+        } else {
+            mask[i] = 'notExist';
+        }
+    }
+    return mask;
 }

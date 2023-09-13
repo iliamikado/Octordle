@@ -12,7 +12,7 @@ import { Header } from "@/components/Header/Header";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { ResultBlock } from "@/components/ResultBlock/ResultBlock";
 
-const START_DAY = 470725;
+const START_DAY = 19612;
 
 export const GamePage = () => {
     const dispatch = useAppDispatch();
@@ -20,7 +20,7 @@ export const GamePage = () => {
     const isGameEnd = useAppSelector(selectIsGameEnd);
 
     useEffect(() => {
-        const seed = Math.floor(Date.now() / 1000 / 60 / 60) - START_DAY;
+        const seed = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
         dispatch(setDay(seed));
         dispatch(setWords(getRandomWords(seed, 8)));
     }, [dispatch]);
