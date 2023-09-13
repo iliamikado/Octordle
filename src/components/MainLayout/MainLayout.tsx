@@ -12,7 +12,7 @@ interface Props {
 
 export const MainLayout = ({children}: Props) => {
     return <Provider store={store}>
-        <div className={styles.container}>
+        <div className={styles.container} style={{height: window.innerHeight}}>
             {children}
         </div>
     </Provider>
