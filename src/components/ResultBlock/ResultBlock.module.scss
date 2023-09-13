@@ -1,0 +1,44 @@
+.resultBlock {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.resultText {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    font-size: 20px;
+}
+
+.smiles {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+.answers {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-column-gap: 10px;
+    grid-row-gap: 0px;
+    font-weight: 700;
+}
+
+.copyButton {
+    border: none;
+    background-color: transparent;
+    width: auto;
+    font-size: 15px;
+    color: var(--var-fontcolor);
+    border-bottom: 1px solid var(--var-fontcolor);
+    &:hover {
+        cursor: pointer;
+    }
+}

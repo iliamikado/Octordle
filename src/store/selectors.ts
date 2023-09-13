@@ -6,5 +6,6 @@ export const selectTries = ((state: RootState) => state.game.tries);
 export const selectTriesCount = ((state: RootState) => state.game.triesCount);
 export const selectCurrentInput = ((state: RootState) => state.game.currentInput);
 export const selectKeyboardMask = ((state: RootState) => state.game.keyboardMask);
-export const selectIsGameEnd = ((state: RootState) => (state.game.guessed === state.game.words.length || state.game.tries.length === state.game.triesCount));
+export const selectIsGameEnd = ((state: RootState) => (state.game.tries.length === state.game.triesCount || state.game.words.every((word) => (state.game.tries.indexOf(word) !== -1))));
+export const selectDay = ((state: RootState) => state.game.day);
 

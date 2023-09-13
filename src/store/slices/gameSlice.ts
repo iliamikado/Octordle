@@ -3,9 +3,9 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 const initialState = {
-  words: [] as string[],
+  words: [''] as string[],
   tries: [] as string[],
-  guessed: 0,
+  day: 0,
   keyboardMask: {} as any,
   currentInput: '',
   triesCount: 12
@@ -17,6 +17,9 @@ export const gameSlice = createSlice({
   reducers: {
     setWords: (state, action: PayloadAction<string[]>) => {
       state.words = action.payload;
+    },
+    setDay: (state, action: PayloadAction<number>) => {
+      state.day = action.payload;
     },
     addLetterToCurrentInput: (state, action: PayloadAction<string>) => {
       if (state.currentInput.length < state.words[0].length) {
@@ -33,10 +36,6 @@ export const gameSlice = createSlice({
         const word = state.currentInput;
         state.tries.push(word);
         state.currentInput = '';
-
-        if (state.words.indexOf(word) !== -1) {
-          state.guessed += 1;
-        }
 
         for (let i = 0; i < state.words.length; ++i) {
           const rightWord = state.words[i];
@@ -61,6 +60,6 @@ export const gameSlice = createSlice({
   },
 })
 
-export const { setWords, addLetterToCurrentInput, removeLetterFromCurrentInput, addCurrentInputToTries } = gameSlice.actions
+export const { setWords, setDay, addLetterToCurrentInput, removeLetterFromCurrentInput, addCurrentInputToTries } = gameSlice.actions
 
 export default gameSlice.reducer
