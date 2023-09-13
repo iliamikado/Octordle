@@ -1,4 +1,4 @@
-import { GamePage } from "@/pages/GamePage/GamePage"
+import { GamePage } from "@/appPages/GamePage/GamePage"
 
 export default function Page() {
   return <GamePage/>
