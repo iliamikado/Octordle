@@ -1,0 +1,22 @@
+.page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.scrollContainer {
+    overflow-y: auto;
+    height: 100%;
+    padding: 0 5px;
+    &::-webkit-scrollbar {
+        width: 0;
+    }
+}
+
+.inputsContainer {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
+    padding-bottom: 20px;
+}
