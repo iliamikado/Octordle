@@ -32,6 +32,7 @@
 }
 
 .copyButton {
+    margin-top: 10px;
     border: none;
     background-color: transparent;
     width: auto;
@@ -41,4 +42,11 @@
     &:hover {
         cursor: pointer;
     }
+}
+
+.timer {
+    margin: 20px 0 10px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

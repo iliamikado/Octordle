@@ -20,9 +20,9 @@ export const GamePage = () => {
     const isGameEnd = useAppSelector(selectIsGameEnd);
 
     useEffect(() => {
-        const seed = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
-        dispatch(setDay(seed));
-        dispatch(setWords(getRandomWords(seed, 8)));
+        const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
+        dispatch(setDay(day));
+        dispatch(setWords(getRandomWords(day, 8)));
     }, [dispatch]);
 
     const keyListener = useCallback((e: KeyboardEvent) => {

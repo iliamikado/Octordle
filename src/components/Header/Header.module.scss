@@ -1,5 +1,13 @@
 .header {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+.title {
+    margin: 0;
+    margin-top: 10px;
+}
+.day {
+    margin: 10px 0 20px 0;
 }
