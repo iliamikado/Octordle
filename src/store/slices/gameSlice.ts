@@ -6,7 +6,6 @@ const initialState = {
   words: [''] as string[],
   tries: [] as string[],
   day: 0,
-  keyboardMask: {} as any,
   currentInput: '',
   triesCount: 14
 }
@@ -19,7 +18,11 @@ export const gameSlice = createSlice({
       state.words = action.payload;
     },
     setDay: (state, action: PayloadAction<number>) => {
+      localStorage.setItem('day', action.payload.toString());
       state.day = action.payload;
+    },
+    setTries: (state, action: PayloadAction<string[]>) => {
+      state.tries = action.payload;
     },
     addLetterToCurrentInput: (state, action: PayloadAction<string>) => {
       if (state.currentInput.length < state.words[0].length) {
@@ -35,44 +38,13 @@ export const gameSlice = createSlice({
       if (state.tries.length < state.triesCount && isWordValid(state.currentInput)) {
         const word = state.currentInput;
         state.tries.push(word);
+        localStorage.setItem('tries', state.tries.join(' '));
         state.currentInput = '';
-
-        for (let i = 0; i < state.words.length; ++i) {
-          const rightWord = state.words[i];
-          if (rightWord === word) {
-            for (let j = 0; j < word.length; ++j) {
-              if (!state.keyboardMask[word[j]]) {
-                state.keyboardMask[word[j]] = [];
-              }
-              state.keyboardMask[word[j]][i] = 'notExist';
-            }
-            continue;
-          }
-          for (let j = 0; j < word.length; ++j) {
-            if (!state.keyboardMask[word[j]]) {
-              state.keyboardMask[word[j]] = [];
-            }
-            if (state.tries.includes(rightWord)) {
-              state.keyboardMask[word[j]][i] = 'notExist'
-              continue;
-            }
-            if (state.keyboardMask[word[j]][i] === 'rightPlace') {
-              continue;
-            }
-            if (word[j] === rightWord[j]) {
-              state.keyboardMask[word[j]][i] = 'rightPlace';
-            } else if (rightWord.indexOf(word[j]) !== -1) {
-              state.keyboardMask[word[j]][i] = 'wrongPlace';
-            } else {
-              state.keyboardMask[word[j]][i] = 'notExist';
-            }
-          }
-        }
       }
     }
   },
 })
 
-export const { setWords, setDay, addLetterToCurrentInput, removeLetterFromCurrentInput, addCurrentInputToTries } = gameSlice.actions
+export const { setWords, setDay, setTries, addLetterToCurrentInput, removeLetterFromCurrentInput, addCurrentInputToTries } = gameSlice.actions
 
 export default gameSlice.reducer

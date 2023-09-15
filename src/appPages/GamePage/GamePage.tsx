@@ -2,7 +2,7 @@
 
 import { WordsInput } from "@/components/WordsInput/WordsInput";
 import { selectIsGameEnd, selectWords } from "@/store/selectors";
-import { addCurrentInputToTries, addLetterToCurrentInput, removeLetterFromCurrentInput, setDay, setWords } from "@/store/slices/gameSlice";
+import { addCurrentInputToTries, addLetterToCurrentInput, removeLetterFromCurrentInput, setDay, setTries, setWords } from "@/store/slices/gameSlice";
 import { getRandomWords, isRussianLetter } from "@/wordsLogic/helpers";
 import { useCallback, useEffect } from "react"
 
@@ -21,6 +21,15 @@ export const GamePage = () => {
 
     useEffect(() => {
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
+        const savedDay = localStorage.getItem('day');
+        if (Number(savedDay) === day) {
+            const tries = localStorage.getItem('tries')?.split(' ');
+            if (tries) {
+                dispatch(setTries(tries))
+            }
+        } else {
+            localStorage.setItem('tries', '');
+        }
         dispatch(setDay(day));
         dispatch(setWords(getRandomWords(day, 8)));
     }, [dispatch]);
