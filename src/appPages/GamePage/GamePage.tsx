@@ -32,6 +32,9 @@ export const GamePage = () => {
         }
         dispatch(setDay(day));
         dispatch(setWords(getRandomWords(day, 8)));
+        setTimeout(() => {
+            window.location.reload();
+        }, (day + 1) * 24 * 60 * 60 * 1000 - Date.now());
     }, [dispatch]);
 
     const keyListener = useCallback((e: KeyboardEvent) => {
