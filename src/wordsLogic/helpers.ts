@@ -1,16 +1,23 @@
 import vocab from './words.json';
-const words = vocab.words;
+const {easyWords, hardWords} = vocab;
+const words = easyWords.concat(hardWords);
 const wordsSet = new Set(words);
 
 export function isWordValid(word: string) {
     return wordsSet.has(word);
 }
 
-export function getRandomWords(seed: number, count: number) {
+export function getRandomWords(seed: number, count: number, mode?: string) {
     const ans = [];
     for (let i = 0; i < count; ++i) {
         seed = seed * 16807 % 2147483647;
-        ans.push(words[seed % words.length]);
+        if (mode === 'hard') {
+            ans.push(hardWords[seed % hardWords.length]);
+        } else if (mode === 'easy') {
+            ans.push(easyWords[seed % easyWords.length]);
+        } else {
+            ans.push(words[seed % words.length]);
+        }
     }
     return ans;
 }
