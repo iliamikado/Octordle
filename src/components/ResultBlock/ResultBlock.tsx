@@ -28,8 +28,6 @@ export const ResultBlock = () => {
             textRes += res[i] + ' ';
         }
         textRes += '\nСчет: ' + score;
-        textRes += '\n\n'
-        textRes += 'Отгадайте слова на ' + document.location.href;
         navigator.clipboard.writeText(textRes);
     }, [res, day, score])
 
