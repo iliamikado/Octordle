@@ -15,6 +15,13 @@ export const MainLayout = ({children}: Props) => {
 
     useEffect(() => {
         setHeight(`${window.innerHeight}px`);
+
+        const startDay = Math.floor(Date.now() / 1000 / 60 / 60 / 24);
+        setInterval(() => {
+            if (Math.floor(Date.now() / 1000 / 60 / 60 / 24) > startDay) {
+                window.location.reload();
+            }
+        }, 5000);
     }, [])
 
     return <Provider store={store}>
