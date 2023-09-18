@@ -24,7 +24,7 @@ export const selectKeyboardMask = createSelector([selectTries, selectWords], (tr
             for (let j = 0; j < tryWord.length; ++j) {
                 if (tryWord[j] === word[j]) {
                     keyMask[tryWord[j]][i] = 'rightPlace';
-                } else if (word.includes(tryWord[j])) {
+                } else if (word.includes(tryWord[j]) && keyMask[tryWord[j]][i] !== 'rightPlace') {
                     keyMask[tryWord[j]][i] = 'wrongPlace';
                 }
             }
