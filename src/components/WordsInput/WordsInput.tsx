@@ -1,18 +1,21 @@
-import { selectCurrentInput, selectTries, selectTriesCount, selectWord } from "@/store/selectors";
+import { selectChosenInput, selectCurrentInput, selectTries, selectTriesCount, selectWord } from "@/store/selectors";
 import cn from 'classnames';
 
 import styles from './WordsInput.module.scss';
-import { useAppSelector } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { isWordValid } from "@/wordsLogic/helpers";
+import { setChosenInput } from "@/store/slices/gameSlice";
 
 interface Props {
     wordInd: number;
 }
 
 export const WordsInput = ({wordInd}: Props) => {
+    const dispatch = useAppDispatch();
     const tries = useAppSelector(selectTries);
     const triesCount = useAppSelector(selectTriesCount);
     const rightWord = useAppSelector((state) => selectWord(state, wordInd));
+    const isChosen = useAppSelector(selectChosenInput) === wordInd;
 
     if (!rightWord) {
         return null;
@@ -46,8 +49,10 @@ export const WordsInput = ({wordInd}: Props) => {
         )
     }   
 
-    return <div className={styles.container}>
-        {rows}
+    return <div 
+        className={cn(styles.container, isChosen ? styles.chosen : '')}
+        onClick={() => {dispatch(setChosenInput(isChosen ? null : wordInd))}}>
+            {rows}
     </div>
 }
 
