@@ -7,7 +7,8 @@ const initialState = {
   tries: [] as string[],
   day: 0,
   currentInput: '',
-  triesCount: 14
+  triesCount: 14,
+  chosenInput: null as (null | number)
 }
 
 export const gameSlice = createSlice({
@@ -23,6 +24,9 @@ export const gameSlice = createSlice({
     },
     setTries: (state, action: PayloadAction<string[]>) => {
       state.tries = action.payload;
+    },
+    setChosenInput: (state, action: PayloadAction<number | null>) => {
+      state.chosenInput = action.payload;
     },
     addLetterToCurrentInput: (state, action: PayloadAction<string>) => {
       if (state.currentInput.length < state.words[0].length) {
@@ -45,6 +49,6 @@ export const gameSlice = createSlice({
   },
 })
 
-export const { setWords, setDay, setTries, addLetterToCurrentInput, removeLetterFromCurrentInput, addCurrentInputToTries } = gameSlice.actions
+export const { setWords, setDay, setTries, setChosenInput, addLetterToCurrentInput, removeLetterFromCurrentInput, addCurrentInputToTries } = gameSlice.actions
 
 export default gameSlice.reducer
