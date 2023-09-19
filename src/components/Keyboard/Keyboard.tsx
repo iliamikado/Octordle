@@ -20,11 +20,11 @@ export const Keyboard = () => {
             <div key={i} className={styles.row}>
                 {r.map(c => {
                     if (c === 'del') {
-                        return <button key={c} className={cn(styles.key, styles.funcKey)} onClick={() => {dispatch(removeLetterFromCurrentInput())}}>⌫</button>
+                        return <div key={c} className={cn(styles.key, styles.funcKey)} onClick={() => {dispatch(removeLetterFromCurrentInput())}}>⌫</div>
                     } else if (c === 'enter') {
-                        return <button key={c} className={cn(styles.key, styles.funcKey)} onClick={() => {dispatch(addCurrentInputToTries())}}>⏎</button>
+                        return <div key={c} className={cn(styles.key, styles.funcKey)} onClick={() => {dispatch(addCurrentInputToTries())}}>⏎</div>
                     } else {
-                        return <button
+                        return <div
                             className={cn(styles.key, keyboardMask[c] ? styles.pressedKey : '')}
                             key={c}
                             onClick={() => {dispatch(addLetterToCurrentInput(c))}}>
@@ -38,7 +38,7 @@ export const Keyboard = () => {
                                     ></div>
                                 )) : null}
                                 <span>{c}</span>
-                        </button>
+                        </div>
                     }
                 })}
             </div>
