@@ -3,6 +3,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 .title {
     margin: 0;
@@ -10,4 +11,21 @@
 }
 .day {
     margin: 10px 0 20px 0;
+}
+
+.icon {
+    border: none;
+    background-color: transparent;
+    position: absolute;
+    path {
+        color: var(--var-fontcolor);
+    }
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.tutorialIcon {
+    right: 20px;
+    top: 18px;
 }
