@@ -5,7 +5,7 @@ async function write() {
     const newWords = [];
 
     for (let i = 1; i <= 42; ++i) {
-        await fetch('https://bezbukv.ru/mask/*****?page=' + i).then(data => {
+        await fetch('https://bezbukv.ru/mask/*****/noun?page=' + i).then(data => {
             return data.text()
         }).then(text => {
             const words = text.match(/\.\n\t.....\t<br \/>/g).map(x => x.slice(3, 8));
@@ -30,4 +30,14 @@ function reallyNewWords() {
     fs.writeFileSync(path + 'reallyNewWords.txt', ans.join('\n'));
 }
 
-reallyNewWords();
+function makeWords() {
+    const oldWords = fs.readFileSync(path + 'words.txt').toString().split('\r\n').map(x => (x.split(',')));
+    const newWords = fs.readFileSync(path + 'reallyNewWords.txt').toString().split('\n').map(x => ([x, '2']));
+    const ans = oldWords.concat(newWords).map(x => (x[0] + ',' + x[1]));
+    fs.writeFileSync(path + 'words.txt', ans.join('\n'));
+}
+
+
+// write();
+// reallyNewWords();
+makeWords();
