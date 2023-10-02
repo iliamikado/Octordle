@@ -17,7 +17,6 @@ export const ResultBlock = () => {
     const score = scoreForWord.reduce((sc, x) => (sc + x), 0);
 
     let smile: string;
-    console.log(attempts);
 
     if (attempts.includes(1)) {
         smile = '😑'
@@ -54,7 +53,7 @@ export const ResultBlock = () => {
                 {words.map((word, i) => <span key={i}>{word}</span>)}
             </div>
         </div>
-        <span>Счет: {score} {smile} ({scoreForWord.join(' + ')})</span>
+        <span>Счет: {scoreForWord.join('+')} = {score} {smile}</span>
         <button className={styles.copyButton} onClick={copyRes}>копировать результат</button>
         <Timer/>
     </div>
