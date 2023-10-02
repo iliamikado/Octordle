@@ -22,6 +22,10 @@ export const MainLayout = ({children}: Props) => {
                 window.location.reload();
             }
         }, 5000);
+
+        window.addEventListener('resize', () => {
+            setHeight(`${window.innerHeight}px`);
+        })
     }, [])
 
     return <Provider store={store}>
