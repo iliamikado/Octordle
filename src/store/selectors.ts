@@ -46,4 +46,7 @@ export const selectKeyboardMask = createSelector([selectTries, selectWords, sele
     }
     return keyMask;
 })
+export const selectWordsMask = createSelector([selectTries, selectWords], (tries, words) => {
+    return words.map(word => (tries.includes(word)));
+})
 

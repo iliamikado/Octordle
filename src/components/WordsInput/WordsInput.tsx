@@ -49,7 +49,8 @@ export const WordsInput = ({wordInd}: Props) => {
         )
     }   
 
-    return <div 
+    return <div
+        id={`wordsInput${wordInd}`}
         className={cn(styles.container, isChosen ? styles.chosen : '')}
         onClick={() => {dispatch(setChosenInput(isChosen ? null : wordInd))}}>
             {rows}

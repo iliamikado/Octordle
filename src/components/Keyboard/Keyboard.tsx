@@ -2,8 +2,8 @@ import cn from 'classnames';
 
 import styles from './Keyboard.module.scss';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { addCurrentInputToTries, addLetterToCurrentInput, removeLetterFromCurrentInput } from '@/store/slices/gameSlice';
-import { selectKeyboardMask, selectTries, selectWords } from '@/store/selectors';
+import { addCurrentInputToTries, addLetterToCurrentInput, removeLetterFromCurrentInput, setChosenInput } from '@/store/slices/gameSlice';
+import { selectKeyboardMask, selectWordsMask } from '@/store/selectors';
 
 const keys = [
     ['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ'],
@@ -14,8 +14,23 @@ const keys = [
 export const Keyboard = () => {
     const dispatch = useAppDispatch();
     const keyboardMask = useAppSelector(selectKeyboardMask);
+    const wordsMask = useAppSelector(selectWordsMask);
 
     return <div className={styles.keyboard}>
+        <div className={styles.wordsMask}>
+            {wordsMask.map((x, i) => (
+                <div key={i}
+                    onClick={() => {
+                        dispatch(setChosenInput(i));
+                        document.querySelector(`#wordsInput${i}`)?.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }}
+                    className={cn(styles.wordMask, x ? styles.guessed : '')}>
+                        {x ? '✓' : i + 1}
+                </div>
+            ))}
+        </div>
         {keys.map((r, i) => (
             <div key={i} className={styles.row}>
                 {r.map(c => {
