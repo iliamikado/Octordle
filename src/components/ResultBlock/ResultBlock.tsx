@@ -10,11 +10,28 @@ export const ResultBlock = () => {
     const words = useAppSelector(selectWords);
     const tries = useAppSelector(selectTries);
     const day = useAppSelector(selectDay);
-    let maxScore = (useAppSelector(selectTriesCount) + 1) * words.length;
 
     const res = words.map(word => (digits[tries.indexOf(word)] || '🟥'));
-    const attempts = words.map(word => (tries.indexOf(word))).map(x => ((x === -1 ? tries.length : x) + 1));
-    const score = maxScore - attempts.reduce((a, b) => (a + b), 0);
+    const attempts = words.map(word => (tries.indexOf(word))).map(x => x + 1);
+    const scoreForWord = attempts.map(x => (x === 0 ? 0 : (20 - x)));
+    const score = scoreForWord.reduce((sc, x) => (sc + x), 0);
+
+    let smile: string;
+    console.log(attempts);
+
+    if (attempts.includes(1)) {
+        smile = '😑'
+    } else if (attempts.every(x => (x <= 10))) {
+        smile = '🤯'
+    } else if (score >= 90) {
+        smile = '😎'
+    } else if (score >= 70) {
+        smile = '😊'
+    } else if (score >= 50) {
+        smile = '🙂'
+    } else {
+        smile = '😶'
+    }
 
     const copyRes = useCallback(() => {
         let textRes = `Дневной Осьминогль #${day}:`;
@@ -24,9 +41,9 @@ export const ResultBlock = () => {
             }
             textRes += res[i] + ' ';
         }
-        textRes += `\nСчет: ${score}`;
+        textRes += `\nСчет: ${score} ${smile}`;
         navigator.clipboard.writeText(textRes);
-    }, [res, day, score]);
+    }, [res, day, score, smile]);
 
     return <div className={styles.resultBlock}>
         <div className={styles.resultText}>
@@ -37,7 +54,7 @@ export const ResultBlock = () => {
                 {words.map((word, i) => <span key={i}>{word}</span>)}
             </div>
         </div>
-        <span>Счет: {score} {`(${maxScore} - ${attempts.join(' - ')})`}</span>
+        <span>Счет: {score} {smile} ({scoreForWord.join(' + ')})</span>
         <button className={styles.copyButton} onClick={copyRes}>копировать результат</button>
         <Timer/>
     </div>
