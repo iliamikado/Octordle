@@ -6,9 +6,10 @@ const initialState = {
   words: [''] as string[],
   tries: [] as string[],
   day: 0,
-  currentInput: '',
+  currentInput: [] as string[],
   triesCount: 14,
-  chosenInput: null as (null | number)
+  chosenInput: null as (null | number),
+  chosenLetter: 0
 }
 
 export const gameSlice = createSlice({
@@ -17,6 +18,7 @@ export const gameSlice = createSlice({
   reducers: {
     setWords: (state, action: PayloadAction<string[]>) => {
       state.words = action.payload;
+      state.currentInput = (new Array(state.words[0].length)).fill('');
     },
     setDay: (state, action: PayloadAction<number>) => {
       localStorage.setItem('day', action.payload.toString());
@@ -28,27 +30,42 @@ export const gameSlice = createSlice({
     setChosenInput: (state, action: PayloadAction<number | null>) => {
       state.chosenInput = action.payload;
     },
+    setChosenLetter: (state, action: PayloadAction<number>) => {
+      state.chosenLetter = action.payload;
+    },
+    moveChosenLetter: (state, action: PayloadAction<number>) => {
+      let newInd = state.chosenLetter + action.payload;
+      if (newInd >= 0 && newInd < state.words[0].length) {
+        state.chosenLetter = newInd;
+      }
+    },
     addLetterToCurrentInput: (state, action: PayloadAction<string>) => {
-      if (state.currentInput.length < state.words[0].length) {
-        state.currentInput += action.payload;
+      state.currentInput[state.chosenLetter] = action.payload;
+      if (state.chosenLetter < state.words[0].length - 1) {
+        state.chosenLetter++;
       }
     },
     removeLetterFromCurrentInput: (state) => {
-      if (state.currentInput.length > 0) {
-        state.currentInput = state.currentInput.slice(0, state.currentInput.length - 1);
+      const ind = state.chosenLetter;
+      if (state.currentInput[ind]) {
+        state.currentInput[ind] = '';
+      } else if (ind > 0) {
+        state.chosenLetter -= 1;
+        state.currentInput[ind - 1] = '';
       }
     },
     addCurrentInputToTries: (state) => {
-      if (state.tries.length < state.triesCount && isWordValid(state.currentInput)) {
-        const word = state.currentInput;
+      if (state.tries.length < state.triesCount && state.currentInput.every(x => (x)) && isWordValid(state.currentInput.join(''))) {
+        const word = state.currentInput.join('');
         state.tries.push(word);
         localStorage.setItem('tries', state.tries.join(' '));
-        state.currentInput = '';
+        state.currentInput = (new Array(state.words[0].length)).fill('');
+        state.chosenLetter = 0;
       }
     }
   },
 })
 
-export const { setWords, setDay, setTries, setChosenInput, addLetterToCurrentInput, removeLetterFromCurrentInput, addCurrentInputToTries } = gameSlice.actions
+export const { setWords, setDay, setTries, setChosenInput, moveChosenLetter, setChosenLetter, addLetterToCurrentInput, removeLetterFromCurrentInput, addCurrentInputToTries } = gameSlice.actions
 
 export default gameSlice.reducer

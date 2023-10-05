@@ -2,7 +2,7 @@
 
 import { WordsInput } from "@/components/WordsInput/WordsInput";
 import { selectIsGameEnd, selectWords } from "@/store/selectors";
-import { addCurrentInputToTries, addLetterToCurrentInput, removeLetterFromCurrentInput, setDay, setTries, setWords } from "@/store/slices/gameSlice";
+import { addCurrentInputToTries, addLetterToCurrentInput, moveChosenLetter, removeLetterFromCurrentInput, setDay, setTries, setWords } from "@/store/slices/gameSlice";
 import { getRandomWords, isRussianLetter } from "@/wordsLogic/helpers";
 import { useCallback, useEffect } from "react"
 
@@ -40,6 +40,12 @@ export const GamePage = () => {
         }
         if (e.code === 'Enter') {
             dispatch(addCurrentInputToTries());
+        }
+        if (e.code === 'ArrowRight') {
+            dispatch(moveChosenLetter(1));
+        }
+        if (e.code === 'ArrowLeft') {
+            dispatch(moveChosenLetter(-1));
         }
         if (isRussianLetter(e.key)) {
             dispatch(addLetterToCurrentInput(e.key));

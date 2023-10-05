@@ -1,10 +1,10 @@
-import { selectChosenInput, selectCurrentInput, selectTries, selectTriesCount, selectWord } from "@/store/selectors";
+import { selectChosenInput, selectChosenLetter, selectCurrentInput, selectTries, selectTriesCount, selectWord } from "@/store/selectors";
 import cn from 'classnames';
 
 import styles from './WordsInput.module.scss';
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { isWordValid } from "@/wordsLogic/helpers";
-import { setChosenInput } from "@/store/slices/gameSlice";
+import { setChosenInput, setChosenLetter } from "@/store/slices/gameSlice";
 
 interface Props {
     wordInd: number;
@@ -58,14 +58,20 @@ export const WordsInput = ({wordInd}: Props) => {
 }
 
 const CurrentInput = ({length}: {length: number}) => {
-    const word = useAppSelector(selectCurrentInput);
-    const invalidWord = (word.length === length && !isWordValid(word));
+    const letters = useAppSelector(selectCurrentInput);
+    const dispatch = useAppDispatch();
+    const letterPlace = useAppSelector(selectChosenLetter);
+    const invalidWord = letters.every(x => (x)) && letters.length === length && !isWordValid(letters.join(''));
 
     const row = [];
     for (let i = 0; i < length; ++i) {
         row.push(<div
-            className={cn(styles.charCell, styles.inputCharCell, (invalidWord ? styles.invalidWordCell : ''))}
-            key={i}>{word[i] ?? ''}
+            className={cn(styles.charCell, styles.inputCharCell, (invalidWord ? styles.invalidWordCell : ''), (i === letterPlace ? styles.chosenLetter : ''))}
+            onClick={(e) => {
+                dispatch(setChosenLetter(i));
+                e.stopPropagation()
+            }}
+            key={i}>{letters[i] ?? ''}
         </div>)
     }
 
