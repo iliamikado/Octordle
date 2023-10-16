@@ -1,0 +1,48 @@
+.name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.title {
+    font-size: 25px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.block {
+    border-top: 2px dashed var(--var-fontcolor);
+    padding: 20px 5px 20px 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.page {
+    height: 100%;
+    position: relative;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+        width: 0;
+    }
+}
+
+.icon {
+    border: none;
+    background-color: transparent;
+    position: absolute;
+    path {
+        fill: var(--var-fontcolor);
+    }
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.crossIcon {
+    right: 20px;
+    top: 18px;
+}

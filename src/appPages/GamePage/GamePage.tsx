@@ -28,7 +28,8 @@ export const GamePage = () => {
                 dispatch(setTries(tries))
             }
         } else {
-            localStorage.clear();
+            localStorage.removeItem('day');
+            localStorage.removeItem('tries');
         }
         dispatch(setDay(day));
         dispatch(setWords(getRandomWords(day, 8, 'easy')));

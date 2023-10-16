@@ -1,8 +1,17 @@
 :root {
+  --var-bgcolor: #fcfcfc;
+  --var-fontcolor: #33332d;
+  --var-cellcolor: #ececec;
+  --var-activecellcolor: #a2a2a2;
+  --var-notexist: #bcbcbc;
+}
+
+[dark] {
   --var-bgcolor: #181a1b;
   --var-fontcolor: #ddd;
   --var-cellcolor: #555e55;
   --var-activecellcolor: #889188;
+  --var-notexist: #555e55;
 }
 
 * {

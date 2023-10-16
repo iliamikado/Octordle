@@ -3,7 +3,7 @@ import cn from 'classnames';
 import styles from './Keyboard.module.scss';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { addCurrentInputToTries, addLetterToCurrentInput, removeLetterFromCurrentInput, setChosenInput } from '@/store/slices/gameSlice';
-import { selectKeyboardMask, selectWordsMask } from '@/store/selectors';
+import { selectChangeDeleteAndEnter, selectKeyboardMask, selectWordsMask } from '@/store/selectors';
 
 const keys = [
     ['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ'],
@@ -15,6 +15,15 @@ export const Keyboard = () => {
     const dispatch = useAppDispatch();
     const keyboardMask = useAppSelector(selectKeyboardMask);
     const wordsMask = useAppSelector(selectWordsMask);
+
+    const changeDeleteAndEnter = useAppSelector(selectChangeDeleteAndEnter);
+    if (changeDeleteAndEnter) {
+        keys[2][0] = 'enter';
+        keys[2][10] = 'del';
+    } else {
+        keys[2][0] = 'del';
+        keys[2][10] = 'enter';
+    }
 
     return <div className={styles.keyboard}>
         <div className={styles.wordsMask}>

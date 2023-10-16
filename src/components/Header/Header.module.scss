@@ -20,6 +20,7 @@
     path {
         color: var(--var-fontcolor);
     }
+    stroke: var(--var-fontcolor);
     &:hover {
         cursor: pointer;
     }
@@ -27,5 +28,10 @@
 
 .tutorialIcon {
     right: 20px;
+    top: 18px;
+}
+
+.settingsIcon {
+    right: 50px;
     top: 18px;
 }

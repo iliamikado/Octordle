@@ -50,4 +50,6 @@ export const selectKeyboardMask = createSelector([selectTries, selectWords, sele
 export const selectWordsMask = createSelector([selectTries, selectWords], (tries, words) => {
     return words.map(word => (tries.includes(word)));
 })
+export const selectChangeDeleteAndEnter = (state: RootState) => (state.settings.changeDeleteAndEnter);
+export const selectDarkTheme = (state: RootState) => (state.settings.darkTheme);
 

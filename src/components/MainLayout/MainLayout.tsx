@@ -4,7 +4,9 @@ import { ReactNode, useEffect, useState } from "react"
 
 import styles from './MainLayout.module.scss';
 import { Provider } from "react-redux";
-import { store } from "@/store/store";
+import { store, useAppDispatch, useAppSelector } from "@/store/store";
+import { setSettings } from "@/store/slices/settingsSlice";
+import { selectDarkTheme } from "@/store/selectors";
 
 interface Props {
     children: ReactNode
@@ -25,12 +27,37 @@ export const MainLayout = ({children}: Props) => {
 
         window.addEventListener('resize', () => {
             setHeight(`${window.innerHeight}px`);
-        })
+        });
+
     }, [])
 
     return <Provider store={store}>
         <div className={styles.container} style={{height}}>
             {children}
         </div>
+        <SetSettings/>
     </Provider>
+}
+
+const SetSettings = () => {
+    const dispatch = useAppDispatch();
+    const darkTheme = useAppSelector(selectDarkTheme);
+    useEffect(() => {
+        const settings = localStorage.getItem('settings');
+        if (settings) {
+            dispatch(setSettings(JSON.parse(settings)));
+        }
+    }, [dispatch]);
+
+    useEffect(() => {
+        console.log(darkTheme);
+        if (darkTheme) {
+            document.body.setAttribute('dark', '');
+        } else {
+            document.body.removeAttribute('dark');
+        }
+    }, [darkTheme])
+
+
+    return null;
 }
