@@ -46,3 +46,26 @@
     right: 20px;
     top: 18px;
 }
+
+.wordInput {
+    border: 1px solid var(--var-fontcolor);
+    border-radius: 3px;
+    color: var(--var-fontcolor);
+    height: 25px;
+    background-color: var(--var-cellcolor);
+}
+
+.offerButton {
+    border: 1px solid var(--var-fontcolor);
+    border-radius: 3px;
+    color: var(--var-fontcolor);
+    height: 25px;
+    width: 150px;
+    background-color: var(--var-cellcolor);
+    &:hover {
+        cursor: pointer;
+    }
+    &:disabled {
+        cursor: default;
+    }
+}

@@ -32,10 +32,10 @@ export const MainLayout = ({children}: Props) => {
     }, [])
 
     return <Provider store={store}>
+        <SetSettings/>
         <div className={styles.container} style={{height}}>
             {children}
         </div>
-        <SetSettings/>
     </Provider>
 }
 
@@ -50,7 +50,6 @@ const SetSettings = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        console.log(darkTheme);
         if (darkTheme) {
             document.body.setAttribute('dark', '');
         } else {

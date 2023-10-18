@@ -91,5 +91,8 @@ jobs:
     needs: build
     steps:
       - name: Deploy to GitHub Pages
+        env:
+          REACT_TG_TOKEN: ${{ secrets.TG_BOT_TOCKEN }}
+          REACT_CHAT_ID: ${{ secrets.CHAT_ID }}
         id: deployment
         uses: actions/deploy-pages@v2
