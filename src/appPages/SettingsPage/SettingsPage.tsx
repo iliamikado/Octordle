@@ -80,8 +80,8 @@ export const SettingsPage = () => {
 
 function sendToTg(word: string) {
     console.log(process.env);
-    const chat_id = process.env.REACT_CHAT_ID;
-    const token = process.env.REACT_TG_TOKEN;
+    const chat_id = process.env.NEXT_PUBLIC_CHAT_ID;
+    const token = process.env.NEXT_PUBLIC_TG_TOKEN;
     fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
         method: 'POST',
         headers: {
