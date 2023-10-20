@@ -23,7 +23,7 @@ export const SettingsPage = () => {
 
     }, [changeDeleteAndEnter, darkTheme]);
     const [word, setWord] = useState('');
-    const [sended, setSended] = useState(false);
+    const [sended, setSended] = useState<'not' | 'delete' | 'add'>('not');
     const changeWord = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         const input = e.target.value;
         if (input.length > 5) {
@@ -31,6 +31,7 @@ export const SettingsPage = () => {
         }
         let ans = '';
         for (let c of input) {
+            c = c.toLocaleLowerCase();
             if (c === 'ё') {
                 c = 'е';
             }
@@ -41,10 +42,10 @@ export const SettingsPage = () => {
         setWord(ans);
     }, [])
 
-    const onSend = useCallback(() => {
+    const onSend = useCallback((s: ('delete' | 'add')) => {
         if (word.length === 5) {
-            sendToTg(word);
-            setSended(true);
+            sendToTg(s + ' ' + word);
+            setSended(s);
             const wordCopy = word;
             setTimeout(() => {
                 setWord((word) => {
@@ -53,7 +54,7 @@ export const SettingsPage = () => {
                     }
                     return word;
                 })
-                setSended(false);
+                setSended('not');
             }, 5000);
         }
     }, [word]);
@@ -71,9 +72,14 @@ export const SettingsPage = () => {
             Темная тема
             <Toggle value={darkTheme} changeValue={() => {dispatch(toggleDarkTheme())}}/>
         </div>
-        <div className={styles.block}>
-            <input placeholder='слово' type='text' className={styles.wordInput} value={word} onChange={changeWord}/>
-            <button className={styles.offerButton} disabled={sended} onClick={onSend}>{sended ? '✓' : 'Предложить слово'}</button>
+        <div className={styles.offerBlock}>
+            Наш словарь неполный и постоянно пополняется. Если вы знаете слово, которого нет в игре, можете предложить добавить его.<br/>
+            Если же вас возмутило загаданное слово и вы считаете его неподходящим для игры, предложите удалить его.<br/><br/>
+            <div style={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
+                <button className={styles.deleteButton} disabled={sended !== 'not'} onClick={() => onSend('delete')}>{sended === 'delete' ? '✓' : 'Удалить'}</button>
+                <input placeholder='слово' type='text' className={styles.wordInput} value={word} onChange={changeWord}/>
+                <button className={styles.offerButton} disabled={sended !== 'not'} onClick={() => onSend('add')}>{sended === 'add' ? '✓' : 'Добавить'}</button>
+            </div>
         </div>
     </div>
 }
