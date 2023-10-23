@@ -1,0 +1,23 @@
+version: '3.9'
+services:
+  octordle_server:
+    image: octordle_server:latest
+    container_name: octordle_server
+    depends_on:
+      - postgres
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_DOMAIN=postgres
+    restart: always
+    ports:
+      - 5000:5000
+  postgres:
+    image: postgres
+    container_name: db
+    env_file:
+      - ./.env
+    volumes:
+      - ./demodb-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432

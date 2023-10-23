@@ -3,6 +3,7 @@ import { useAppSelector } from "@/store/store"
 
 import styles from './ResultBlock.module.scss';
 import { useCallback, useEffect, useState } from "react";
+import { postGameResult } from "@/service/service";
 
 const digits = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟', '🕚', '🕛', '🕐', '🕑', '🕒'];
 
@@ -43,6 +44,14 @@ export const ResultBlock = () => {
         textRes += `\nСчет: ${score} ${smile}`;
         navigator.clipboard.writeText(textRes);
     }, [res, day, score, smile]);
+
+    useEffect(() => {
+        const resultSended = localStorage.getItem('resultSended') === 'true';
+        if (!resultSended) {
+            localStorage.setItem('resultSended', 'true');
+            postGameResult({day, words: words.join(' '), tries: attempts.join(' '), score});
+        }
+    }, [day, words, attempts, score]);
 
     return <div className={styles.resultBlock}>
         <div className={styles.resultText}>
