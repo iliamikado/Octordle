@@ -28,8 +28,10 @@ const start = async () => {
     let certificate;
 
     try {
-        privateKey = fs.readFileSync('privkey.pem');
-        certificate = fs.readFileSync('cert.pem');
+        privateKey = fs.readFileSync('./privkey.pem', 'utf8');
+        certificate = fs.readFileSync('./cert.pem', 'utf8');
+        console.log(privateKey);
+        console.log(certificate);
     } catch (error) {
         console.log(error);
     }
