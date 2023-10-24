@@ -3,6 +3,8 @@ dotenv.config();
 import express from 'express';
 import { GameInfo, sequelize } from './db.js';
 import cors from 'cors';
+import https from 'https';
+import fs from 'fs';
 
 const PORT = process.env.PORT || 5000;
 
@@ -22,8 +24,15 @@ app.post('/post_game', (req, res) => {
 
 const start = async () => {
     console.log(process.env);
-    let privateKey = process.env.PRIVKEY;
-    let certificate = process.env.CERT;
+    let privateKey;
+    let certificate;
+
+    try {
+        privateKey = fs.readFileSync('privkey.pem');
+        certificate = fs.readFileSync('cert.pem');
+    } catch (error) {
+        console.log(error);
+    }
 
     try {
         await sequelize.authenticate();
