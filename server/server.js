@@ -3,7 +3,6 @@ dotenv.config();
 import express from 'express';
 import { GameInfo, sequelize } from './db.js';
 import cors from 'cors';
-import fs from 'fs';
 
 const PORT = process.env.PORT || 5000;
 
@@ -22,14 +21,9 @@ app.post('/post_game', (req, res) => {
 });
 
 const start = async () => {
-    let privateKey;
-    let certificate;
-    try {
-        privateKey = fs.readFileSync('/etc/letsencrypt/live/octordle-server.ru/privkey.pem');
-        certificate = fs.readFileSync('/etc/letsencrypt/live/octordle-server.ru/cert.pem');
-    } catch (e) {
-        console.log(e);
-    }
+    console.log(process.env);
+    let privateKey = process.env.PRIVKEY;
+    let certificate = process.env.CERT;
 
     try {
         await sequelize.authenticate();
