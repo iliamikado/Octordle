@@ -27,6 +27,7 @@ jobs:
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> "./server/.env"
       - name: Add PRIVKEY and CERT
         run: |
+          mkdir ./server/ssl
           echo "${{ secrets.PRIVKEY }}" > ./server/ssl/privkey.pem
           echo "${{ secrets.CERT }}" > ./server/ssl/cert.pem
       - name: Build
