@@ -2,7 +2,7 @@ version: '3.9'
 services:
   octordle_nginx:
     image: nginx
-    container_name: Octordle_nginx
+    container_name: octordle_nginx
     depends_on:
       - octordle_server
     command: [nginx-debug, '-g', 'daemon off;']

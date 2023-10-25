@@ -35,7 +35,7 @@ jobs:
       - name: Save docker image to file
         run: docker save octordle_server:latest -o octordle_server.tar
       - name: Copy files
-        run: scp -i $HOME/.ssh/key -o StrictHostKeyChecking=no octordle_server.tar ./server/docker-compose.yml ./server/.env iliamikado@84.201.153.241:~
+        run: scp -i $HOME/.ssh/key -o StrictHostKeyChecking=no octordle_server.tar ./server/docker-compose.yml ./server/.env ./server/app.conf iliamikado@84.201.153.241:~
       - name: load docker image
         run: ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no iliamikado@84.201.153.241 'sudo docker load -i ~/octordle_server.tar'
       - name: docker restart
