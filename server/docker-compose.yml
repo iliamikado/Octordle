@@ -1,5 +1,17 @@
 version: '3.9'
 services:
+  octordle_nginx:
+    image: nginx
+    container_name: Octordle_nginx
+    depends_on:
+      - octordle_server
+    command: [nginx-debug, '-g', 'daemon off;']
+    volumes:
+      - ./app.conf:/etc/nginx/conf.d/
+      - ./ssl:/etc/nginx/ssl
+    ports:
+      - 80:80
+      - 443:443
   octordle_server:
     image: octordle_server:latest
     container_name: octordle_server
@@ -11,7 +23,7 @@ services:
       - POSTGRES_DOMAIN=postgres
     restart: always
     ports:
-      - 80:5000
+      - 5000:5000
   postgres:
     image: postgres
     container_name: db

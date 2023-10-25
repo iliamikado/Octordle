@@ -24,35 +24,38 @@ app.post('/post_game', (req, res) => {
 
 const start = async () => {
     console.log(process.env);
-    let privateKey;
-    let certificate;
+    // let privateKey;
+    // let certificate;
 
-    try {
-        privateKey = fs.readFileSync('./privkey.pem', 'utf8');
-        certificate = fs.readFileSync('./cert.pem', 'utf8');
-        console.log(privateKey);
-        console.log(certificate);
-    } catch (error) {
-        console.log(error);
-    }
+    // try {
+    //     privateKey = fs.readFileSync('./privkey.pem', 'utf8');
+    //     certificate = fs.readFileSync('./cert.pem', 'utf8');
+    //     console.log(privateKey);
+    //     console.log(certificate);
+    // } catch (error) {
+    //     console.log(error);
+    // }
 
     try {
         await sequelize.authenticate();
         await sequelize.sync();
-        if (privateKey && certificate) {
-            console.log('Start with certificate');
-            https.createServer({
-                key: privateKey,
-                cert: certificate
-            }, app).listen(PORT, () => {
-                console.log(`Server started on port ${PORT}`);
-            });
-        } else {
-            console.log('Start without certificate');
-            app.listen(PORT, () => {
-                console.log(`Server started on port ${PORT}`);
-            });
-        }
+        // if (privateKey && certificate) {
+        //     console.log('Start with certificate');
+        //     https.createServer({
+        //         key: privateKey,
+        //         cert: certificate
+        //     }, app).listen(PORT, () => {
+        //         console.log(`Server started on port ${PORT}`);
+        //     });
+        // } else {
+        //     console.log('Start without certificate');
+        //     app.listen(PORT, () => {
+        //         console.log(`Server started on port ${PORT}`);
+        //     });
+        // }
+        app.listen(PORT, () => {
+            console.log(`Server started on port ${PORT}`);
+        });
     } catch (error) {
         console.log(error)
     }
