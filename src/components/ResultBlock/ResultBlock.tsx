@@ -1,9 +1,9 @@
-import { selectDay, selectTries, selectTriesCount, selectWords } from "@/store/selectors"
+import { selectDay, selectTries, selectWords } from "@/store/selectors"
 import { useAppSelector } from "@/store/store"
 
 import styles from './ResultBlock.module.scss';
 import { useCallback, useEffect, useState } from "react";
-import { postGameResult } from "@/service/service";
+import { getGameStat, postGameResult } from "@/service/service";
 
 const digits = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟', '🕚', '🕛', '🕐', '🕑', '🕒'];
 
@@ -11,6 +11,7 @@ export const ResultBlock = () => {
     const words = useAppSelector(selectWords);
     const tries = useAppSelector(selectTries);
     const day = useAppSelector(selectDay);
+    const [betterThan, setBetterThan] = useState(-1);
 
     const res = words.map(word => (digits[tries.indexOf(word)] || '🟥'));
     const attempts = words.map(word => (tries.indexOf(word))).map(x => x + 1);
@@ -42,16 +43,25 @@ export const ResultBlock = () => {
             textRes += res[i] + ' ';
         }
         textRes += `\nСчет: ${score} ${smile}`;
+        if (betterThan !== -1) {
+            textRes += `\nКруче ${betterThan}% игроков`;
+        }
         navigator.clipboard.writeText(textRes);
-    }, [res, day, score, smile]);
+    }, [res, day, score, smile, betterThan]);
 
     useEffect(() => {
         const resultSended = localStorage.getItem('resultSended') === 'true';
         if (!resultSended) {
             localStorage.setItem('resultSended', 'true');
-            postGameResult({day, words: words.join(' '), tries: attempts.join(' '), score});
+            postGameResult({day, words: tries.join(' '), tries: attempts.join(' '), score}).then(res => {
+                setBetterThan(res.betterThan)
+            });
+        } else {
+            getGameStat({day, words: tries.join(' '), tries: attempts.join(' '), score}).then(res => {
+                setBetterThan(res.betterThan)
+            });
         }
-    }, [day, words, attempts, score]);
+    }, [day, tries, attempts, score]);
 
     return <div className={styles.resultBlock}>
         <div className={styles.resultText}>
@@ -63,6 +73,9 @@ export const ResultBlock = () => {
             </div>
         </div>
         <span>Счет: {scoreForWord.join('+')} = {score} {smile}</span>
+        {betterThan === -1 ? null : <div className={styles.betterThan}>
+            Ваш результат лучше, чем у {betterThan}% игроков
+        </div>}
         <button className={styles.copyButton} onClick={copyRes}>копировать результат</button>
         <Timer/>
     </div>
