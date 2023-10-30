@@ -1,4 +1,4 @@
-import { selectDay, selectTries, selectWords } from "@/store/selectors"
+import { selectDay, selectTries, selectUuid, selectWords } from "@/store/selectors"
 import { useAppSelector } from "@/store/store"
 
 import styles from './ResultBlock.module.scss';
@@ -11,6 +11,7 @@ export const ResultBlock = () => {
     const words = useAppSelector(selectWords);
     const tries = useAppSelector(selectTries);
     const day = useAppSelector(selectDay);
+    const uuid = useAppSelector(selectUuid);
     const [betterThan, setBetterThan] = useState(-1);
 
     const res = words.map(word => (digits[tries.indexOf(word)] || '🟥'));
@@ -52,16 +53,16 @@ export const ResultBlock = () => {
     useEffect(() => {
         const resultSended = localStorage.getItem('resultSended') === 'true';
         if (!resultSended) {
-            localStorage.setItem('resultSended', 'true');
-            postGameResult({day, words: tries.join(' '), tries: attempts.join(' '), score}).then(res => {
+            postGameResult({day, words: tries.join(' '), tries: attempts.join(' '), score, uuid}).then(res => {
+                localStorage.setItem('resultSended', 'true');
                 setBetterThan(res.betterThan)
             });
         } else {
-            getGameStat({day, words: tries.join(' '), tries: attempts.join(' '), score}).then(res => {
+            getGameStat({day, words: tries.join(' '), tries: attempts.join(' '), score, uuid}).then(res => {
                 setBetterThan(res.betterThan)
             });
         }
-    }, [day, tries, attempts, score]);
+    }, [day, tries, attempts, score, uuid]);
 
     return <div className={styles.resultBlock}>
         <div className={styles.resultText}>

@@ -5,8 +5,9 @@ import { ReactNode, useEffect, useState } from "react"
 import styles from './MainLayout.module.scss';
 import { Provider } from "react-redux";
 import { store, useAppDispatch, useAppSelector } from "@/store/store";
-import { setSettings } from "@/store/slices/settingsSlice";
+import { setSettings, setUuid } from "@/store/slices/settingsSlice";
 import { selectDarkTheme } from "@/store/selectors";
+import { v4 } from 'uuid';
 
 interface Props {
     children: ReactNode
@@ -46,6 +47,14 @@ const SetSettings = () => {
         const settings = localStorage.getItem('settings');
         if (settings) {
             dispatch(setSettings(JSON.parse(settings)));
+        }
+        const uuid = localStorage.getItem('uuid');
+        if (uuid) {
+            dispatch(setUuid(uuid));
+        } else {
+            const newUuid = v4();
+            localStorage.setItem('uuid', newUuid);
+            dispatch(setUuid(newUuid));
         }
     }, [dispatch]);
 
