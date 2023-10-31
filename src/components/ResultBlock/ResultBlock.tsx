@@ -13,17 +13,18 @@ export const ResultBlock = () => {
     const day = useAppSelector(selectDay);
     const uuid = useAppSelector(selectUuid);
     const [betterThan, setBetterThan] = useState(-1);
+    const [copied, setCopied] = useState(false);
 
     const res = words.map(word => (digits[tries.indexOf(word)] || '🟥'));
-    const attempts = words.map(word => (tries.indexOf(word))).map(x => x + 1);
-    const scoreForWord = attempts.map(x => (x === 0 ? 0 : (20 - x)));
-    const score = scoreForWord.reduce((sc, x) => (sc + x), 0);
+    const [attempts] = useState(words.map(word => (tries.indexOf(word))).map(x => x + 1));
+    const [scoreForWord] = useState(attempts.map(x => (x === 0 ? 0 : (20 - x))));
+    const [score] = useState(scoreForWord.reduce((sc, x) => (sc + x), 0));
 
     let smile: string;
 
     if (attempts.includes(1)) {
         smile = '😑'
-    } else if (attempts.every(x => (x <= 10))) {
+    } else if (attempts.every(x => (x <= 10 && x !== 0))) {
         smile = '🤯'
     } else if (score >= 90) {
         smile = '😎'
@@ -48,19 +49,24 @@ export const ResultBlock = () => {
             textRes += `\nКруче ${betterThan}% игроков`;
         }
         navigator.clipboard.writeText(textRes);
+        setCopied(true);
+        setTimeout(() => {
+            setCopied(false);
+        }, 2000);
     }, [res, day, score, smile, betterThan]);
 
     useEffect(() => {
+        console.log([day, tries, attempts, score, uuid]);
         const resultSended = localStorage.getItem('resultSended') === 'true';
         if (!resultSended) {
             postGameResult({day, words: tries.join(' '), tries: attempts.join(' '), score, uuid}).then(res => {
                 localStorage.setItem('resultSended', 'true');
                 setBetterThan(res.betterThan)
-            });
+            }).catch(e => {});
         } else {
             getGameStat({day, words: tries.join(' '), tries: attempts.join(' '), score, uuid}).then(res => {
                 setBetterThan(res.betterThan)
-            });
+            }).catch(e => {});
         }
     }, [day, tries, attempts, score, uuid]);
 
@@ -77,7 +83,7 @@ export const ResultBlock = () => {
         {betterThan === -1 ? null : <div className={styles.betterThan}>
             Ваш результат лучше, чем у {betterThan}% игроков
         </div>}
-        <button className={styles.copyButton} onClick={copyRes}>копировать результат</button>
+        <button className={styles.copyButton} onClick={copyRes} disabled={copied}>{copied ? 'скопировано' : 'копировать результат'}</button>
         <Timer/>
     </div>
 }
