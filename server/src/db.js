@@ -21,3 +21,10 @@ export const GameInfo = sequelize.define('game_info', {
     score: {type: DataTypes.INTEGER},
     uuid: {type: DataTypes.TEXT}
 });
+
+export const StartedGame = sequelize.define('started_game', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    day: {type: DataTypes.INTEGER},
+    word: {type: DataTypes.TEXT},
+    uuid: {type: DataTypes.TEXT}
+});

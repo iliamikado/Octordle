@@ -56,7 +56,6 @@ export const ResultBlock = () => {
     }, [res, day, score, smile, betterThan]);
 
     useEffect(() => {
-        console.log([day, tries, attempts, score, uuid]);
         const resultSended = localStorage.getItem('resultSended') === 'true';
         if (!resultSended) {
             postGameResult({day, words: tries.join(' '), tries: attempts.join(' '), score, uuid}).then(res => {

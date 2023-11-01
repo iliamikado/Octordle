@@ -1,46 +1,37 @@
-import { GameInfo, sequelize } from './db.js';
+import { GameInfo, StartedGame } from './db.js';
 
 const START_DAY = 19612;
 
 class Statistic {
-    games = [];
-    todayGames = [];
-    today = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
 
-    constructor() {
-        setInterval(() => {
-            const newDay = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
-            if (newDay !== this.today) {
-                this.today = newDay;
-                this.setValues();
-            }
-        }, 10000);
+    async addTodaysGame(game) {
+        await GameInfo.create(game);
     }
 
-    async setValues() {
-        this.games = (await GameInfo.findAll()).map(({dataValues: game}) => (game));
-        this.todayGames = this.games.filter(game => (game.day === this.today));
-        console.log(this.todayGames);
+    async addStartedGame(game) {
+        await StartedGame.create(game);
     }
 
-    addTodaysGame(game) {
-        this.games.push(game);
-        this.todayGames.push(game);
-    }
-
-    getStatForGame(game) {
+    async getStatForGame(game) {
         let losers = 0;
-        this.todayGames.forEach(({score}) => {
-            if (game.score > score) {
+        const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
+        const todayGames = await GameInfo.findAll({where: {day}});
+        const uuidsSet = new Set(todayGames.map(({uuid}) => (uuid)));
+        const startedGames = (await StartedGame.findAll({where: {day}})).filter(({uuid}) => (!uuidsSet.has(uuid)));
+        console.log(startedGames);
+        
+
+        todayGames.forEach(({score}) => {
+            if (game.score >= score) {
                 losers += 1;
             }
         });
         const resp = {};
-        const n = this.todayGames.length;
+        const n = todayGames.length;
         if (n <= 1) {
             resp.betterThan = 100;
         } else {
-            resp.betterThan = Math.floor(losers * 100 / (n - 1));
+            resp.betterThan = Math.floor(losers * 100 / n);
         }
         return resp;
     }

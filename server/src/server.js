@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
-import { GameInfo, sequelize } from './db.js';
+import { sequelize } from './db.js';
 import { statistics } from './statistic.js';
 import cors from 'cors';
 
@@ -15,17 +15,23 @@ app.get('/ping', (req, res) => {
     res.send('I am alive');
 })
 
-app.post('/post_game', (req, res) => {
-    console.log(req.body);
+app.post('/post_game', async (req, res) => {
     const gameInfo = req.body;
-    GameInfo.create(gameInfo);
-    statistics.addTodaysGame(gameInfo);
-    res.json(statistics.getStatForGame(gameInfo));
+    await statistics.addTodaysGame(gameInfo);
+    res.json(await statistics.getStatForGame(gameInfo));
 });
 
-app.get('/get_game_stat', (req, res) => {
-    res.json(statistics.getStatForGame(JSON.parse(req.query.game)));
+app.post('/post_start', async (req, res) => {
+    console.log(req.body);
+    const gameStart = req.body;
+    await statistics.addStartedGame(gameStart);
+    res.json({status: 200});
 })
+
+app.get('/get_game_stat', async (req, res) => {
+    res.json(await statistics.getStatForGame(JSON.parse(req.query.game)));
+})
+
 
 const start = async () => {
     console.log(process.env);
@@ -33,7 +39,6 @@ const start = async () => {
     try {
         await sequelize.authenticate();
         await sequelize.sync();
-        await statistics.setValues();
 
         app.listen(PORT, () => {
             console.log(`Server started on port ${PORT}`);

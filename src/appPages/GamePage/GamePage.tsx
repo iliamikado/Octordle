@@ -1,7 +1,7 @@
 'use client'
 
 import { WordsInput } from "@/components/WordsInput/WordsInput";
-import { selectIsGameEnd, selectWords } from "@/store/selectors";
+import { selectDay, selectIsGameEnd, selectIsGameStarted, selectUuid, selectWords } from "@/store/selectors";
 import { addCurrentInputToTries, addLetterToCurrentInput, moveChosenLetter, removeLetterFromCurrentInput, setDay, setTries, setWords } from "@/store/slices/gameSlice";
 import { getRandomWords, isRussianLetter } from "@/wordsLogic/helpers";
 import { useCallback, useEffect } from "react"
@@ -11,6 +11,7 @@ import { Keyboard } from "@/components/Keyboard/Keyboard";
 import { Header } from "@/components/Header/Header";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { ResultBlock } from "@/components/ResultBlock/ResultBlock";
+import { postStart } from "@/service/service";
 
 const START_DAY = 19612;
 
@@ -18,6 +19,9 @@ export const GamePage = () => {
     const dispatch = useAppDispatch();
     const words = useAppSelector(selectWords);
     const isGameEnd = useAppSelector(selectIsGameEnd);
+    const isGameStarted = useAppSelector(selectIsGameStarted);
+    const day = useAppSelector(selectDay);
+    const uuid = useAppSelector(selectUuid);
 
     useEffect(() => {
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
@@ -31,6 +35,7 @@ export const GamePage = () => {
             localStorage.removeItem('day');
             localStorage.removeItem('tries');
             localStorage.setItem('resultSended', 'false');
+            localStorage.setItem('startSended', 'false');
         }
         dispatch(setDay(day));
         dispatch(setWords(getRandomWords(day, 8, 'easy')));
@@ -64,6 +69,15 @@ export const GamePage = () => {
     useEffect(() => {
         document.getElementById('scrollContainer')?.scrollTo({top: 0});
     }, [isGameEnd]);
+
+    useEffect(() => {
+        const startSended = localStorage.getItem('startSended');
+        if (isGameStarted && startSended !== 'true') {
+            postStart({day, word: isGameStarted, uuid}).then((data) => {
+                localStorage.setItem('startSended', 'true');
+            }).catch(e => {});
+        }
+    }, [day, isGameStarted, uuid]);
 
     return <main className={styles.page}>
         <div className={styles.scrollContainer} id={'scrollContainer'}>
