@@ -18,16 +18,15 @@ class Statistic {
         const todayGames = await GameInfo.findAll({where: {day}});
         const uuidsSet = new Set(todayGames.map(({uuid}) => (uuid)));
         const startedGames = (await StartedGame.findAll({where: {day}})).filter(({uuid}) => (!uuidsSet.has(uuid)));
-        console.log(startedGames);
-        
 
         todayGames.forEach(({score}) => {
             if (game.score >= score) {
                 losers += 1;
             }
         });
+        losers += startedGames.length;
         const resp = {};
-        const n = todayGames.length;
+        const n = todayGames.length + startedGames.length;
         if (n <= 1) {
             resp.betterThan = 100;
         } else {
