@@ -17,9 +17,9 @@ export const Header = () => {
         <button className={cn(styles.icon, styles.settingsIcon)} onClick={() => {router.push('settings')}}>
             <SettingsIcon/>
         </button>
-        <button className={cn(styles.icon, styles.statsIcon)} onClick={() => {router.push('stats')}}>
+        {/* <button className={cn(styles.icon, styles.statsIcon)} onClick={() => {router.push('stats')}}>
             <StatsIcon/>
-        </button>
+        </button> */}
         <h1 className={styles.title}>Осьминогль</h1>
         <h3 className={styles.day}>День #{day}</h3>
     </div>

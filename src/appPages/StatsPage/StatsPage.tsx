@@ -50,7 +50,7 @@ const StatBlock = ({stats}: {stats: any}) => {
         <p>Минимальный балл: {stats.min}</p>
         <p>Средний балл: {stats.average}</p>
         {stats.place ? <>
-        <p>Ваше место: {stats.place[0] === stats.place[1] ? stats.place[0] : `${stats.place[0] - stats.place[1]}`}</p>
+        <p>Ваше место: {stats.place[0] === stats.place[1] ? stats.place[0] : `${stats.place[0]} - ${stats.place[1]}`}</p>
         <p>Вы лучше чем {stats.betterThan}% игроков</p>
         <p>Вы сыграли {stats.timePlace} по счету</p>
         </> : null}
