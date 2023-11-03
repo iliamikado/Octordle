@@ -23,3 +23,7 @@ export function postStart(result: {day: number, word: string, uuid: string}) {
 export function getGameStat(result: {day: number, words: string, tries: string, score: number, uuid: string}) {
     return fetch(`${url}/get_game_stat?game=${JSON.stringify(result)}`).then(data => (data.json()));
 }
+
+export function getFullStat(uuid: string) {
+    return fetch(`${url}/get_full_stat?uuid=${uuid}`).then(data => data.json());
+}

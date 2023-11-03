@@ -34,6 +34,55 @@ class Statistic {
         }
         return resp;
     }
+
+    async getFullStat(uuid) {
+        const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
+        return {
+            today: await this.getFullStatForDay(uuid, day),
+            yesterday: await this.getFullStatForDay(uuid, day - 1)
+        }
+    }
+
+    async getFullStatForDay(uuid, day) {
+        const resp = {};
+        const games = await GameInfo.findAll({where: {day}});
+        const startedGames = (await StartedGame.findAll({where: {day}}));
+        resp.starts = startedGames.length;
+        resp.finish = games.length;
+        resp.average = Math.floor(games.reduce((sum, {score}) => (sum + score), 0) / games.length);
+        resp.max = 0;
+        resp.min = 10000;
+        games.forEach(({score}) => {
+            resp.max = Math.max(resp.max, score);
+            resp.min = Math.min(resp.min, score);
+        });
+        const userGame = games.find(({uuid: id}) => (id === uuid))?.dataValues;
+        console.log(userGame);
+
+        if (!userGame) {
+            return resp;
+        }
+        resp.place = [1, 0];
+        let losers = startedGames.length;
+        resp.timePlace = 1;
+        console.log(userGame.createdAt);
+        games.forEach(({score, createdAt}) => {
+            if (score > userGame.score) {
+                resp.place[0]++;
+                resp.place[1]++;
+                losers--;
+            } else if (score === userGame.score) {
+                resp.place[1]++;
+            }
+
+            if (createdAt < userGame.createdAt) {
+                resp.timePlace++;
+            }
+
+        });
+        resp.betterThan = Math.floor(losers * 100 / startedGames.length);
+        return resp;
+    }
 }
 
 export const statistics = new Statistic();

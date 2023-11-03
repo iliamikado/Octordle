@@ -32,6 +32,11 @@ app.get('/get_game_stat', async (req, res) => {
     res.json(await statistics.getStatForGame(JSON.parse(req.query.game)));
 })
 
+app.get('/get_full_stat', async (req, res) => {
+    console.log(req.query);
+    res.json(await statistics.getFullStat(req.query.uuid));
+})
+
 
 const start = async () => {
     console.log(process.env);
