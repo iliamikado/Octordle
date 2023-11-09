@@ -1,4 +1,4 @@
-const url = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
+const url = (process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000') + '/api';
 
 export function postGameResult(result: {day: number, words: string, tries: string, score: number, uuid: string}) {
     return fetch(`${url}/post_game`, {

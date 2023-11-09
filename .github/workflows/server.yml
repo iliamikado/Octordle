@@ -23,19 +23,25 @@ jobs:
           chmod 600 "$HOME/.ssh/key"
       - name: Change env file
         run: |
-          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> "./server/.env"
-          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> "./server/.env"
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> ".env"
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> ".env"
       - name: Add PRIVKEY and CERT
         run: |
-          echo "${{ secrets.PRIVKEY }}" > ./server/privkey.pem
-          echo "${{ secrets.CERT }}" > ./server/cert.pem
+          echo "${{ secrets.PRIVKEY }}" > ./privkey.pem
+          echo "${{ secrets.CERT }}" > ./cert.pem
       - name: Build
-        run: docker build -t octordle_server:latest ./server
+        run: | 
+          docker build -t octordle_server:latest ./server
+          docker build -t octordle_client:latest .
       - name: Save docker image to file
-        run: docker save octordle_server:latest -o octordle_server.tar
+        run: |
+          docker save octordle_server:latest -o octordle_server.tar
+          docker save octordle_client:latest -o octordle_client.tar
       - name: Copy files
-        run: scp -i $HOME/.ssh/key -o StrictHostKeyChecking=no octordle_server.tar ./server/docker-compose.yml ./server/.env ./server/app.conf ./server/privkey.pem ./server/cert.pem iliamikado@84.201.153.241:~
+        run: scp -i $HOME/.ssh/key -o StrictHostKeyChecking=no octordle_server.tar octordle_client.tar docker-compose.yml .env app.conf privkey.pem cert.pem iliamikado@84.201.153.241:~
       - name: load docker image
-        run: ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no iliamikado@84.201.153.241 'sudo docker load -i ~/octordle_server.tar'
+        run: |
+          ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no iliamikado@84.201.153.241 'sudo docker load -i ~/octordle_server.tar'
+          ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no iliamikado@84.201.153.241 'sudo docker load -i ~/octordle_client.tar'
       - name: docker restart
         run: ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no iliamikado@84.201.153.241 'sudo docker-compose up --build --force-recreate --no-deps -d'
