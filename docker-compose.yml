@@ -31,7 +31,7 @@ services:
       - 5000:5000
   postgres:
     image: postgres
-    container_name: db
+    container_name: postgres
     env_file:
       - ./.env
     volumes:
