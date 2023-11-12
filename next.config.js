@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+
+require('dotenv').config();
+
 const nextConfig = {
     output: process.env.OUTPUT || 'export',
     webpack(config) {
