@@ -78,7 +78,6 @@ jobs:
           NEXT_PUBLIC_TG_TOKEN: ${{ secrets.TG_BOT_TOCKEN }}
           NEXT_PUBLIC_CHAT_ID: ${{ secrets.CHAT_ID }}
           NEXT_PUBLIC_SERVER_URL: ${{ vars.NEXT_PUBLIC_SERVER_URL }}
-          NEXT_PUBLIC_OUTPUT: 'export'
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
       - name: Static HTML export with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next export
