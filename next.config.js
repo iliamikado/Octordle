@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 require('dotenv').config();
+console.log(process.env);
 
 const nextConfig = {
     output: process.env.OUTPUT || 'export',

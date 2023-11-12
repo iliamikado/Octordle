@@ -25,7 +25,8 @@ jobs:
         run: |
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> ".env"
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> ".env"
-          echo "OUTPUT=standalone" >> ".env"
+          echo "OUTPUT='standalone'" >> ".env"
+          echo .env
       - name: Add PRIVKEY and CERT
         run: |
           echo "${{ secrets.PRIVKEY }}" > ./privkey.pem
