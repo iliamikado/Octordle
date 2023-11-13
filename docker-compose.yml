@@ -34,5 +34,7 @@ services:
     container_name: postgres
     env_file:
       - ./.env
+    volumes:
+      - ./demodb-data:/var/lib/postgresql/data
     ports:
       - 5432:5432
