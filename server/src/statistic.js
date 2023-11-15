@@ -45,7 +45,7 @@ class Statistic {
 
     async getFullStatForDay(uuid, day) {
         const resp = {};
-        const games = await GameInfo.findAll({where: {day}});
+        const games = (await GameInfo.findAll({where: {day}})).map(x => (x.dataValues));
         const startedGames = (await StartedGame.findAll({where: {day}}));
         resp.starts = startedGames.length;
         resp.finish = games.length;
@@ -56,12 +56,17 @@ class Statistic {
             resp.max = Math.max(resp.max, score);
             resp.min = Math.min(resp.min, score);
         });
-        const userGame = games.find(({uuid: id}) => (id === uuid))?.dataValues;
-        console.log(userGame);
+        games.sort((g1, g2) => (g1.score - g2.score));
+        console.log(games);
+        resp.median = games[Math.floor(games.length / 2)]?.score;
 
+
+        const userGame = games.find(({uuid: id}) => (id === uuid));
+        console.log(userGame);
         if (!userGame) {
             return resp;
         }
+        resp.score = userGame.score;
         resp.place = [1, 0];
         let losers = startedGames.length;
         resp.timePlace = 1;

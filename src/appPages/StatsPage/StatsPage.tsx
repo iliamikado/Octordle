@@ -30,9 +30,11 @@ export const StatsPage = () => {
         </button>
         {stats.loading ? <div className={styles.log}>загрузка...</div> : stats.error ? <div className={styles.log}>сервер не отвечает</div> : <div>
             <div className={styles.block}>
+                <h3 style={{margin: 0}}>Статистика за сегодня</h3>
                 <StatBlock stats={stats.today}/>
             </div>
             <div className={styles.block}>
+                <h3 style={{margin: 0}}>Статистика за вчера</h3>
                 <StatBlock stats={stats.yesterday}/>
             </div>
         </div>}
@@ -44,12 +46,14 @@ const StatBlock = ({stats}: {stats: any}) => {
         return <p>Пока никто не сыграл</p>
     }
     return <>
-        <p>Начато игр: {stats.starts}</p>
-        <p>Завершено игр: {stats.finish}</p>
+        {/* <p>Начато игр: {stats.starts}</p> */}
+        <p>Человек сыграло: {stats.finish}</p>
         <p>Максимальный балл: {stats.max}</p>
         <p>Минимальный балл: {stats.min}</p>
         <p>Средний балл: {stats.average}</p>
+        <p>Медиана: {stats.median}</p>
         {stats.place ? <>
+        <p>Ваш балл: {stats.score}</p>
         <p>Ваше место: {stats.place[0] === stats.place[1] ? stats.place[0] : `${stats.place[0]} - ${stats.place[1]}`}</p>
         <p>Вы лучше чем {stats.betterThan}% игроков</p>
         <p>Вы сыграли {stats.timePlace} по счету</p>
