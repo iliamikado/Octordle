@@ -6,8 +6,9 @@ import { MainLayout } from '@/components/MainLayout/MainLayout'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Осьминогль',
-  description: 'Отгадываем слова',
+  title: 'Осьминогль. Octordle на русском языке',
+  description: 'Отгадай все слова за 14 попыток. Новые слова каждый день.',
+  robots: 'index'
 }
 
 export default function RootLayout({
