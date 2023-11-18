@@ -17,7 +17,7 @@ class Statistic {
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
         const todayGames = await GameInfo.findAll({where: {day}});
         const uuidsSet = new Set(todayGames.map(({uuid}) => (uuid)));
-        const startedGames = (await StartedGame.findAll({where: {day}})).filter(({uuid}) => (!uuidsSet.has(uuid)));
+        const startedGames = (await StartedGame.findAll({where: {day}})).filter(({uuid}) => (!uuidsSet.has(uuid))).filter(({score}) => (score < 124));
 
         todayGames.forEach(({score}) => {
             if (game.score >= score) {
@@ -37,15 +37,28 @@ class Statistic {
 
     async getFullStat(uuid) {
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
+        const resp = {};
         return {
             today: await this.getFullStatForDay(uuid, day),
-            yesterday: await this.getFullStatForDay(uuid, day - 1)
+            yesterday: await this.getFullStatForDay(uuid, day - 1),
+            personal: await this.getPersonalStat(uuid)
         }
+    }
+
+    async getPersonalStat(uuid) {
+        const resp = {};
+        const games = (await GameInfo.findAll({where: {uuid}})).map(x => (x.dataValues));
+        console.log(games);
+        resp.played = games.length;
+        resp.scores = games.map(({day, score}) => ([day, score]));
+        resp.average = Math.floor(games.reduce((x, {score}) => (x + score), 0) / games.length);
+        resp.longestPeriod = 0;
+        return resp;
     }
 
     async getFullStatForDay(uuid, day) {
         const resp = {};
-        const games = (await GameInfo.findAll({where: {day}})).map(x => (x.dataValues));
+        const games = (await GameInfo.findAll({where: {day}})).map(x => (x.dataValues)).filter(({score}) => (score < 124));
         const startedGames = (await StartedGame.findAll({where: {day}}));
         resp.starts = startedGames.length;
         resp.finish = games.length;
@@ -59,7 +72,6 @@ class Statistic {
         games.sort((g1, g2) => (g1.score - g2.score));
         console.log(games);
         resp.median = games[Math.floor(games.length / 2)]?.score;
-
 
         const userGame = games.find(({uuid: id}) => (id === uuid));
         console.log(userGame);
