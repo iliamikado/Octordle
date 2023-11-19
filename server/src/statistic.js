@@ -15,7 +15,7 @@ class Statistic {
     async getStatForGame(game) {
         let losers = 0;
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
-        const todayGames = await GameInfo.findAll({where: {day}}).filter(({score}) => (score < 124));
+        const todayGames = (await GameInfo.findAll({where: {day}})).filter(({score}) => (score < 124));
         const startedGames = (await StartedGame.findAll({where: {day}}));
 
         todayGames.forEach(({score}) => {
@@ -36,7 +36,6 @@ class Statistic {
 
     async getFullStat(uuid) {
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
-        const resp = {};
         return {
             today: await this.getFullStatForDay(uuid, day),
             yesterday: await this.getFullStatForDay(uuid, day - 1),
@@ -51,7 +50,6 @@ class Statistic {
         resp.played = games.length;
         resp.scores = games.map(({day, score}) => ([day, score]));
         resp.average = Math.floor(games.reduce((x, {score}) => (x + score), 0) / games.length);
-        resp.longestPeriod = 0;
         return resp;
     }
 
