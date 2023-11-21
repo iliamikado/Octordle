@@ -8,12 +8,10 @@ import { useEffect, useState } from 'react';
 import { getFullStat } from '@/service/service';
 import { useAppSelector } from '@/store/store';
 import { selectUuid } from '@/store/selectors';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 export const StatsPage = () => {
     const [stats, setStats] = useState<any>({loading: true, error: false});
     const uuid = useAppSelector(selectUuid);
-    const [graphData, setGraphData] = useState<{uv: number, name?: number}[]>([]);
 
     useEffect(() => {
         if (!uuid) {
@@ -21,20 +19,9 @@ export const StatsPage = () => {
         }
         getFullStat(uuid).then((stats) => {
             setStats(stats);
-            const scores = stats.personal.scores;
-            // const data = scores.map(([day, score]: [number, number]) => ({uv: score, name: day}));
-            const data = [];
-            const startDay = scores[0][0];
-            for (let i = 0; i < scores.at(-1)[0] - scores[0][0]; ++i) {
-                data.push({uv: 0});
-            }
-            scores.forEach(([day, score]: [number, number]) => {
-                data[day - startDay] = {uv: score, name: day}
-            });
-            setGraphData(data);
-
         }).catch(e => {
             setStats({loading: false, error: true});
+            console.log(e);
         });
     }, [uuid]);
 
@@ -57,11 +44,6 @@ export const StatsPage = () => {
                 <h3 style={{margin: 0}}>Личная Статистика</h3>
                 <p>Игр сыграно: {stats.personal.played}</p>
                 <p>Средний балл: {stats.personal.average}</p>
-                <LineChart width={550} height={400} data={graphData} style={{width: '100%'}}>
-                    <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false}/>
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                </LineChart>
             </div>
         </div>}
     </div>
