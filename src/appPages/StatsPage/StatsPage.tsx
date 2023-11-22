@@ -67,6 +67,7 @@ export const StatsPage = () => {
             }, 500)
         }).catch(e => {
             setStats({loading: false, error: true});
+            console.log(e);
         });
     }, [uuid]);
 
