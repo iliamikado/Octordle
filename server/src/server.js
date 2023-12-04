@@ -10,7 +10,7 @@ import cors from 'cors';
 const PORT = process.env.PORT || 5000;
 
 const app = express();
-const allowedOrigins = ['http://localhost:3000', 'https://iliamikado.github.io'];
+const allowedOrigins = ['http://localhost:3000', 'https://iliamikado.github.io', 'https://octordle.ru'];
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin) return callback(null, true);
