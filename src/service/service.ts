@@ -41,7 +41,7 @@ export function googleAuth() {
     const redirect_uri = location.origin + location.pathname;
 
     const params: any = {
-        'client_id': '764289505427-9gdkino9eu2djfidki82vpb5fpoh1bs9.apps.googleusercontent.com',
+        'client_id': process.env.NEXT_PUBLIC_GOOGLE_ID,
         'redirect_uri': redirect_uri,
         'response_type': 'token',
         'scope': 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',

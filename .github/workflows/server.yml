@@ -36,6 +36,7 @@ jobs:
           docker build -t octordle_client:latest \
             --build-arg NEXT_PUBLIC_TG_TOKEN=${{ secrets.TG_BOT_TOCKEN }} \
             --build-arg NEXT_PUBLIC_CHAT_ID=${{ secrets.CHAT_ID }} \
+            --build-arg NEXT_PUBLIC_GOOGLE_ID=${{ secrets.GOOGLE_ID }} \
             --build-arg NEXT_PUBLIC_SERVER_URL=${{ vars.NEXT_PUBLIC_SERVER_URL }} \
             .
       - name: Save docker image to file
