@@ -20,6 +20,7 @@
     path {
         color: var(--var-fontcolor);
     }
+    fill: var(--var-fontcolor);
     stroke: var(--var-fontcolor);
     &:hover {
         cursor: pointer;
@@ -38,5 +39,10 @@
 
 .statsIcon {
     left: 20px;
+    top: 18px;
+}
+
+.personIcon {
+    left: 50px;
     top: 18px;
 }

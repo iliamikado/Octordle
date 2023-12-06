@@ -1,4 +1,4 @@
-import { GameInfo, StartedGame } from './db.js';
+import { Device, GameInfo, StartedGame, User } from './db.js';
 
 const START_DAY = 19612;
 
@@ -28,18 +28,26 @@ class Statistic {
         return resp;
     }
 
-    async getFullStat(uuid) {
+    async getFullStat(uuid, email) {
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
         return {
-            today: await this.getFullStatForDay(uuid, day),
-            yesterday: await this.getFullStatForDay(uuid, day - 1),
-            personal: await this.getPersonalStat(uuid)
+            today: await this.getFullStatForDay(uuid, day, email),
+            yesterday: await this.getFullStatForDay(uuid, day - 1, email),
+            personal: await this.getPersonalStat(uuid, email)
         }
     }
 
-    async getPersonalStat(uuid) {
+    async getPersonalStat(uuid, email) {
         const resp = {};
-        const games = (await GameInfo.findAll({where: {uuid}})).map(x => (x.dataValues));
+        let games = [];
+        if (!email) {
+            games = await GameInfo.findAll({
+                where: {uuid}
+            });
+        } else {
+            games = await this.getAllGamesForEmail(email);
+        }
+        games = games.map(x => (x.dataValues));
         console.log(games);
         resp.played = games.length;
         resp.scores = games.map(({day, score}) => ([day, score]));
@@ -47,7 +55,7 @@ class Statistic {
         return resp;
     }
 
-    async getFullStatForDay(uuid, day) {
+    async getFullStatForDay(uuid, day, email) {
         const resp = {};
         const games = (await GameInfo.findAll({where: {day}})).map(x => (x.dataValues)).filter(({score}) => (score < 124));
         const startedGames = (await StartedGame.findAll({where: {day}}));
@@ -64,7 +72,6 @@ class Statistic {
         resp.median = games[Math.floor(games.length / 2)]?.score;
 
         const userGame = games.find(({uuid: id}) => (id === uuid));
-        console.log(userGame);
         if (!userGame) {
             return resp;
         }
@@ -88,6 +95,19 @@ class Statistic {
         });
         resp.betterThan = Math.floor(losers * 100 / startedGames.length);
         return resp;
+    }
+
+    async getAllGamesForEmail(email) {
+        const games = [];
+        console.log(email);
+        const user = (await User.findAll({where: {email: email}}))[0];
+        console.log(user);
+        const devices = await Device.findAll({where: {userId: user.dataValues.id}});
+        for (let {uuid} of devices) {
+            console.log(uuid);
+            games.push(...(await GameInfo.findAll({where: {uuid: uuid}})));
+        }
+        return games;
     }
 }
 

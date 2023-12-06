@@ -7,20 +7,21 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { getFullStat } from '@/service/service';
 import { useAppSelector } from '@/store/store';
-import { selectUuid } from '@/store/selectors';
+import { selectUserInfo, selectUuid } from '@/store/selectors';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 
 export const StatsPage = () => {
     const [stats, setStats] = useState<any>({loading: true, error: false});
     const uuid = useAppSelector(selectUuid);
+    const userInfo = useAppSelector(selectUserInfo);
     const chart = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
         if (!uuid) {
             return;
         }
-        getFullStat(uuid).then((stats) => {
+        getFullStat(uuid, userInfo?.email).then((stats) => {
             setStats(stats);
             setTimeout(() => {
                 if (!chart.current) {
@@ -69,7 +70,7 @@ export const StatsPage = () => {
             setStats({loading: false, error: true});
             console.log(e);
         });
-    }, [uuid]);
+    }, [uuid, userInfo]);
 
     const router = useRouter()
     return <div className={styles.page}>
