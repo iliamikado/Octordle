@@ -14,7 +14,6 @@ export const SignInPage = () => {
     const userInfo = useAppSelector(selectUserInfo);
     const dispath = useAppDispatch();
     const router = useRouter();
-    console.log(userInfo);
     
     useEffect(() => {
         console.log(location);
