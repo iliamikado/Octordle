@@ -5,6 +5,7 @@ dotenv.config({
 import express from 'express';
 import { sequelize } from './db.js';
 import { statistics } from './statistic.js';
+import { User, Device } from './db.js';
 import cors from 'cors';
 
 const PORT = process.env.PORT || 5000;
@@ -44,8 +45,46 @@ app.get('/api/get_game_stat', async (req, res) => {
 })
 
 app.get('/api/get_full_stat', async (req, res) => {
-    console.log(req.query);
-    res.json(await statistics.getFullStat(req.query.uuid));
+    res.json(await statistics.getFullStat(req.query.uuid, req.query.email));
+})
+
+app.post('/api/login', async (req, res) => {
+    const {uuid, email} = req.query;
+    const exist = await Device.findAll({
+        include: [{
+            model: User,
+            required: true,
+            where: {
+                email: email
+            }
+        }],
+        where: {
+            uuid: uuid
+        }
+    });
+    if (exist.length > 0) {
+        res.json({message: 'already linked'});
+        return;
+    }
+    const user = (await User.findAll({
+        where: {
+            email: email
+        }
+    }))[0];
+    let id;
+    if (user) {
+        id = user.dataValues.id;
+    } else {
+        id = (await User.create({
+            email: email
+        })).dataValues.id
+    }
+    await Device.create({
+        userId: id,
+        uuid: uuid
+    });
+    console.log(id);
+    res.json({message: 'link created'});
 })
 
 

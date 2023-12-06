@@ -54,4 +54,5 @@ export const selectWordsMask = createSelector([selectTries, selectWords], (tries
 export const selectChangeDeleteAndEnter = (state: RootState) => (state.settings.changeDeleteAndEnter);
 export const selectDarkTheme = (state: RootState) => (state.settings.darkTheme);
 export const selectUuid = (state: RootState) => (state.settings.uuid);
+export const selectUserInfo = (state: RootState) => (state.settings.userInfo);
 

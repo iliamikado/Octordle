@@ -30,3 +30,17 @@ export const StartedGame = sequelize.define('started_game', {
     word: {type: DataTypes.TEXT},
     uuid: {type: DataTypes.TEXT}
 });
+
+export const User = sequelize.define('user', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    email: {type: DataTypes.TEXT}
+});
+
+export const Device = sequelize.define('device', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    userId: {type: DataTypes.INTEGER},
+    uuid: {type: DataTypes.TEXT}
+});
+
+User.hasMany(Device, {foreignKey: 'userId'})
+Device.belongsTo(User, {foreignKey: 'userId'})

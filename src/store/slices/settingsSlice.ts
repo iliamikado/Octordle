@@ -4,7 +4,8 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 const initialState = {
     darkTheme: true,
     changeDeleteAndEnter: false,
-    uuid: ''
+    uuid: '',
+    userInfo: null as any
 }
 
 export const settingsSlice = createSlice({
@@ -23,10 +24,13 @@ export const settingsSlice = createSlice({
     },
     setUuid: (state, action: PayloadAction<string>) => {
       state.uuid = action.payload;
+    },
+    setUserInfo: (state, action: PayloadAction<any>) => {
+      state.userInfo = action.payload;
     }
   },
 })
 
-export const { toggleChangeDeleteAndEnter, toggleDarkTheme, setSettings, setUuid } = settingsSlice.actions
+export const { toggleChangeDeleteAndEnter, toggleDarkTheme, setSettings, setUuid, setUserInfo } = settingsSlice.actions
 
 export default settingsSlice.reducer
