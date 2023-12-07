@@ -66,8 +66,8 @@ export function getUserInfo(token: string) {
     return fetch(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`).then(data => (data.json()));
 }
 
-export function linkEmailAndDevice(email: string, uuid: string) {
-    return fetch(`${url}/login?uuid=${uuid}&email=${email}`, {
+export function linkEmailAndDevice(email: string, uuid: string, name: string) {
+    return fetch(`${url}/login?uuid=${uuid}&email=${email}&name=${name}`, {
         method: 'POST'
     });
 }

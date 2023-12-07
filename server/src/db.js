@@ -33,7 +33,8 @@ export const StartedGame = sequelize.define('started_game', {
 
 export const User = sequelize.define('user', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    email: {type: DataTypes.TEXT}
+    email: {type: DataTypes.TEXT},
+    name: {type: DataTypes.TEXT}
 });
 
 export const Device = sequelize.define('device', {

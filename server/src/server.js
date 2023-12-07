@@ -49,7 +49,14 @@ app.get('/api/get_full_stat', async (req, res) => {
 })
 
 app.post('/api/login', async (req, res) => {
-    const {uuid, email} = req.query;
+    const {uuid, email, name} = req.query;
+
+    const user = await User.findOne({ where: { email: email } });
+    if (user) {
+        user.name = name; 
+        await user.save()
+    }
+
     const exist = await Device.findAll({
         include: [{
             model: User,
@@ -66,17 +73,13 @@ app.post('/api/login', async (req, res) => {
         res.json({message: 'already linked'});
         return;
     }
-    const user = (await User.findAll({
-        where: {
-            email: email
-        }
-    }))[0];
     let id;
     if (user) {
         id = user.dataValues.id;
     } else {
         id = (await User.create({
-            email: email
+            email: email,
+            name: name
         })).dataValues.id
     }
     await Device.create({

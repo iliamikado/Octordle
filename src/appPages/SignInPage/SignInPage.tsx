@@ -30,7 +30,7 @@ export const SignInPage = () => {
                 dispath(setUserInfo(data));
                 const uuid = localStorage.getItem('uuid');
                 if (uuid) {
-                    linkEmailAndDevice(data.email, uuid);
+                    linkEmailAndDevice(data.email, uuid, data.name);
                 }
             })
         }
@@ -46,6 +46,7 @@ export const SignInPage = () => {
             <p>Вы вошли как {userInfo.name}</p>
             <button onClick={() => {
                 dispath(setUserInfo(null));
+                localStorage.removeItem('access_token');
             }} className={styles.googleAuth}>Logout</button>
         </div> : <div className={styles.block}>
             <p>Мы не знаем, кто вы. Войдите с помощью аккаунта Google, чтобы переносить свой прогресс на разные устройства</p>
