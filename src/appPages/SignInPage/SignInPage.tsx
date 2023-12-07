@@ -42,8 +42,11 @@ export const SignInPage = () => {
             <CrossIcon/>
         </button>
 
-        {userInfo ? <div>
+        {userInfo ? <div className={styles.block}>
             <p>Вы вошли как {userInfo.name}</p>
+            <button onClick={() => {
+                dispath(setUserInfo(null));
+            }} className={styles.googleAuth}>Logout</button>
         </div> : <div className={styles.block}>
             <p>Мы не знаем, кто вы. Войдите с помощью аккаунта Google, чтобы переносить свой прогресс на разные устройства</p>
             <button onClick={() => {googleAuth()}} className={styles.googleAuth}>Sign in with google</button>
