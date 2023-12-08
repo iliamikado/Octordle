@@ -82,7 +82,7 @@ export const StatsPage = () => {
         </button>
         {stats.loading ? <div className={styles.log}>загрузка...</div> : stats.error ? <div className={styles.log}>сервер не отвечает</div> : <div>
             <div className={styles.block}>
-                <h3 style={{margin: 0}}>Рейтинг*</h3>
+                <h3 style={{margin: 0}}>Рейтинг <a href='#ps' style={{textDecoration: 'none'}}>*</a></h3>
                 <table className={styles.leaderBoard}>
                     <thead>
                         <tr>
@@ -116,7 +116,7 @@ export const StatsPage = () => {
             </div>
             <canvas ref={chart} style={{width: '100%', height: '300px'}}></canvas>
             <div className={styles.block}>
-                <p>* - рейтинг среди <Link href='/login'>авторизованных</Link> пользователей</p>
+                <p id='ps'>* - рейтинг среди <Link href='/login'>авторизованных</Link> пользователей</p>
             </div>
         </div>}
     </div>
