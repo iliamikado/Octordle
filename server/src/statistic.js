@@ -77,16 +77,15 @@ class Statistic {
             return resp;
         }
         resp.score = userGame.score;
-        resp.place = [1, 0];
+        resp.place = 1;
         let losers = startedGames.length;
         resp.timePlace = 1;
         games.forEach(({score, createdAt}) => {
             if (score > userGame.score) {
-                resp.place[0]++;
-                resp.place[1]++;
+                resp.place++;
                 losers--;
-            } else if (score === userGame.score) {
-                resp.place[1]++;
+            } else if (score === userGame.score && createdAt < userGame.createdAt) {
+                resp.place++;
             }
 
             if (createdAt < userGame.createdAt) {

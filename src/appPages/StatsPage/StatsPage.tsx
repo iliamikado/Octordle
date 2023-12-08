@@ -9,6 +9,7 @@ import { getFullStat } from '@/service/service';
 import { useAppSelector } from '@/store/store';
 import { selectUserInfo, selectUuid } from '@/store/selectors';
 import { Chart, registerables } from 'chart.js';
+import Link from 'next/link';
 Chart.register(...registerables);
 
 export const StatsPage = () => {
@@ -81,7 +82,7 @@ export const StatsPage = () => {
         </button>
         {stats.loading ? <div className={styles.log}>загрузка...</div> : stats.error ? <div className={styles.log}>сервер не отвечает</div> : <div>
             <div className={styles.block}>
-                <h3 style={{margin: 0}}>Таблица лидеров среди авторизованных</h3>
+                <h3 style={{margin: 0}}>Рейтинг*</h3>
                 <table className={styles.leaderBoard}>
                     <thead>
                         <tr>
@@ -93,7 +94,7 @@ export const StatsPage = () => {
                     <tbody>
                         {stats.leaderBoard.map(({name, score}: {name: string, score: number}, id: number) => (<tr key={id}>
                             <td className={styles.cell}>{id + 1}</td>
-                            <td className={styles.cell}>{name}</td>
+                            <td className={cn(styles.cell, styles.notCenter)}>{name}</td>
                             <td className={styles.lastCell}>{score}</td>
                         </tr>))}
                     </tbody>
@@ -114,6 +115,9 @@ export const StatsPage = () => {
                 <p>Баллы за все время:</p>
             </div>
             <canvas ref={chart} style={{width: '100%', height: '300px'}}></canvas>
+            <div className={styles.block}>
+                <p>* - рейтинг среди <Link href='/login'>авторизованных</Link> пользователей</p>
+            </div>
         </div>}
     </div>
 }
@@ -131,7 +135,7 @@ const StatBlock = ({stats}: {stats: any}) => {
         <p>Медиана: {stats.median}</p>
         {stats.place ? <>
         <p>Ваш балл: {stats.score}</p>
-        <p>Ваше место: {stats.place[0] === stats.place[1] ? stats.place[0] : `${stats.place[0]} - ${stats.place[1]}`}</p>
+        <p>Ваше место: {stats.place}</p>
         <p>Вы лучше чем {stats.betterThan}% игроков</p>
         <p>Вы сыграли {stats.timePlace} по счету</p>
         </> : null}

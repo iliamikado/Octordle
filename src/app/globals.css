@@ -27,3 +27,8 @@ body {
   color: var(--var-fontcolor);
 }
 
+h1 {
+  font-size: 25px;
+  margin: 20px 0 10px 0;
+}
+
