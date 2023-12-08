@@ -49,3 +49,19 @@
     display: flex;
     justify-content: center;
 }
+
+.leaderBoard {
+    width: 100%;
+    th {
+        border-bottom: 1px solid var(--var-fontcolor);
+    }
+    .cell {
+        border-right: 1px solid var(--var-fontcolor);
+        border-collapse: collapse;
+    }
+
+    td {
+        text-align: center; 
+        vertical-align: middle;
+    }
+}

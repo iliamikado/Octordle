@@ -33,7 +33,8 @@ class Statistic {
         return {
             today: await this.getFullStatForDay(uuid, day, email),
             yesterday: await this.getFullStatForDay(uuid, day - 1, email),
-            personal: await this.getPersonalStat(uuid, email)
+            personal: await this.getPersonalStat(uuid, email),
+            leaderBoard: await this.getLeaderBoard(day)
         }
     }
 
@@ -108,6 +109,39 @@ class Statistic {
             games.push(...(await GameInfo.findAll({where: {uuid: uuid}})));
         }
         return games;
+    }
+
+    async getLeaderBoard(day) {
+        const games = (await GameInfo.findAll({where: {day}}));
+        const users = (await User.findAll());
+        const idToUser = new Map();
+        for (let {id, name, email} of users) {
+            idToUser.set(id, {name, email});
+        }
+        const devices = (await Device.findAll());
+        const uuidToName = new Map();
+        for (let {uuid, userId} of devices) {
+            uuidToName.set(uuid, idToUser.get(userId));
+        }
+        const ans = [];
+        const repeatedGames = new Map();
+        for (let {score, uuid} of games) {
+            if (uuidToName.has(uuid)) {
+                if (repeatedGames.has(uuidToName.get(uuid).email)) {
+                    const gameId = repeatedGames.get(uuidToName.get(uuid).email);
+                    ans[gameId].score = Math.min(ans[gameId].score, score);
+                } else {
+                    repeatedGames.set(uuidToName.get(uuid).email, ans.length);
+                    ans.push({
+                        name: uuidToName.get(uuid).name,
+                        score,
+                        email: uuidToName.get(uuid).email
+                    });
+                }
+            }
+        }
+        ans.sort((a, b) => (b.score - a.score));
+        return ans;
     }
 }
 

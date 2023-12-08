@@ -34,6 +34,7 @@ export const StatsPage = () => {
                 }
 
                 const scores = [];
+                stats.personal.scores = stats.personal.scores.sort((a: [number, number], b: [number, number]) => (a[0] - b[0]));
                 for (let i = stats.personal.scores[0][0]; i < stats.personal.scores.at(-1)[0]; ++i) {
                     scores.push(0);
                 }
@@ -79,6 +80,25 @@ export const StatsPage = () => {
             <CrossIcon/>
         </button>
         {stats.loading ? <div className={styles.log}>загрузка...</div> : stats.error ? <div className={styles.log}>сервер не отвечает</div> : <div>
+            <div className={styles.block}>
+                <h3 style={{margin: 0}}>Таблица лидеров среди авторизованных</h3>
+                <table className={styles.leaderBoard}>
+                    <thead>
+                        <tr>
+                            <th className={styles.cell}>#</th>
+                            <th className={styles.cell}>Имя</th>
+                            <th className={styles.lastCell}>Счет</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {stats.leaderBoard.map(({name, score}: {name: string, score: number}, id: number) => (<tr key={id}>
+                            <td className={styles.cell}>{id + 1}</td>
+                            <td className={styles.cell}>{name}</td>
+                            <td className={styles.lastCell}>{score}</td>
+                        </tr>))}
+                    </tbody>
+                </table>
+            </div>
             <div className={styles.block}>
                 <h3 style={{margin: 0}}>Статистика за сегодня</h3>
                 <StatBlock stats={stats.today}/>
