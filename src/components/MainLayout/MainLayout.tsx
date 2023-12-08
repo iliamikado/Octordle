@@ -8,7 +8,6 @@ import { store, useAppDispatch, useAppSelector } from "@/store/store";
 import { setSettings, setUserInfo, setUuid } from "@/store/slices/settingsSlice";
 import { selectDarkTheme } from "@/store/selectors";
 import { v4 } from 'uuid';
-import { getUserInfo } from "@/service/service";
 
 interface Props {
     children: ReactNode
@@ -69,19 +68,12 @@ const SetSettings = () => {
     }, [darkTheme])
 
     useEffect(() => {
-        const accessToken = localStorage.getItem('access_token');
-        if (accessToken) {
-            getUserInfo(accessToken).then(data => {
-                if (!data.email) {
-                    throw new Error('No email');
-                }
-                dispatch(setUserInfo(data));
-            }).catch(e => {
-                console.log(e);
-                localStorage.removeItem('access_token');
-            })
+        const name = localStorage.getItem('name');
+        const email = localStorage.getItem('email');
+        if (name && email) {
+            dispatch(setUserInfo({name, email}));
         }
-    }, [dispatch])
+    }, [dispatch]);
 
     return null;
 }

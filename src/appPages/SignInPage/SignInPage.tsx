@@ -16,7 +16,6 @@ export const SignInPage = () => {
     const router = useRouter();
     
     useEffect(() => {
-        console.log(location);
         const fragmentString = document.location.hash.substring(1);
         if (fragmentString) {
             const params: any = {};
@@ -24,10 +23,10 @@ export const SignInPage = () => {
             for (let m = regex.exec(fragmentString); m != null; m = regex.exec(fragmentString)) {
                 params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
             }
-            localStorage.setItem('access_token', params['access_token']);
-            console.log(params);
             getUserInfo(params['access_token']).then(data => {
                 dispath(setUserInfo(data));
+                localStorage.setItem('name', data.name);
+                localStorage.setItem('email', data.email);
                 const uuid = localStorage.getItem('uuid');
                 if (uuid) {
                     linkEmailAndDevice(data.email, uuid, data.name);
@@ -46,7 +45,8 @@ export const SignInPage = () => {
             <p>Вы вошли как {userInfo.name}</p>
             <button onClick={() => {
                 dispath(setUserInfo(null));
-                localStorage.removeItem('access_token');
+                localStorage.removeItem('name');
+                localStorage.removeItem('email');
             }} className={styles.googleAuth}>Logout</button>
         </div> : <div className={styles.block}>
             <p>Мы не знаем, кто вы. Войдите с помощью аккаунта Google, чтобы переносить свой прогресс на разные устройства</p>
