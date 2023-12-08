@@ -41,8 +41,22 @@
 .googleAuth {
     margin: 0 auto;
     height: 30px;
-    min-width: 300px;
+    width: 100%;
+    max-width: 300px;
     border-radius: 5px;
     background-color: var(--var-cellcolor);
     color: var(--var-fontcolor);
+}
+
+.logout {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    button {
+        width: 70px;
+        height: 30px;
+        border-radius: 5px;
+        background-color: var(--var-cellcolor);
+        color: var(--var-fontcolor);
+    }
 }
