@@ -92,10 +92,12 @@ export const StatsPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {stats.leaderBoard.map(({name, score}: {name: string, score: number}, id: number) => (<tr key={id}>
-                            <td className={styles.cell}>{id + 1}</td>
-                            <td className={cn(styles.cell, styles.notCenter)}>{name}</td>
-                            <td className={styles.lastCell}>{score}</td>
+                        {stats.leaderBoard.map(
+                            ({name, score, users}: {name: string, score: number, users: boolean}, id: number) => 
+                            (<tr key={id} className={users ? styles.self : ''}>
+                                <td className={styles.cell}>{id + 1}</td>
+                                <td className={cn(styles.cell, styles.notCenter)}>{name}</td>
+                                <td className={styles.lastCell}>{score}</td>
                         </tr>))}
                     </tbody>
                 </table>

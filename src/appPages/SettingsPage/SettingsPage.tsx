@@ -75,7 +75,7 @@ export const SettingsPage = () => {
         <div className={styles.offerBlock}>
             Наш словарь неполный и постоянно пополняется. Если вы знаете слово, которого нет в игре, можете предложить добавить его.<br/>
             Если же вас возмутило загаданное слово и вы считаете его неподходящим для игры, предложите удалить его.<br/><br/>
-            <div style={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', gap: '5px'}}>
                 <button className={styles.deleteButton} disabled={sended !== 'not'} onClick={() => onSend('delete')}>{sended === 'delete' ? '✓' : 'Удалить'}</button>
                 <input placeholder='слово' type='text' className={styles.wordInput} value={word} onChange={changeWord}/>
                 <button className={styles.offerButton} disabled={sended !== 'not'} onClick={() => onSend('add')}>{sended === 'add' ? '✓' : 'Добавить'}</button>

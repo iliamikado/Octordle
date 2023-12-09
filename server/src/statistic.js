@@ -34,7 +34,7 @@ class Statistic {
             today: await this.getFullStatForDay(uuid, day, email),
             yesterday: await this.getFullStatForDay(uuid, day - 1, email),
             personal: await this.getPersonalStat(uuid, email),
-            leaderBoard: await this.getLeaderBoard(day)
+            leaderBoard: await this.getLeaderBoard(day, email)
         }
     }
 
@@ -110,7 +110,7 @@ class Statistic {
         return games;
     }
 
-    async getLeaderBoard(day) {
+    async getLeaderBoard(day, userEmail) {
         const games = (await GameInfo.findAll({where: {day}}));
         const users = (await User.findAll());
         const idToUser = new Map();
@@ -134,7 +134,7 @@ class Statistic {
                     ans.push({
                         name: uuidToName.get(uuid).name,
                         score,
-                        email: uuidToName.get(uuid).email
+                        users: uuidToName.get(uuid).email === userEmail
                     });
                 }
             }
