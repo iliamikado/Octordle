@@ -99,15 +99,26 @@ class Statistic {
 
     async getAllGamesForEmail(email) {
         const games = [];
-        console.log(email);
         const user = (await User.findAll({where: {email: email}}))[0];
-        console.log(user);
         const devices = await Device.findAll({where: {userId: user.dataValues.id}});
         for (let {uuid} of devices) {
             console.log(uuid);
             games.push(...(await GameInfo.findAll({where: {uuid: uuid}})));
         }
-        return games;
+        const repeatedGames = new Map();
+        const ans = [];
+        for (let i = 0; i < games.length; ++i) {
+            const {day, score} = games[i];
+            if (repeatedGames.has(day)) {
+                if (score < ans[repeatedGames.get(day)].dataValues.score) {
+                    ans[repeatedGames.get(day)] = games[i];
+                }
+            } else {
+                repeatedGames.set(day, ans.length);
+                ans.push(games[i]);
+            }
+        }
+        return ans;
     }
 
     async getLeaderBoard(day, userEmail) {

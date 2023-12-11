@@ -8,7 +8,8 @@ import { useEffect } from 'react';
 import { getUserInfo, googleAuth, linkEmailAndDevice } from '@/service/service';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { selectUserInfo } from '@/store/selectors';
-import { setUserInfo } from '@/store/slices/settingsSlice';
+import { setUserInfo, setUuid } from '@/store/slices/settingsSlice';
+import { v4 } from 'uuid';
 
 export const SignInPage = () => {
     const userInfo = useAppSelector(selectUserInfo);
@@ -47,6 +48,9 @@ export const SignInPage = () => {
                 dispath(setUserInfo(null));
                 localStorage.removeItem('name');
                 localStorage.removeItem('email');
+                const newUuid = v4();
+                localStorage.setItem('uuid', newUuid);
+                dispath(setUuid(newUuid));
             }}>Logout</button>
         </div> : <div className={styles.block}>
             <p>Мы не знаем, кто вы. Войдите с помощью аккаунта Google, чтобы переносить свой прогресс на разные устройства</p>
