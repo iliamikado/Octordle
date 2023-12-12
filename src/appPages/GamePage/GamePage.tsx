@@ -25,7 +25,15 @@ export const GamePage = () => {
 
     useEffect(() => {
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
+        const words = getRandomWords(day, 8, 'easy');
         const savedDay = localStorage.getItem('day');
+        const wordsHash = localStorage.getItem('wordsHash');
+        if (wordsHash && +wordsHash !== cyrb53(words.join(''))) {
+            localStorage.removeItem('tries');
+            localStorage.setItem('resultSended', 'false');
+            localStorage.setItem('startSended', 'false');
+        }
+
         if (Number(savedDay) === day) {
             const tries = localStorage.getItem('tries')?.split(' ');
             if (tries) {
@@ -38,7 +46,8 @@ export const GamePage = () => {
             localStorage.setItem('startSended', 'false');
         }
         dispatch(setDay(day));
-        dispatch(setWords(getRandomWords(day, 8, 'easy')));
+        dispatch(setWords(words));
+        localStorage.setItem('wordsHash', `${cyrb53(words.join(''))}`);
     }, [dispatch]);
 
     const keyListener = useCallback((e: KeyboardEvent) => {
@@ -90,3 +99,18 @@ export const GamePage = () => {
         {isGameEnd ? null : <Keyboard/>}
     </main>
 }
+
+const cyrb53 = (str: string) => {
+    let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for(let i = 0, ch; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1  = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+    h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2  = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+    h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+};
