@@ -34,14 +34,15 @@ export const StatsPage = () => {
                     return;
                 }
 
-                const scores = [];
                 stats.personal.scores = stats.personal.scores.sort((a: [number, number], b: [number, number]) => (a[0] - b[0]));
-                for (let i = stats.personal.scores[0][0]; i < stats.personal.scores.at(-1)[0]; ++i) {
-                    scores.push(0);
-                }
-                stats.personal.scores.forEach(([day, score]: [number, number]) => {
-                    scores[day - stats.personal.scores[0][0]] = score;
-                });
+                // const scores = [];
+                // for (let i = stats.personal.scores[0][0]; i < stats.personal.scores.at(-1)[0]; ++i) {
+                //     scores.push(0);
+                // }
+                // stats.personal.scores.forEach(([day, score]: [number, number]) => {
+                //     scores[day - stats.personal.scores[0][0]] = score;
+                // });
+                const scores = stats.personal.scores.map((x: [number, number]) => (x[1]));
                 new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -81,7 +82,7 @@ export const StatsPage = () => {
             <CrossIcon/>
         </button>
         {stats.loading ? <div className={styles.log}>загрузка...</div> : stats.error ? <div className={styles.log}>сервер не отвечает</div> : <div>
-            <div className={styles.block}>
+            {stats.leaderBoard.length > 0 ? <div className={styles.block}>
                 <h3 style={{margin: 0}}>Рейтинг <a href='#ps' style={{textDecoration: 'none'}}>*</a></h3>
                 <table className={styles.leaderBoard}>
                     <thead>
@@ -101,7 +102,7 @@ export const StatsPage = () => {
                         </tr>))}
                     </tbody>
                 </table>
-            </div>
+            </div> : null}
             <div className={styles.block}>
                 <h3 style={{margin: 0}}>Статистика за сегодня</h3>
                 <StatBlock stats={stats.today}/>
