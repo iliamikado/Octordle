@@ -6,7 +6,7 @@ import styles from './SettingsPage.module.scss';
 import { useRouter } from 'next/navigation';
 import { Toggle } from '@/components/Toggle/Toggle';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { selectChangeDeleteAndEnter, selectDarkTheme } from '@/store/selectors';
+import { selectChangeDeleteAndEnter, selectDarkTheme, selectUserInfo } from '@/store/selectors';
 import { toggleChangeDeleteAndEnter, toggleDarkTheme } from '@/store/slices/settingsSlice';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 
@@ -15,6 +15,9 @@ export const SettingsPage = () => {
     const dispatch = useAppDispatch();
     const changeDeleteAndEnter = useAppSelector(selectChangeDeleteAndEnter);
     const darkTheme = useAppSelector(selectDarkTheme);
+    const userName = useAppSelector(selectUserInfo)?.name;
+    console.log(userName);
+
     useEffect(() => {
         localStorage.setItem('settings', JSON.stringify({
             changeDeleteAndEnter,
@@ -44,7 +47,7 @@ export const SettingsPage = () => {
 
     const onSend = useCallback((s: ('delete' | 'add')) => {
         if (word.length === 5) {
-            sendToTg(s + ' ' + word);
+            sendToTg(s + ' ' + word + (userName ? ` (${userName})` : ''));
             setSended(s);
             const wordCopy = word;
             setTimeout(() => {
@@ -57,7 +60,7 @@ export const SettingsPage = () => {
                 setSended('not');
             }, 5000);
         }
-    }, [word]);
+    }, [word, userName]);
 
     return <div className={styles.page}>
         <h1 className={styles.name}>Осьминогль</h1>
