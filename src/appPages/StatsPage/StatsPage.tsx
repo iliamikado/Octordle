@@ -4,19 +4,16 @@ import cn from 'classnames';
 import styles from './StatsPage.module.scss';
 import CrossIcon from './assets/cross.svg';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getFullStat } from '@/service/service';
 import { useAppSelector } from '@/store/store';
 import { selectUserInfo, selectUuid } from '@/store/selectors';
-import { Chart, registerables } from 'chart.js';
 import Link from 'next/link';
-Chart.register(...registerables);
 
 export const StatsPage = () => {
     const [stats, setStats] = useState<any>({loading: true, error: false});
     const uuid = useAppSelector(selectUuid);
     const userInfo = useAppSelector(selectUserInfo);
-    const chart = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
         if (!uuid) {
@@ -24,51 +21,6 @@ export const StatsPage = () => {
         }
         getFullStat(uuid, userInfo?.email).then((stats) => {
             setStats(stats);
-            setTimeout(() => {
-                if (!chart.current) {
-                    return;
-                }
-
-                const ctx = chart.current.getContext('2d');
-                if (!ctx) {
-                    return;
-                }
-
-                stats.personal.scores = stats.personal.scores.sort((a: [number, number], b: [number, number]) => (a[0] - b[0]));
-                // const scores = [];
-                // for (let i = stats.personal.scores[0][0]; i < stats.personal.scores.at(-1)[0]; ++i) {
-                //     scores.push(0);
-                // }
-                // stats.personal.scores.forEach(([day, score]: [number, number]) => {
-                //     scores[day - stats.personal.scores[0][0]] = score;
-                // });
-                const scores = stats.personal.scores.map((x: [number, number]) => (x[1]));
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: scores.map(() => ('')),
-                        datasets: [
-                            {
-                                data: scores,
-                                fill: false,
-                                borderColor: 'rgb(75, 192, 192)',
-                                tension: 0.1,
-                                pointStyle: false
-                            }
-                        ]
-                    },
-                    options: {
-                        plugins: {
-                            legend: {
-                                display: false,
-                            },
-                            tooltip: {
-                                enabled: false
-                            }
-                        }
-                    }
-                })
-            }, 500)
         }).catch(e => {
             setStats({loading: false, error: true});
             console.log(e);
@@ -111,16 +63,9 @@ export const StatsPage = () => {
                 <h3 style={{margin: 0}}>Статистика за вчера</h3>
                 <StatBlock stats={stats.yesterday}/>
             </div>
-            <div className={styles.block}>
-                <h3 style={{margin: 0}}>Личная Статистика</h3>
-                <p>Игр сыграно: {stats.personal.played}</p>
-                <p>Средний балл: {stats.personal.average}</p>
-                <p>Баллы за все время:</p>
-            </div>
-            <canvas ref={chart} style={{width: '100%', height: '300px'}}></canvas>
-            <div className={styles.block}>
+            {stats.leaderBoard.length > 0 ? <div className={styles.block}>
                 <p id='ps'>* - рейтинг среди <Link href='/login'>авторизованных</Link> пользователей</p>
-            </div>
+            </div> : null}
         </div>}
     </div>
 }

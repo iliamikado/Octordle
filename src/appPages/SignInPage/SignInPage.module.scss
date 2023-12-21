@@ -38,6 +38,21 @@
     width: 100%;
 }
 
+.statsBlock {
+    border-top: 2px dashed var(--var-fontcolor);
+    padding: 20px 5px 20px 5px;
+    margin-top: 10px;
+
+    p {
+        margin: 2px;
+    }
+
+    a {
+        color: rgb(55, 166, 251)
+    }
+}
+
+
 .googleAuth {
     margin: 0 auto;
     height: 30px;

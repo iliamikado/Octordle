@@ -4,17 +4,23 @@ import cn from 'classnames';
 import styles from './SignInPage.module.scss';
 import CrossIcon from './assets/cross.svg';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { getUserInfo, googleAuth, linkEmailAndDevice } from '@/service/service';
+import { useEffect, useRef, useState } from 'react';
+import { getFullStat, getUserInfo, googleAuth, linkEmailAndDevice } from '@/service/service';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { selectUserInfo } from '@/store/selectors';
+import { selectUserInfo, selectUuid } from '@/store/selectors';
 import { setUserInfo, setUuid } from '@/store/slices/settingsSlice';
 import { v4 } from 'uuid';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
 
 export const SignInPage = () => {
     const userInfo = useAppSelector(selectUserInfo);
     const dispath = useAppDispatch();
     const router = useRouter();
+    const [stats, setStats] = useState<any>(null);
+    const uuid = useAppSelector(selectUuid);
+    const chart = useRef<HTMLCanvasElement>(null);
+    const chartRef = useRef<Chart<"line", any, unknown>>();
     
     useEffect(() => {
         const fragmentString = document.location.hash.substring(1);
@@ -36,6 +42,60 @@ export const SignInPage = () => {
         }
     }, [dispath]);
 
+    useEffect(() => {
+        if (!uuid) {
+            return;
+        }
+        getFullStat(uuid, userInfo?.email).then((stats) => {
+            setStats(stats);
+            setTimeout(() => {
+                if (!chart.current) {
+                    return;
+                }
+
+                const ctx = chart.current.getContext('2d');
+                if (!ctx) {
+                    return;
+                }
+
+                stats.personal.scores = stats.personal.scores.sort((a: [number, number], b: [number, number]) => (a[0] - b[0]));
+
+                const scores = stats.personal.scores.map((x: [number, number]) => (x[1]));
+                if (chartRef.current) {
+                    chartRef.current.destroy();
+                }
+                chartRef.current = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: scores.map(() => ('')),
+                        datasets: [
+                            {
+                                data: scores,
+                                fill: false,
+                                borderColor: 'rgb(75, 192, 192)',
+                                tension: 0.1,
+                                pointStyle: false
+                            }
+                        ]
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                display: false,
+                            },
+                            tooltip: {
+                                enabled: false
+                            }
+                        }
+                    }
+                })
+            }, 500)
+        }).catch(e => {
+            setStats({loading: false, error: true});
+            console.log(e);
+        });
+    }, [uuid, userInfo]);
+
     return <div className={styles.page}>
         <h1 className={styles.name}>Осьминогль</h1>
         <button className={cn(styles.icon, styles.crossIcon)} onClick={() => {router.push('.')}}>
@@ -56,5 +116,15 @@ export const SignInPage = () => {
             <p>Мы не знаем, кто вы. Войдите с помощью аккаунта Google, чтобы переносить свой прогресс на разные устройства</p>
             <button onClick={() => {googleAuth()}} className={styles.googleAuth}>Sign in with google</button>
         </div>}
+
+        {stats ? <div className={styles.statsBlock}>
+            <h3 style={{margin: 0}}>Личная Статистика</h3>
+            <p>Игр сыграно: {stats.personal.played}</p>
+            {stats.personal.played > 0 ? <>
+                <p>Средний балл: {stats.personal.average}</p>
+                <p>Баллы за все время:</p>
+            </> : null}
+        </div> : null}
+        <canvas ref={chart} style={{width: '100%', height: '300px', display: stats?.personal?.played > 0 ? 'block' : 'none'}}></canvas>
     </div>
 }
