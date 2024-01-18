@@ -2,9 +2,14 @@ import vocab from './words.json';
 const {easyWords, hardWords} = vocab;
 const words = easyWords.concat(hardWords);
 const wordsSet = new Set(words);
+const hardWordsSet = new Set(hardWords);
 
 export function isWordValid(word: string) {
     return wordsSet.has(word);
+}
+
+export function isWordHard(word: string) {
+    return hardWordsSet.has(word);
 }
 
 export function getRandomWords(seed: number, count: number, mode?: string) {

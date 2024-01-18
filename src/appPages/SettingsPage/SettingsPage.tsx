@@ -6,8 +6,8 @@ import styles from './SettingsPage.module.scss';
 import { useRouter } from 'next/navigation';
 import { Toggle } from '@/components/Toggle/Toggle';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { selectChangeDeleteAndEnter, selectDarkTheme, selectUserInfo } from '@/store/selectors';
-import { toggleChangeDeleteAndEnter, toggleDarkTheme } from '@/store/slices/settingsSlice';
+import { selectChangeDeleteAndEnter, selectDarkTheme, selectHighlightHardWords, selectUserInfo } from '@/store/selectors';
+import { toggleChangeDeleteAndEnter, toggleDarkTheme, toggleHighlightHardWords } from '@/store/slices/settingsSlice';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 
 export const SettingsPage = () => {
@@ -15,16 +15,17 @@ export const SettingsPage = () => {
     const dispatch = useAppDispatch();
     const changeDeleteAndEnter = useAppSelector(selectChangeDeleteAndEnter);
     const darkTheme = useAppSelector(selectDarkTheme);
+    const highlightHardWords = useAppSelector(selectHighlightHardWords);
     const userName = useAppSelector(selectUserInfo)?.name;
-    console.log(userName);
 
     useEffect(() => {
         localStorage.setItem('settings', JSON.stringify({
             changeDeleteAndEnter,
-            darkTheme
+            darkTheme,
+            highlightHardWords
         }));
 
-    }, [changeDeleteAndEnter, darkTheme]);
+    }, [changeDeleteAndEnter, darkTheme, highlightHardWords]);
     const [word, setWord] = useState('');
     const [sended, setSended] = useState<'not' | 'delete' | 'add'>('not');
     const changeWord = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -74,6 +75,10 @@ export const SettingsPage = () => {
         <div className={styles.block}>
             Темная тема
             <Toggle value={darkTheme} changeValue={() => {dispatch(toggleDarkTheme())}}/>
+        </div>
+        <div className={styles.block}>
+            Подсвечивать сложные слова
+            <Toggle value={highlightHardWords} changeValue={() => {dispatch(toggleHighlightHardWords())}}/>
         </div>
         <div className={styles.offerBlock}>
             Наш словарь неполный и постоянно пополняется. Если вы знаете слово, которого нет в игре, можете предложить добавить его.<br/>
