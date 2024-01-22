@@ -135,7 +135,7 @@ class Statistic {
         }
         const ans = [];
         const repeatedGames = new Map();
-        for (let {score, uuid} of games) {
+        for (let {score, uuid, tries} of games) {
             if (uuidToName.has(uuid)) {
                 if (repeatedGames.has(uuidToName.get(uuid).email)) {
                     const gameId = repeatedGames.get(uuidToName.get(uuid).email);
@@ -145,7 +145,8 @@ class Statistic {
                     ans.push({
                         name: uuidToName.get(uuid).name,
                         score,
-                        users: uuidToName.get(uuid).email === userEmail
+                        users: uuidToName.get(uuid).email === userEmail,
+                        allWords: tries.split(' ').indexOf('0') === -1
                     });
                 }
             }

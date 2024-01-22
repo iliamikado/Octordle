@@ -46,8 +46,8 @@ export const StatsPage = () => {
                     </thead>
                     <tbody>
                         {stats.leaderBoard.map(
-                            ({name, score, users}: {name: string, score: number, users: boolean}, id: number) => 
-                            (<tr key={id} className={users ? styles.self : ''}>
+                            ({name, score, users, allWords}: {name: string, score: number, users: boolean, allWords: boolean}, id: number) => 
+                            (<tr key={id} className={users ? styles.self : !allWords ? styles.notAllWords : ''}>
                                 <td className={styles.cell}>{id + 1}</td>
                                 <td className={cn(styles.cell, styles.notCenter)}>{name}</td>
                                 <td className={styles.lastCell}>{score}</td>
