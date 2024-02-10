@@ -146,7 +146,8 @@ class Statistic {
                         name: uuidToName.get(uuid).name,
                         score,
                         users: uuidToName.get(uuid).email === userEmail,
-                        allWords: tries.split(' ').indexOf('0') === -1
+                        allWords: tries.split(' ').indexOf('0') === -1,
+                        tries
                     });
                 }
             }

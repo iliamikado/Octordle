@@ -9,6 +9,7 @@ import { getFullStat } from '@/service/service';
 import { useAppSelector } from '@/store/store';
 import { selectUserInfo, selectUuid } from '@/store/selectors';
 import Link from 'next/link';
+import { Tooltip } from '@/components/Tooltip/Tooltip';
 
 export const StatsPage = () => {
     const [stats, setStats] = useState<any>({loading: true, error: false});
@@ -46,10 +47,14 @@ export const StatsPage = () => {
                     </thead>
                     <tbody>
                         {stats.leaderBoard.map(
-                            ({name, score, users, allWords}: {name: string, score: number, users: boolean, allWords: boolean}, id: number) => 
+                            ({name, score, users, allWords, tries}: {name: string, score: number, users: boolean, allWords: boolean, tries: string}, id: number) => 
                             (<tr key={id} className={users ? styles.self : !allWords ? styles.notAllWords : ''}>
                                 <td className={styles.cell}>{id + 1}</td>
-                                <td className={cn(styles.cell, styles.notCenter)}>{name}</td>
+                                <td className={cn(styles.cell, styles.notCenter)}>
+                                    <Tooltip popOn={name} tooltipTop={65}>
+                                        <TriesBlock tries={tries.split(' ').map(Number)} score={score}/>
+                                    </Tooltip>
+                                </td>
                                 <td className={styles.lastCell}>{score}</td>
                         </tr>))}
                     </tbody>
@@ -88,4 +93,17 @@ const StatBlock = ({stats}: {stats: any}) => {
         <p>Вы сыграли {stats.timePlace} по счету</p>
         </> : null}
     </>
+}
+
+const digits = ['🟥', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟', '🕚', '🕛', '🕐', '🕑', '🕒'];
+const TriesBlock = ({tries, score}: {tries: number[], score: number}) => {
+    return <div className={styles.addInfo}>
+        Результат
+        <div className={styles.triesBlock}>
+            {tries.map((tr, i) => (<div key={i} className={styles.smile}>
+                {digits[tr]}
+            </div>))}
+        </div>
+        Счет: {score}
+    </div>
 }
