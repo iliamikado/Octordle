@@ -37,7 +37,7 @@ export const ResultBlock = () => {
     }
 
     const copyRes = useCallback(() => {
-        let textRes = `Дневной Осьминогль #${day}:`;
+        let textRes = `octordle▪️ru #${day}:`;
         for (let i = 0; i < res.length; ++i) {
             if (i % 2 === 0) {
                 textRes += '\n';
