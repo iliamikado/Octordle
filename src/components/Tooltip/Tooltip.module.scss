@@ -16,7 +16,7 @@
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
-    left: 110%;
+    left: calc(100% + 10px);
 
     &::after {
         content: " ";

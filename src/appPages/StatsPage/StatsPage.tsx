@@ -51,7 +51,7 @@ export const StatsPage = () => {
                             (<tr key={id} className={users ? styles.self : !allWords ? styles.notAllWords : ''}>
                                 <td className={styles.cell}>{id + 1}</td>
                                 <td className={cn(styles.cell, styles.notCenter)}>
-                                    <Tooltip popOn={name} tooltipTop={65}>
+                                    <Tooltip popOn={name} tooltipHeight={150}>
                                         <TriesBlock tries={tries.split(' ').map(Number)} score={score}/>
                                     </Tooltip>
                                 </td>

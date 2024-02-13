@@ -5,13 +5,16 @@ import styles from './Tooltip.module.scss'
 interface Props {
     children: ReactNode,
     popOn: ReactNode,
-    tooltipTop: number
+    tooltipHeight: number
 }
 
-export const Tooltip = ({children, popOn, tooltipTop}: Props) => {
+export const Tooltip = ({children, popOn, tooltipHeight}: Props) => {
     return <div className={styles.tooltip}>
         {popOn}
-        <div className={styles.tooltipContent} style={{top: `${-tooltipTop}px`}}>
+        <div className={styles.tooltipContent} style={{
+            top: `calc(50% - ${tooltipHeight / 2}px)`,
+            height: `${tooltipHeight}px`
+        }}>
             {children}
         </div>
     </div>
