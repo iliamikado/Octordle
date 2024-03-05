@@ -1,0 +1,21 @@
+.content {
+    height: 400px;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+        width: 0;
+    }
+    scrollbar-width: none;
+}
+
+.newsItem {
+    .date {
+        margin: 2px;
+        font-size: 12px;
+    }
+    .text {
+        margin: 2px;
+        font-size: 16px;
+    }
+
+    margin: 10px;
+}

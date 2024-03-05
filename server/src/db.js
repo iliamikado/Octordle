@@ -45,3 +45,8 @@ export const Device = sequelize.define('device', {
 
 User.hasMany(Device, {foreignKey: 'userId'})
 Device.belongsTo(User, {foreignKey: 'userId'})
+
+export const News = sequelize.define('news', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    text: {type: DataTypes.TEXT}
+})

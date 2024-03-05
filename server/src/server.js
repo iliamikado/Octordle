@@ -5,7 +5,7 @@ dotenv.config({
 import express from 'express';
 import { sequelize } from './db.js';
 import { statistics } from './statistic.js';
-import { User, Device } from './db.js';
+import { User, Device, News } from './db.js';
 import cors from 'cors';
 
 const PORT = process.env.PORT || 5000;
@@ -25,6 +25,24 @@ app.use(express.json());
 
 app.get('/api/ping', (req, res) => {
     res.send('I am alive');
+})
+
+app.post('/api/post_news', async (req, res) => {
+    try {
+        const text = req.body.text;
+        if (!text) {
+            throw new Error('No text')
+        }
+        const news = await News.create({text})
+        res.json(news)
+    } catch (e) {
+        res.send(e.message)
+    }
+})
+
+app.get('/api/get_news', async (req, res) => {
+    const news = await News.findAll()
+    res.json(news)
 })
 
 app.post('/api/post_game', async (req, res) => {
