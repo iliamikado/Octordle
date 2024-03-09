@@ -40,7 +40,7 @@ export const NewsModal = ({onClose}: Props) => {
 
 function formatDate(date: string): string {
     const d = new Date(date)
-    return add0(d.getDay()) + "." + add0(d.getMonth()) + "." + d.getFullYear()
+    return add0(d.getDate()) + "." + add0(d.getMonth() + 1) + "." + d.getFullYear()
 }
 
 function add0(s: number): string {
