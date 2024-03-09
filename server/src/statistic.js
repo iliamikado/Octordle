@@ -52,7 +52,7 @@ class Statistic {
         console.log(games);
         resp.played = games.length;
         resp.scores = games.map(({day, score}) => ([day, score]));
-        resp.average = Math.floor(games.reduce((x, {score}) => (x + score), 0) / games.length);
+        resp.average = Math.floor(games.reduce((x, {score}) => (x + score), 0) * 100 / games.length) / 100;
         return resp;
     }
 
@@ -62,7 +62,7 @@ class Statistic {
         const startedGames = (await StartedGame.findAll({where: {day}}));
         resp.starts = startedGames.length;
         resp.finish = games.length;
-        resp.average = Math.floor(games.reduce((sum, {score}) => (sum + score), 0) / games.length);
+        resp.average = Math.floor(games.reduce((sum, {score}) => (sum + score), 0) * 100 / games.length) / 100;
         resp.max = 0;
         resp.min = 10000;
         games.forEach(({score}) => {
