@@ -1,12 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
+interface News {
+  id: number,
+  text: string,
+  date: string
+}
+
 const initialState = {
     darkTheme: true,
     changeDeleteAndEnter: false,
     highlightHardWords: false,
     uuid: '',
-    userInfo: null as any
+    userInfo: null as any,
+    newsList: [] as News[]
 }
 
 export const settingsSlice = createSlice({
@@ -32,10 +39,13 @@ export const settingsSlice = createSlice({
     },
     setUserInfo: (state, action: PayloadAction<any>) => {
       state.userInfo = action.payload;
+    },
+    setNews: (state, action: PayloadAction<News[]>) => {
+      state.newsList = action.payload
     }
   },
 })
 
-export const { toggleChangeDeleteAndEnter, toggleDarkTheme, toggleHighlightHardWords, setSettings, setUuid, setUserInfo } = settingsSlice.actions
+export const { toggleChangeDeleteAndEnter, toggleDarkTheme, toggleHighlightHardWords, setSettings, setUuid, setUserInfo, setNews } = settingsSlice.actions
 
 export default settingsSlice.reducer

@@ -31,8 +31,8 @@ export function getFullStat(uuid: string, email?: string) {
     return fetch(`${url}/get_full_stat?uuid=${uuid}`).then(data => data.json());
 }
 
-export function getNews() {
-    return fetch(`${url}/get_news`).then(data => data.json());
+export function getNews(lastNews: number) {
+    return fetch(`${url}/get_news?lastNews=${lastNews}`).then(data => data.json());
 }
 
 export function googleAuth() {

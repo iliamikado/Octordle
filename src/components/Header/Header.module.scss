@@ -43,3 +43,16 @@
     left: 50px;
     top: 18px;
 }
+
+.bellIcon {
+    right: calc(50% - 90px);
+    bottom: 7px;
+}
+
+.noNewNews {
+    path {
+        color: gray;
+    }
+    fill: gray;
+    stroke: gray;
+}

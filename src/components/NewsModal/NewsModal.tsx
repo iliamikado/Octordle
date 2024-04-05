@@ -1,39 +1,39 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { Modal } from "../Modal/Modal"
-import { getNews } from "@/service/service"
 
 import styles from './NewsModal.module.scss'
+import { selectNews } from "@/store/selectors"
+import { useAppSelector } from "@/store/store"
 
 interface Props {
     onClose: () => void
 }
 
-interface News {
-    text: string,
-    createdAt: string
-}
-
 export const NewsModal = ({onClose}: Props) => {
-    const [news, setNews] = useState<News[]>([])
+    const news = useAppSelector(selectNews)
+
     useEffect(() => {
-        getNews().then((data: any) => {
-            data.sort((a: News, b: News) => {
-                const d1 = new Date(a.createdAt)
-                const d2 = new Date(b.createdAt)
-                return d2.getTime() - d1.getTime()
-            })
-            setNews(data)
-            console.log(data)
+        if (news.length === 0) {
+            return
+        }
+        let newLastNews = -1
+        news.forEach((x: any) => {
+            if (newLastNews < x.id) {
+                newLastNews = x.id
+            }
         })
-    }, [])
+        localStorage.setItem("lastNews", String(newLastNews))
+        localStorage.setItem("seenNews", "true")
+    }, [news])
 
     return <Modal onClose={onClose}>
         <div className={styles.content}>
             <h3>Новости</h3>
             {news.map((n, i) => (<div key={i} className={styles.newsItem}>
-                <p className={styles.date}>{formatDate(n.createdAt)}</p>
+                <p className={styles.date}>{formatDate(n.date)}</p>
                 <p className={styles.text}>{n.text}</p>
             </div>))}
+            {news.length === 0 ? <p>Новостей нет</p> : null}
         </div>
     </Modal>
 }

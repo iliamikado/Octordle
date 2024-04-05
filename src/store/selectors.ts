@@ -56,4 +56,5 @@ export const selectDarkTheme = (state: RootState) => (state.settings.darkTheme);
 export const selectHighlightHardWords = (state: RootState) => (state.settings.highlightHardWords);
 export const selectUuid = (state: RootState) => (state.settings.uuid);
 export const selectUserInfo = (state: RootState) => (state.settings.userInfo);
+export const selectNews = (state: RootState) => (state.settings.newsList);
 

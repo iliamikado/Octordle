@@ -5,11 +5,10 @@ import { ReactNode, useEffect, useState } from "react"
 import styles from './MainLayout.module.scss';
 import { Provider } from "react-redux";
 import { store, useAppDispatch, useAppSelector } from "@/store/store";
-import { setSettings, setUserInfo, setUuid } from "@/store/slices/settingsSlice";
+import { setNews, setSettings, setUserInfo, setUuid } from "@/store/slices/settingsSlice";
 import { selectDarkTheme } from "@/store/selectors";
 import { v4 } from 'uuid';
-import { Modal } from "../Modal/Modal";
-import { NewsModal } from "../NewsModal/NewsModal";
+import { getNews } from "@/service/service";
 
 interface Props {
     children: ReactNode
@@ -17,7 +16,6 @@ interface Props {
 
 export const MainLayout = ({children}: Props) => {
     const [height, setHeight] = useState('100%');
-    const [showNews, setShowNews] = useState(false);
 
     useEffect(() => {
         setHeight(`${window.innerHeight}px`);
@@ -35,15 +33,8 @@ export const MainLayout = ({children}: Props) => {
 
     }, [])
 
-    useEffect(() => {
-        if (location.href.indexOf('#news') !== -1) {
-            setShowNews(true)
-        }
-    }, [])
-
     return <Provider store={store}>
         <SetSettings/>
-        {showNews ? <NewsModal onClose={() => {setShowNews(false)}}/> : null}
         
         <div className={styles.container} style={{height}}>
             {children}
@@ -85,6 +76,18 @@ const SetSettings = () => {
             dispatch(setUserInfo({name, email}));
         }
     }, [dispatch]);
+
+    useEffect(() => {
+        const lastNews = Number(localStorage.getItem('lastNews') || -1);
+        getNews(lastNews).then(news => {
+            console.log(news)
+            const maxId = news.reduce((a: number, t: any) => (Math.max(a, t.id)), -1)
+            if (news.length > 0 && maxId > lastNews) {
+                localStorage.setItem("seenNews", 'false')
+            }
+            dispatch(setNews(news))
+        }).catch(e => {console.log(e)})
+    }, [dispatch])
 
     return null;
 }

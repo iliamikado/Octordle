@@ -7,6 +7,7 @@ import { sequelize } from './db.js';
 import { statistics } from './statistic.js';
 import { User, Device, News } from './db.js';
 import cors from 'cors';
+import { Op } from 'sequelize';
 
 const PORT = process.env.PORT || 5000;
 
@@ -41,7 +42,18 @@ app.post('/api/post_news', async (req, res) => {
 })
 
 app.get('/api/get_news', async (req, res) => {
-    const news = await News.findAll()
+    const {lastNews} = req.query
+    let news = await News.findAll({
+        where: {id: {[Op.gt]: Number(lastNews)}}
+    })
+    let d = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    console.log(d)
+    const news2 = await News.findAll({
+        where: {date: {[Op.gt]: d}}
+    })
+    if (news2.length > news.length) {
+        news = news2
+    }
     res.json(news)
 })
 
