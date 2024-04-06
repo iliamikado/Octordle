@@ -3,7 +3,7 @@ dotenv.config({
     path: '../.env'
 });
 import express from 'express';
-import { sequelize } from './db.js';
+import { NewsWatch, sequelize } from './db.js';
 import { statistics } from './statistic.js';
 import { User, Device, News } from './db.js';
 import cors from 'cors';
@@ -28,17 +28,11 @@ app.get('/api/ping', (req, res) => {
     res.send('I am alive');
 })
 
-app.post('/api/post_news', async (req, res) => {
-    try {
-        const text = req.body.text;
-        if (!text) {
-            throw new Error('No text')
-        }
-        const news = await News.create({text})
-        res.json(news)
-    } catch (e) {
-        res.send(e.message)
-    }
+app.post('/api/post_watched_news', async (req, res) => {
+    const {uuid} = req.query
+    NewsWatch.create({
+        uuid
+    })
 })
 
 app.get('/api/get_news', async (req, res) => {
@@ -55,6 +49,25 @@ app.get('/api/get_news', async (req, res) => {
         news = news2
     }
     res.json(news)
+})
+
+const DAY = 24 * 60 * 60 * 1000
+app.get('/api/get_day_news', async (req, res) => {
+    let news = await News.findOne({
+        order: [['id', 'DESC']],
+        limit: 1
+    })
+    if (!news) {
+        res.json(null)
+        return
+    }
+    const day = new Date(Math.floor(Date.now() / DAY) * DAY)
+    console.log(news.date, day)
+    if (news.dataValues.date > day) {
+        res.json(news)
+        return
+    }
+    res.json(null)
 })
 
 app.post('/api/post_game', async (req, res) => {

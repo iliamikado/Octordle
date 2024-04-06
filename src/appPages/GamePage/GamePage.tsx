@@ -42,6 +42,7 @@ export const GamePage = () => {
         } else {
             localStorage.removeItem('day');
             localStorage.removeItem('tries');
+            localStorage.removeItem('seenNews');
             localStorage.setItem('resultSended', 'false');
             localStorage.setItem('startSended', 'false');
         }

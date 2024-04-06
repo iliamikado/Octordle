@@ -51,3 +51,7 @@ export const News = sequelize.define('news', {
     text: {type: DataTypes.TEXT},
     date: {type: DataTypes.DATE, allowNull: false, defaultValue: sequelize.literal('CURRENT_TIMESTAMP')}
 }, {timestamps: false})
+
+export const NewsWatch = sequelize.define('news_watch', {
+    uuid: {type: DataTypes.TEXT}
+})

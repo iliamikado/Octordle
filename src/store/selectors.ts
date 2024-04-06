@@ -57,4 +57,6 @@ export const selectHighlightHardWords = (state: RootState) => (state.settings.hi
 export const selectUuid = (state: RootState) => (state.settings.uuid);
 export const selectUserInfo = (state: RootState) => (state.settings.userInfo);
 export const selectNews = (state: RootState) => (state.settings.newsList);
+export const selectDayNews = (state: RootState) => (state.settings.dayNews);
+
 

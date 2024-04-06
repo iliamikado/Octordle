@@ -1,5 +1,6 @@
 .content {
-    height: 400px;
+    max-height: 600px;
+    min-height: 100px;
     overflow-y: auto;
     &::-webkit-scrollbar {
         width: 0;
@@ -7,15 +8,7 @@
     scrollbar-width: none;
 }
 
-.newsItem {
-    .date {
-        margin: 2px;
-        font-size: 12px;
-    }
-    .text {
-        margin: 2px;
-        font-size: 16px;
-    }
-
-    margin: 10px;
+.text {
+    margin: 2px;
+    font-size: 16px;
 }

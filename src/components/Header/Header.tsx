@@ -1,6 +1,6 @@
 import { useAppSelector } from '@/store/store';
 import styles from './Header.module.scss';
-import { selectDay, selectNews } from '@/store/selectors';
+import { selectDay, selectDayNews, selectNews } from '@/store/selectors';
 import TutorialIcon from './assets/tutorial.svg';
 import SettingsIcon from './assets/settings.svg';
 import StatsIcon from './assets/stats.svg';
@@ -16,12 +16,12 @@ export const Header = () => {
     const day = useAppSelector(selectDay);
     const [showNews, setShowNews] = useState(false);
     const [newNews, setNewNews] = useState(false);
-    const news = useAppSelector(selectNews);
+    const dayNews = useAppSelector(selectDayNews);
     useEffect(() => {
-        if (news.length > 0 && localStorage.getItem("seenNews") === "false") {
+        if (dayNews && localStorage.getItem("seenNews") !== "true") {
             setNewNews(true);
         }
-    }, [news])
+    }, [dayNews])
 
     return <div className={styles.header}>
         <button className={cn(styles.icon, styles.tutorialIcon)} onClick={() => {router.push('info')}}>
@@ -38,9 +38,9 @@ export const Header = () => {
         </button>
         <h1 className={styles.title}>Осьминогль</h1>
         <h3 className={styles.day}>День #{day}</h3>
-        <button className={cn(styles.icon, styles.bellIcon, newNews ? "" : styles.noNewNews)} onClick={() => setShowNews(true)}>
+        {dayNews ? <button className={cn(styles.icon, styles.bellIcon, newNews ? "" : styles.noNewNews)} onClick={() => setShowNews(true)}>
             <BellIcon/>
-        </button>
+        </button> : null}
 
         {showNews ? <NewsModal onClose={() => {
             setShowNews(false);

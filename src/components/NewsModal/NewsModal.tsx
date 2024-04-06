@@ -2,38 +2,27 @@ import { useEffect } from "react"
 import { Modal } from "../Modal/Modal"
 
 import styles from './NewsModal.module.scss'
-import { selectNews } from "@/store/selectors"
+import { selectDayNews, selectNews, selectUuid } from "@/store/selectors"
 import { useAppSelector } from "@/store/store"
+import { sendWatchedNews } from "@/service/service"
 
 interface Props {
     onClose: () => void
 }
 
 export const NewsModal = ({onClose}: Props) => {
-    const news = useAppSelector(selectNews)
+    const dayNews = useAppSelector(selectDayNews)
+    const uuid = useAppSelector(selectUuid)
 
     useEffect(() => {
-        if (news.length === 0) {
-            return
-        }
-        let newLastNews = -1
-        news.forEach((x: any) => {
-            if (newLastNews < x.id) {
-                newLastNews = x.id
-            }
-        })
-        localStorage.setItem("lastNews", String(newLastNews))
-        localStorage.setItem("seenNews", "true")
-    }, [news])
+        localStorage.setItem('seenNews', 'true')
+        sendWatchedNews(uuid)
+    }, [uuid])
 
     return <Modal onClose={onClose}>
         <div className={styles.content}>
-            <h3>Новости</h3>
-            {news.map((n, i) => (<div key={i} className={styles.newsItem}>
-                <p className={styles.date}>{formatDate(n.date)}</p>
-                <p className={styles.text}>{n.text}</p>
-            </div>))}
-            {news.length === 0 ? <p>Новостей нет</p> : null}
+            <h3>Новость дня</h3>
+            {dayNews ? <>{dayNews.text.split('\n').map((text, i) => (<p key={i} className={styles.text}>{text}</p>))}</> : <p className={styles.text}>Новостей нет</p>}
         </div>
     </Modal>
 }

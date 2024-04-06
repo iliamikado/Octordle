@@ -5,10 +5,10 @@ import { ReactNode, useEffect, useState } from "react"
 import styles from './MainLayout.module.scss';
 import { Provider } from "react-redux";
 import { store, useAppDispatch, useAppSelector } from "@/store/store";
-import { setNews, setSettings, setUserInfo, setUuid } from "@/store/slices/settingsSlice";
+import { setDayNews, setNews, setSettings, setUserInfo, setUuid } from "@/store/slices/settingsSlice";
 import { selectDarkTheme } from "@/store/selectors";
 import { v4 } from 'uuid';
-import { getNews } from "@/service/service";
+import { getDayNews, getNews } from "@/service/service";
 
 interface Props {
     children: ReactNode
@@ -78,15 +78,19 @@ const SetSettings = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        const lastNews = Number(localStorage.getItem('lastNews') || -1);
-        getNews(lastNews).then(news => {
-            console.log(news)
-            const maxId = news.reduce((a: number, t: any) => (Math.max(a, t.id)), -1)
-            if (news.length > 0 && maxId > lastNews) {
-                localStorage.setItem("seenNews", 'false')
-            }
-            dispatch(setNews(news))
-        }).catch(e => {console.log(e)})
+        // const lastNews = Number(localStorage.getItem('lastNews') || -1);
+        // getNews(lastNews).then(news => {
+        //     console.log(news)
+        //     const maxId = news.reduce((a: number, t: any) => (Math.max(a, t.id)), -1)
+        //     if (news.length > 0 && maxId > lastNews) {
+        //         localStorage.setItem("seenNews", 'false')
+        //     }
+        //     dispatch(setNews(news))
+        // }).catch(e => {console.log(e)})
+
+        getDayNews().then(news => {
+            dispatch(setDayNews(news))
+        }).catch(e => {})
     }, [dispatch])
 
     return null;

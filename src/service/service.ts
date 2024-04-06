@@ -35,6 +35,16 @@ export function getNews(lastNews: number) {
     return fetch(`${url}/get_news?lastNews=${lastNews}`).then(data => data.json());
 }
 
+export function getDayNews() {
+    return fetch(`${url}/get_day_news`).then(data => data.json());
+}
+
+export function sendWatchedNews(uuid: string) {
+    fetch(`${url}/post_watched_news?uuid=${uuid}`, {
+        method: 'POST',
+    }).catch(e => {})
+}
+
 export function googleAuth() {
     const oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
 

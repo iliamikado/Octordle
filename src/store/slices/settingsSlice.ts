@@ -13,7 +13,8 @@ const initialState = {
     highlightHardWords: false,
     uuid: '',
     userInfo: null as any,
-    newsList: [] as News[]
+    newsList: [] as News[],
+    dayNews: null as (News | null)
 }
 
 export const settingsSlice = createSlice({
@@ -42,10 +43,13 @@ export const settingsSlice = createSlice({
     },
     setNews: (state, action: PayloadAction<News[]>) => {
       state.newsList = action.payload
-    }
+    },
+    setDayNews: (state, action: PayloadAction<News | null>) => {
+      state.dayNews = action.payload
+    },
   },
 })
 
-export const { toggleChangeDeleteAndEnter, toggleDarkTheme, toggleHighlightHardWords, setSettings, setUuid, setUserInfo, setNews } = settingsSlice.actions
+export const { toggleChangeDeleteAndEnter, toggleDarkTheme, toggleHighlightHardWords, setSettings, setUuid, setUserInfo, setNews, setDayNews } = settingsSlice.actions
 
 export default settingsSlice.reducer
