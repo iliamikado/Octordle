@@ -3,7 +3,7 @@ import cn from 'classnames';
 import styles from './Keyboard.module.scss';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { addCurrentInputToTries, addLetterToCurrentInput, removeLetterFromCurrentInput, setChosenInput } from '@/store/slices/gameSlice';
-import { selectChangeDeleteAndEnter, selectKeyboardMask, selectWordsMask } from '@/store/selectors';
+import { selectChangeDeleteAndEnter, selectChosenInput, selectKeyboardMask, selectWordsMask } from '@/store/selectors';
 
 const keys = [
     ['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ'],
@@ -15,6 +15,7 @@ export const Keyboard = () => {
     const dispatch = useAppDispatch();
     const keyboardMask = useAppSelector(selectKeyboardMask);
     const wordsMask = useAppSelector(selectWordsMask);
+    const chosenInput = useAppSelector(selectChosenInput);
 
     const changeDeleteAndEnter = useAppSelector(selectChangeDeleteAndEnter);
     if (changeDeleteAndEnter) {
@@ -35,7 +36,7 @@ export const Keyboard = () => {
                             behavior: 'smooth'
                         });
                     }}
-                    className={cn(styles.wordMask, x ? styles.guessed : '')}>
+                    className={cn(styles.wordMask, x ? styles.guessed : '', chosenInput === i ? styles.chosen : '')}>
                         {x ? '✓' : i + 1}
                 </div>
             ))}
