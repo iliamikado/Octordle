@@ -49,7 +49,7 @@ Device.belongsTo(User, {foreignKey: 'userId'})
 export const News = sequelize.define('news', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     text: {type: DataTypes.TEXT},
-    date: {type: DataTypes.DATE, allowNull: false, defaultValue: sequelize.literal('CURRENT_TIMESTAMP')}
+    date: {type: DataTypes.DATEONLY, unique: true, allowNull: false, defaultValue: sequelize.literal('CURRENT_TIMESTAMP')}
 }, {timestamps: false})
 
 export const NewsWatch = sequelize.define('news_watch', {

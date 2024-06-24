@@ -35,39 +35,16 @@ app.post('/api/post_watched_news', async (req, res) => {
     })
 })
 
-app.get('/api/get_news', async (req, res) => {
-    const {lastNews} = req.query
-    let news = await News.findAll({
-        where: {id: {[Op.gt]: Number(lastNews)}}
-    })
-    let d = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    console.log(d)
-    const news2 = await News.findAll({
-        where: {date: {[Op.gt]: d}}
-    })
-    if (news2.length > news.length) {
-        news = news2
-    }
-    res.json(news)
-})
-
-const DAY = 24 * 60 * 60 * 1000
 app.get('/api/get_day_news', async (req, res) => {
+    const day = new Date().toISOString().split('T')[0];
     let news = await News.findOne({
-        order: [['id', 'DESC']],
-        limit: 1
+        where: {date: day}
     })
     if (!news) {
         res.json(null)
         return
     }
-    const day = new Date(Math.floor(Date.now() / DAY) * DAY)
-    console.log(news.date, day)
-    if (news.dataValues.date > day) {
-        res.json(news)
-        return
-    }
-    res.json(null)
+    res.json(news.dataValues)
 })
 
 app.post('/api/post_game', async (req, res) => {

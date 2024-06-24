@@ -78,16 +78,6 @@ const SetSettings = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        // const lastNews = Number(localStorage.getItem('lastNews') || -1);
-        // getNews(lastNews).then(news => {
-        //     console.log(news)
-        //     const maxId = news.reduce((a: number, t: any) => (Math.max(a, t.id)), -1)
-        //     if (news.length > 0 && maxId > lastNews) {
-        //         localStorage.setItem("seenNews", 'false')
-        //     }
-        //     dispatch(setNews(news))
-        // }).catch(e => {console.log(e)})
-
         getDayNews().then(news => {
             dispatch(setDayNews(news))
         }).catch(e => {})
