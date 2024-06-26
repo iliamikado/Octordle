@@ -35,8 +35,8 @@ export function getNews(lastNews: number) {
     return fetch(`${url}/get_news?lastNews=${lastNews}`).then(data => data.json());
 }
 
-export function getDayNews() {
-    return fetch(`${url}/get_day_news`).then(data => data.json());
+export function getDayNews(newsNumber: number = 0) {
+    return fetch(`${url}/get_day_news?news_number=${newsNumber}`).then(data => data.json());
 }
 
 export function sendWatchedNews(uuid: string) {

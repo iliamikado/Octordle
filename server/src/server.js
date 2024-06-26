@@ -37,14 +37,30 @@ app.post('/api/post_watched_news', async (req, res) => {
 
 app.get('/api/get_day_news', async (req, res) => {
     const day = new Date().toISOString().split('T')[0];
-    let news = await News.findOne({
-        where: {date: day}
+    const newsNumber = req.query.news_number ?? 0
+    let allNews = await News.findAll({
+        order: [['date', 'DESC']],
+        where: {
+            date: {
+                [Op.lte]: day
+            }
+        }
     })
-    if (!news) {
-        res.json(null)
-        return
+    console.log(allNews)
+    const ans = {
+        haveNext: false,
+        news: null
     }
-    res.json(news.dataValues)
+    if (allNews[0].dataValues.date === day) {
+        ans.news = allNews[newsNumber].dataValues
+        ans.haveNext = newsNumber < allNews.length - 1
+    } else {
+        if (newsNumber > 0) {
+            ans.news = allNews[newsNumber - 1].dataValues
+        }
+        ans.haveNext = newsNumber < allNews.length
+    }
+    res.json(ans)
 })
 
 app.post('/api/post_game', async (req, res) => {

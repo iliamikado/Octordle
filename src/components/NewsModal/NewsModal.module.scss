@@ -12,3 +12,32 @@
     margin: 2px;
     font-size: 16px;
 }
+
+.footer {
+    position: relative;
+    height: 20px;
+    width: 100%;
+
+    button {
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: var(--var-fontcolor);
+        position: absolute;
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    .left {
+        left: 10px;
+    }
+
+    .right {
+        right: 10px;
+    }
+
+    .invis {
+        display: none;
+    }
+}

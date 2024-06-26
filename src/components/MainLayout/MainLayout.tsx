@@ -5,10 +5,10 @@ import { ReactNode, useEffect, useState } from "react"
 import styles from './MainLayout.module.scss';
 import { Provider } from "react-redux";
 import { store, useAppDispatch, useAppSelector } from "@/store/store";
-import { setDayNews, setNews, setSettings, setUserInfo, setUuid } from "@/store/slices/settingsSlice";
+import { setHaveDailyNews, setSettings, setUserInfo, setUuid } from "@/store/slices/settingsSlice";
 import { selectDarkTheme } from "@/store/selectors";
 import { v4 } from 'uuid';
-import { getDayNews, getNews } from "@/service/service";
+import { getDayNews } from "@/service/service";
 
 interface Props {
     children: ReactNode
@@ -78,8 +78,10 @@ const SetSettings = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        getDayNews().then(news => {
-            dispatch(setDayNews(news))
+        getDayNews().then(newsData => {
+            if (newsData.news) {
+                dispatch(setHaveDailyNews(true))
+            }
         }).catch(e => {})
     }, [dispatch])
 
