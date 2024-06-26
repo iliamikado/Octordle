@@ -41,10 +41,10 @@ export const NewsModal = ({onClose}: Props) => {
             {news ? <>{news.text.split('\n').map((text, i) => (<p key={i} className={styles.text}>{text}</p>))}</> : <p className={styles.text}>Сегодня новостей нет</p>}
         </div>
         <div className={styles.footer}>
-            <button className={cn(styles.left, newsNumber > 0 ? '' : styles.invis)}
-                onClick={() => setNewsNumber((state) => (state - 1))}>ᐊ</button>
-            <button className={cn(styles.right, haveNext ? '' : styles.invis)}
-                onClick={() => setNewsNumber((state) => (state + 1))}>ᐅ</button>
+            <button className={cn(styles.left, haveNext ? '' : styles.invis)}
+                onClick={() => setNewsNumber((state) => (state + 1))}>ᐊ</button>
+            <button className={cn(styles.right, newsNumber > 0 ? '' : styles.invis)}
+                onClick={() => setNewsNumber((state) => (state - 1))}>ᐅ</button>
         </div>
     </Modal>
 }
