@@ -25,10 +25,7 @@ export const NewsModal = ({onClose}: Props) => {
 
     useEffect(() => {
         getDayNews(newsNumber).then(data => {
-            console.log(data)
-            if (data.news) {
-                setNews(data.news)
-            }
+            setNews(data.news)
             setHaveNext(data.haveNext)
         })
     }, [newsNumber])
@@ -40,14 +37,14 @@ export const NewsModal = ({onClose}: Props) => {
 
     return <Modal onClose={onClose}>
         <div className={styles.content}>
-            <h3>Новость дня</h3>
-            {news ? <>{news.text.split('\n').map((text, i) => (<p key={i} className={styles.text}>{text}</p>))}</> : <p className={styles.text}>Новостей нет</p>}
+            <h3>{newsNumber === 0 ? 'Новость дня' : `Новость за ${news?.date}`}</h3>
+            {news ? <>{news.text.split('\n').map((text, i) => (<p key={i} className={styles.text}>{text}</p>))}</> : <p className={styles.text}>Сегодня новостей нет</p>}
         </div>
         <div className={styles.footer}>
             <button className={cn(styles.left, newsNumber > 0 ? '' : styles.invis)}
-                onClick={() => setNewsNumber((state) => (state - 1))}>🢀</button>
+                onClick={() => setNewsNumber((state) => (state - 1))}>ᐊ</button>
             <button className={cn(styles.right, haveNext ? '' : styles.invis)}
-                onClick={() => setNewsNumber((state) => (state + 1))}>🢂</button>
+                onClick={() => setNewsNumber((state) => (state + 1))}>ᐅ</button>
         </div>
     </Modal>
 }

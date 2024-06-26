@@ -38,9 +38,9 @@ export const Header = () => {
         </button>
         <h1 className={styles.title}>Осьминогль</h1>
         <h3 className={styles.day}>День #{day}</h3>
-        {haveDailyNews ? <button className={cn(styles.icon, styles.bellIcon, newNews ? "" : styles.noNewNews)} onClick={() => setShowNews(true)}>
+        <button className={cn(styles.icon, styles.bellIcon, newNews && haveDailyNews ? "" : styles.noNewNews)} onClick={() => setShowNews(true)}>
             <BellIcon/>
-        </button> : null}
+        </button>
 
         {showNews ? <NewsModal onClose={() => {
             setShowNews(false);
