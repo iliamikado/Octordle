@@ -10,6 +10,8 @@ import cn from 'classnames';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { NewsModal } from '../NewsModal/NewsModal';
+import Lottie from 'react-lottie';
+import BellAnimation from './assets/bellAnimation.json'
 
 export const Header = () => {
     const router = useRouter();
@@ -38,8 +40,8 @@ export const Header = () => {
         </button>
         <h1 className={styles.title}>Осьминогль</h1>
         <h3 className={styles.day}>День #{day}</h3>
-        <button className={cn(styles.icon, styles.bellIcon, newNews && haveDailyNews ? "" : styles.noNewNews)} onClick={() => setShowNews(true)}>
-            <BellIcon/>
+        <button className={cn(styles.icon, styles.bellIcon, haveDailyNews ? "" : styles.noNewNews)} onClick={() => setShowNews(true)}>
+            {newNews && haveDailyNews ? <AnimatedBell/> : <BellIcon/>}
         </button>
 
         {showNews ? <NewsModal onClose={() => {
@@ -47,5 +49,19 @@ export const Header = () => {
             setNewNews(false)
         }}/> : null}
 
+    </div>
+}
+
+const AnimatedBell = () => {
+    return <div className={styles.animatedBell}>
+        <Lottie
+            options={{
+                loop: true,
+                autoplay: true,
+                animationData: BellAnimation
+            }}
+            width={35}
+            height={35}
+        />
     </div>
 }

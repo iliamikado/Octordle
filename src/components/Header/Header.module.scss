@@ -46,7 +46,9 @@
 
 .bellIcon {
     right: calc(50% - 90px);
-    bottom: 7px;
+    bottom: 2px;
+    width: 35px;
+    height: 35px;
 }
 
 .noNewNews {
@@ -55,4 +57,13 @@
     }
     fill: gray;
     stroke: gray;
+}
+
+.animatedBell {
+    path {
+        fill: yellow;
+    }
+    right: 5px;
+    bottom: 4px;
+    position: relative;
 }
