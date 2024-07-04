@@ -30,11 +30,11 @@ export const SignInPage = () => {
 
     useEffect(() => {
         if (userInfo) {
-            document.querySelector('#telegram-login-octordle_bot')?.remove()
-            console.log('delete tg button')
+            setTimeout(() => {
+                document.querySelector('#telegram-login-octordle_bot')?.remove()
+            }, 500)
             return
         }
-        console.log('build tg button')
         const button = document.createElement('script')
         button.async = true
         button.src = 'https://telegram.org/js/telegram-widget.js?22'
