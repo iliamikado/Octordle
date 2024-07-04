@@ -29,6 +29,9 @@ export const SignInPage = () => {
     const chartRef = useRef<Chart<"line", any, unknown>>();
 
     useEffect(() => {
+        if (userInfo) {
+            return
+        }
         const button = document.createElement('script')
         button.async = true
         button.src = 'https://telegram.org/js/telegram-widget.js?22'
@@ -50,12 +53,13 @@ export const SignInPage = () => {
             if (uuid) {
                 linkEmailAndDevice(user.id, uuid, `${user.first_name} ${user.last_name}`);
             }
+            document.body.querySelector('#login_buttons')?.removeChild(button)
         }
 
         return () => {
             document.body.querySelector('#login_buttons')?.removeChild(button)
         }
-    }, [dispath])
+    }, [dispath, userInfo])
     
     useEffect(() => {
         const fragmentString = document.location.hash.substring(1);
