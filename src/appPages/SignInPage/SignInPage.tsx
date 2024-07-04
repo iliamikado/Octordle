@@ -39,20 +39,23 @@ export const SignInPage = () => {
         button.setAttribute('data-request-access', 'write')
         document.body.querySelector('#login_buttons')?.appendChild(button)
         window.onTelegramAuth = function (user) {
-            console.log('Logged in as ' +
-                user.first_name +
-                ' ' +
-                user.last_name +
-                ' (' +
-                user.id +
-                (user.username ? ', @' + user.username : '') +
-                ')')
+            console.log(`Logged in as ${user.first_name} ${user.last_name} ${user.id} (${user.username ?? ''})`)
+            dispath(setUserInfo({
+                name: `${user.first_name} ${user.last_name}`,
+                email: user.id
+            }));
+            localStorage.setItem('name', `${user.first_name} ${user.last_name}`);
+            localStorage.setItem('email', user.id);
+            const uuid = localStorage.getItem('uuid');
+            if (uuid) {
+                linkEmailAndDevice(user.id, uuid, `${user.first_name} ${user.last_name}`);
+            }
         }
 
         return () => {
             document.body.querySelector('#login_buttons')?.removeChild(button)
         }
-    }, [])
+    }, [dispath])
     
     useEffect(() => {
         const fragmentString = document.location.hash.substring(1);
