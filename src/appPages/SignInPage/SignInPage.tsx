@@ -30,6 +30,7 @@ export const SignInPage = () => {
 
     useEffect(() => {
         if (userInfo) {
+            document.querySelector('#telegram-login-octordle_bot')?.remove()
             return
         }
         const button = document.createElement('script')
