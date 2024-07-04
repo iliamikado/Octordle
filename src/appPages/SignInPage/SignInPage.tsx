@@ -54,10 +54,12 @@ export const SignInPage = () => {
                 linkEmailAndDevice(user.id, uuid, `${user.first_name} ${user.last_name}`);
             }
             document.body.querySelector('#login_buttons')?.removeChild(button)
+            document.querySelector('#telegram-login-octordle_bot')?.remove()
         }
 
         return () => {
             document.body.querySelector('#login_buttons')?.removeChild(button)
+            document.querySelector('#telegram-login-octordle_bot')?.remove()
         }
     }, [dispath, userInfo])
     
