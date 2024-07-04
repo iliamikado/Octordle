@@ -21,6 +21,20 @@ export const SignInPage = () => {
     const uuid = useAppSelector(selectUuid);
     const chart = useRef<HTMLCanvasElement>(null);
     const chartRef = useRef<Chart<"line", any, unknown>>();
+
+    useEffect(() => {
+        const button = document.createElement('script')
+        button.async = true
+        button.src = 'https://telegram.org/js/telegram-widget.js?22'
+        button.setAttribute('data-telegram-login', 'octordle_bot')
+        button.setAttribute('data-size', 'large')
+        button.setAttribute('data-radius', '20')
+        button.setAttribute('data-auth-url', location.origin + location.pathname);
+        document.body.querySelector('#login_buttons')?.appendChild(button)
+        return () => {
+            document.body.querySelector('#login_buttons')?.removeChild(button)
+        }
+    }, [])
     
     useEffect(() => {
         const fragmentString = document.location.hash.substring(1);
@@ -112,12 +126,12 @@ export const SignInPage = () => {
                 localStorage.setItem('uuid', newUuid);
                 dispath(setUuid(newUuid));
             }}>Logout</button>
-        </div> : <div className={styles.block}>
+        </div> : <div className={styles.block} id="login_buttons">
             <p>Мы не знаем, кто вы. Войдите с помощью аккаунта Google, чтобы переносить свой прогресс на разные устройства</p>
             <button onClick={() => {googleAuth()}} className={styles.googleAuth}>Sign in with google</button>
         </div>}
 
-        {stats ? <div className={styles.statsBlock}>
+        {stats && !stats.error ? <div className={styles.statsBlock}>
             <h3 style={{margin: 0}}>Личная Статистика</h3>
             <p>Игр сыграно: {stats.personal.played}</p>
             {stats.personal.played > 0 ? <>
