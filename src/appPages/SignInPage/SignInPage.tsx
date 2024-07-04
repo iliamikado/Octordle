@@ -35,19 +35,18 @@ export const SignInPage = () => {
         button.setAttribute('data-telegram-login', 'octordle_bot')
         button.setAttribute('data-size', 'medium')
         button.setAttribute('data-radius', '20')
-        button.setAttribute('data-onauth', 'onTelegramAuth')
+        button.setAttribute('data-onauth', 'onTelegramAuth(user)')
+        button.setAttribute('data-request-access', 'write')
         document.body.querySelector('#login_buttons')?.appendChild(button)
         window.onTelegramAuth = function (user) {
-            alert(
-              'Logged in as ' +
+            console.log('Logged in as ' +
                 user.first_name +
                 ' ' +
                 user.last_name +
                 ' (' +
                 user.id +
                 (user.username ? ', @' + user.username : '') +
-                ')'
-            )
+                ')')
         }
 
         return () => {
