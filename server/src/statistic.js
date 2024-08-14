@@ -122,7 +122,7 @@ class Statistic {
     }
 
     async getLeaderBoard(day, userEmail) {
-        const games = (await GameInfo.findAll({where: {day}, order: ["createdAt"]}));
+        const games = (await GameInfo.findAll({where: {day}, order: ["createdAt"]})).filter(({score}) => (score < 124));
         const users = (await User.findAll());
         const idToUser = new Map();
         for (let {id, name, email} of users) {
