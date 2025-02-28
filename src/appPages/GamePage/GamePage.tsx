@@ -31,7 +31,6 @@ export const GamePage = () => {
         const mode = searchParams.get("mode");
         const words = getRandomWords(day, 8, mode ?? "");
         if (mode === 'sogra') dispatch(setHighlightHardWords(false));
-        console.log(words);
         const savedDay = localStorage.getItem('day');
         const wordsHash = localStorage.getItem('wordsHash');
         if (wordsHash && +wordsHash !== cyrb53(words.join(''))) {
