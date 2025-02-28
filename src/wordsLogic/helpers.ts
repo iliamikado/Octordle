@@ -16,12 +16,10 @@ export function getRandomWords(seed: number, count: number, mode?: string) {
     const ans = [];
     for (let i = 0; i < count; ++i) {
         seed = seed * 16807 % 2147483647;
-        if (mode === 'hard') {
-            ans.push(hardWords[seed % hardWords.length]);
-        } else if (mode === 'easy') {
-            ans.push(easyWords[seed % easyWords.length]);
-        } else {
+        if (mode === 'sogra') {
             ans.push(words[seed % words.length]);
+        } else {
+            ans.push(easyWords[seed % easyWords.length]);
         }
     }
     return ans;

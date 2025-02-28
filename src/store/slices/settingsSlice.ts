@@ -37,9 +37,12 @@ export const settingsSlice = createSlice({
     setHaveDailyNews: (state, action: PayloadAction<boolean>) => {
       state.haveDailyNews = action.payload
     },
+    setHighlightHardWords: (state, action: PayloadAction<boolean>) => {
+      state.highlightHardWords = action.payload;
+    },
   },
 })
 
-export const { toggleChangeDeleteAndEnter, toggleDarkTheme, toggleHighlightHardWords, setSettings, setUuid, setUserInfo, setHaveDailyNews } = settingsSlice.actions
+export const { toggleChangeDeleteAndEnter, toggleDarkTheme, toggleHighlightHardWords, setSettings, setUuid, setUserInfo, setHaveDailyNews, setHighlightHardWords } = settingsSlice.actions
 
 export default settingsSlice.reducer

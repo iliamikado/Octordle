@@ -12,6 +12,8 @@ import { Header } from "@/components/Header/Header";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { ResultBlock } from "@/components/ResultBlock/ResultBlock";
 import { postStart } from "@/service/service";
+import { useSearchParams } from "next/navigation";
+import { setHighlightHardWords } from "@/store/slices/settingsSlice";
 
 const START_DAY = 19612;
 
@@ -22,10 +24,14 @@ export const GamePage = () => {
     const isGameStarted = useAppSelector(selectIsGameStarted);
     const day = useAppSelector(selectDay);
     const uuid = useAppSelector(selectUuid);
+    const searchParams = useSearchParams();
 
     useEffect(() => {
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
-        const words = getRandomWords(day, 8, 'easy');
+        const mode = searchParams.get("mode");
+        const words = getRandomWords(day, 8, mode ?? "");
+        if (mode === 'sogra') dispatch(setHighlightHardWords(false));
+        console.log(words);
         const savedDay = localStorage.getItem('day');
         const wordsHash = localStorage.getItem('wordsHash');
         if (wordsHash && +wordsHash !== cyrb53(words.join(''))) {
@@ -49,7 +55,7 @@ export const GamePage = () => {
         dispatch(setDay(day));
         dispatch(setWords(words));
         localStorage.setItem('wordsHash', `${cyrb53(words.join(''))}`);
-    }, [dispatch]);
+    }, [dispatch, searchParams]);
 
     const keyListener = useCallback((e: KeyboardEvent) => {
         if (e.code === 'Backspace') {
