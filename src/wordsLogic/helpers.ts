@@ -22,9 +22,6 @@ export function getRandomWords(seed: number, count: number, mode?: string) {
             ans.push(easyWords[seed % easyWords.length]);
         }
     }
-    if ((new Set(ans)).size < ans.length) {
-        return getRandomWords(seed, count, mode);
-    }
     return ans;
 }
 
