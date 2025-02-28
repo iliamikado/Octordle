@@ -4,6 +4,7 @@ import { useAppSelector } from "@/store/store"
 import styles from './ResultBlock.module.scss';
 import { useCallback, useEffect, useState } from "react";
 import { getGameStat, postGameResult } from "@/service/service";
+import { useSearchParams } from "next/navigation";
 
 const digits = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟', '🕚', '🕛', '🕐', '🕑', '🕒'];
 
@@ -14,6 +15,8 @@ export const ResultBlock = () => {
     const uuid = useAppSelector(selectUuid);
     const [betterThan, setBetterThan] = useState(-1);
     const [copied, setCopied] = useState(false);
+    const params = useSearchParams();
+    const mode = params.get('mode');
 
     const res = words.map(word => (digits[tries.indexOf(word)] || '🟥'));
     const [attempts] = useState(words.map(word => (tries.indexOf(word))).map(x => x + 1));
@@ -38,6 +41,7 @@ export const ResultBlock = () => {
 
     const copyRes = useCallback(() => {
         let textRes = `octordle▪️ru #${day}:`;
+        if (mode === 'sogra') textRes = `sogra mode #${day}:`;
         for (let i = 0; i < res.length; ++i) {
             if (i % 2 === 0) {
                 textRes += '\n';
@@ -53,7 +57,7 @@ export const ResultBlock = () => {
         setTimeout(() => {
             setCopied(false);
         }, 2000);
-    }, [res, day, score, smile, betterThan]);
+    }, [res, day, score, smile, betterThan, mode]);
 
     useEffect(() => {
         const resultSended = localStorage.getItem('resultSended') === 'true';
