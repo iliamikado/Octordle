@@ -13,7 +13,6 @@ import { useAppDispatch, useAppSelector } from "@/store/store";
 import { ResultBlock } from "@/components/ResultBlock/ResultBlock";
 import { postStart } from "@/service/service";
 import { useSearchParams } from "next/navigation";
-import { setHighlightHardWords } from "@/store/slices/settingsSlice";
 
 const START_DAY = 19612;
 
@@ -30,7 +29,6 @@ export const GamePage = () => {
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
         const mode = searchParams.get("mode");
         const words = getRandomWords(day, 8, mode ?? "");
-        if (mode === 'sogra') dispatch(setHighlightHardWords(false));
         const savedDay = localStorage.getItem('day');
         const wordsHash = localStorage.getItem('wordsHash');
         if (wordsHash && +wordsHash !== cyrb53(words.join(''))) {

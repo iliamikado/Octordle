@@ -5,6 +5,7 @@ import styles from './WordsInput.module.scss';
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { isWordHard, isWordValid } from "@/wordsLogic/helpers";
 import { setChosenInput, setChosenLetter } from "@/store/slices/gameSlice";
+import { useSearchParams } from "next/navigation";
 
 interface Props {
     wordInd: number;
@@ -62,7 +63,8 @@ const CurrentInput = ({length}: {length: number}) => {
     const dispatch = useAppDispatch();
     const letterPlace = useAppSelector(selectChosenLetter);
     const invalidWord = letters.every(x => (x)) && letters.length === length && !isWordValid(letters.join(''));
-    const hardWord = useAppSelector(selectHighlightHardWords) && isWordHard(letters.join(''));
+    const searchParams = useSearchParams();
+    const hardWord = useAppSelector(selectHighlightHardWords) && isWordHard(letters.join('')) && searchParams.get('mode') !== 'sogra';
 
     const row = [];
     for (let i = 0; i < length; ++i) {

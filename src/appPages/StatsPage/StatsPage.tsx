@@ -31,7 +31,7 @@ export const StatsPage = () => {
     const router = useRouter()
     return <div className={styles.page}>
         <h1 className={styles.name}>Осьминогль</h1>
-        <button className={cn(styles.icon, styles.crossIcon)} onClick={() => {router.push('.')}}>
+        <button className={cn(styles.icon, styles.crossIcon)} onClick={() => {router.back()}}>
             <CrossIcon/>
         </button>
         {stats.loading ? <div className={styles.log}>загрузка...</div> : stats.error ? <div className={styles.log}>сервер не отвечает</div> : <div>
