@@ -16,7 +16,7 @@ export const ResultBlock = () => {
     const [betterThan, setBetterThan] = useState(-1);
     const [copied, setCopied] = useState(false);
     const params = useSearchParams();
-    const mode = params.get('mode');
+    const mode = params.get('mode') ?? "";
 
     const res = words.map(word => (digits[tries.indexOf(word)] || '🟥'));
     const [attempts] = useState(words.map(word => (tries.indexOf(word))).map(x => x + 1));
@@ -62,7 +62,7 @@ export const ResultBlock = () => {
     useEffect(() => {
         const resultSended = localStorage.getItem('resultSended') === 'true';
         if (!resultSended) {
-            postGameResult({day, words: tries.join(' '), tries: attempts.join(' '), score, uuid}).then(res => {
+            postGameResult({day, words: tries.join(' '), tries: attempts.join(' '), score, uuid, mode}).then(res => {
                 localStorage.setItem('resultSended', 'true');
                 setBetterThan(res.betterThan)
             }).catch(e => {});
@@ -71,7 +71,7 @@ export const ResultBlock = () => {
                 setBetterThan(res.betterThan)
             }).catch(e => {});
         }
-    }, [day, tries, attempts, score, uuid]);
+    }, [day, tries, attempts, score, uuid, mode]);
 
     return <div className={styles.resultBlock}>
         <div className={styles.resultText}>

@@ -47,7 +47,7 @@ export const StatsPage = () => {
                     </thead>
                     <tbody>
                         {stats.leaderBoard.map(
-                            ({name, score, users, allWords, tries}: {name: string, score: number, users: boolean, allWords: boolean, tries: string}, id: number) => 
+                            ({name, score, users, allWords, tries, mode}: {name: string, score: number, users: boolean, allWords: boolean, tries: string, mode: string}, id: number) => 
                             (<tr key={id} className={users ? styles.self : !allWords ? styles.notAllWords : ''}>
                                 <td className={styles.cell}>{id + 1}</td>
                                 <td className={cn(styles.cell, styles.notCenter)}>
@@ -55,7 +55,7 @@ export const StatsPage = () => {
                                         <TriesBlock tries={tries.split(' ').map(Number)} score={score}/>
                                     </Tooltip>
                                 </td>
-                                <td className={styles.lastCell}>{score}</td>
+                                <td className={styles.lastCell}>{score} {mode === 'sogra' ? '🧠' : ''}</td>
                         </tr>))}
                     </tbody>
                 </table>

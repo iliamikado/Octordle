@@ -21,7 +21,8 @@ export const GameInfo = sequelize.define('game_info', {
     words: {type: DataTypes.TEXT},
     tries: {type: DataTypes.TEXT},
     score: {type: DataTypes.INTEGER},
-    uuid: {type: DataTypes.TEXT}
+    uuid: {type: DataTypes.TEXT},
+    mode: {type: DataTypes.TEXT}
 });
 
 export const StartedGame = sequelize.define('started_game', {

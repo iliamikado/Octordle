@@ -135,19 +135,21 @@ class Statistic {
         }
         const ans = [];
         const repeatedGames = new Map();
-        for (let {score, uuid, tries} of games) {
+        for (let {score, uuid, tries, mode} of games) {
+            mode = mode ?? '';
             if (uuidToName.has(uuid)) {
-                if (repeatedGames.has(uuidToName.get(uuid).email)) {
-                    const gameId = repeatedGames.get(uuidToName.get(uuid).email);
+                if (repeatedGames.has(uuidToName.get(uuid).email + mode)) {
+                    const gameId = repeatedGames.get(uuidToName.get(uuid).email + mode);
                     ans[gameId].score = Math.min(ans[gameId].score, score);
                 } else {
-                    repeatedGames.set(uuidToName.get(uuid).email, ans.length);
+                    repeatedGames.set(uuidToName.get(uuid).email + mode, ans.length);
                     ans.push({
                         name: uuidToName.get(uuid).name,
                         score,
                         users: uuidToName.get(uuid).email === userEmail,
                         allWords: tries.split(' ').indexOf('0') === -1,
-                        tries
+                        tries,
+                        mode
                     });
                 }
             }
