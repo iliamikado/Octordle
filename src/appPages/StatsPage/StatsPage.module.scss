@@ -57,8 +57,8 @@
         border-bottom: 1px solid var(--var-fontcolor);
     }
     .cell {
-        border-right: 1px solid var(--var-fontcolor);
-        border-collapse: collapse;
+        border-left: 1px solid var(--var-fontcolor);
+        border-collapse:separate;
     }
 
     td {
@@ -96,16 +96,5 @@
         .smile {
             margin: 0px;
         }
-    }
-}
-
-.lastCell {
-    display: flex;
-    align-items:flex-start;
-    gap: 3px;
-    padding-left: 10px;
-
-    a {
-        text-decoration: none;
     }
 }

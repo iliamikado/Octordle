@@ -40,22 +40,24 @@ export const StatsPage = () => {
                 <table className={styles.leaderBoard}>
                     <thead>
                         <tr>
-                            <th className={styles.cell}>#</th>
+                            <th>#</th>
                             <th className={styles.cell}>Имя</th>
-                            <th className={styles.lastCell}>Счет</th>
+                            <th></th>
+                            <th className={styles.cell}>Счет</th>
                         </tr>
                     </thead>
                     <tbody>
                         {stats.leaderBoard.map(
                             ({name, score, users, allWords, tries, mode}: {name: string, score: number, users: boolean, allWords: boolean, tries: string, mode: string}, id: number) => 
                             (<tr key={id} className={users ? styles.self : !allWords ? styles.notAllWords : ''}>
-                                <td className={styles.cell}>{id + 1}</td>
+                                <td>{id + 1}</td>
                                 <td className={cn(styles.cell, styles.notCenter)}>
                                     <Tooltip popOn={name} tooltipHeight={150}>
                                         <TriesBlock tries={tries.split(' ').map(Number)} score={score}/>
                                     </Tooltip>
                                 </td>
-                                <td className={styles.lastCell}>{score} {mode === 'sogra' ? <a href="#sogra">🧠</a> : ''}</td>
+                                <td>{mode === 'sogra' ? '🧠' : ''}</td>
+                                <td className={styles.cell}>{score}</td>
                         </tr>))}
                     </tbody>
                 </table>
@@ -70,7 +72,7 @@ export const StatsPage = () => {
             </div>
             {stats.leaderBoard.length > 0 ? <div className={styles.block}>
                 <p id='ps'>* - рейтинг среди <Link href='/login'>авторизованных</Link> пользователей</p>
-                <p id='sogra'>🧠 - усложненная игра в <Link href='/?mode=sogra'>согра моде</Link></p>
+                <p id='sogra'>🧠 - усложненный режим игры <Link href='/?mode=sogra'>согра</Link></p>
             </div> : null}
         </div>}
     </div>
