@@ -55,7 +55,7 @@ export const StatsPage = () => {
                                         <TriesBlock tries={tries.split(' ').map(Number)} score={score}/>
                                     </Tooltip>
                                 </td>
-                                <td className={styles.lastCell}>{score} {mode === 'sogra' ? '🧠' : ''}</td>
+                                <td className={styles.lastCell}>{score} {mode === 'sogra' ? <a href="#sogra">🧠</a> : ''}</td>
                         </tr>))}
                     </tbody>
                 </table>
@@ -70,6 +70,7 @@ export const StatsPage = () => {
             </div>
             {stats.leaderBoard.length > 0 ? <div className={styles.block}>
                 <p id='ps'>* - рейтинг среди <Link href='/login'>авторизованных</Link> пользователей</p>
+                <p id='sogra'>🧠 - усложненная игра в <Link href='/?mode=sogra'>согра моде</Link></p>
             </div> : null}
         </div>}
     </div>

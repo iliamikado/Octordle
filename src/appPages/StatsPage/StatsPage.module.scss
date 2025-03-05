@@ -98,3 +98,10 @@
         }
     }
 }
+
+.lastCell {
+    display: flex;
+    align-items:flex-start;
+    gap: 3px;
+    padding-left: 10px;
+}
