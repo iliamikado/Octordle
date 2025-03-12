@@ -54,11 +54,11 @@ export const gameSlice = createSlice({
         state.currentInput[ind - 1] = '';
       }
     },
-    addCurrentInputToTries: (state) => {
+    addCurrentInputToTries: (state, action: PayloadAction<('sogra' | '')>) => {
       if (state.tries.length < state.triesCount && state.currentInput.every(x => (x)) && isWordValid(state.currentInput.join(''))) {
         const word = state.currentInput.join('');
         state.tries.push(word);
-        localStorage.setItem('tries', state.tries.join(' '));
+        localStorage.setItem(action.payload === 'sogra' ? 'triesSogra' : 'tries', state.tries.join(' '));
         state.currentInput = (new Array(state.words[0].length)).fill('');
         state.chosenLetter = 0;
       }

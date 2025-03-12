@@ -24,42 +24,52 @@ export const GamePage = () => {
     const day = useAppSelector(selectDay);
     const uuid = useAppSelector(selectUuid);
     const searchParams = useSearchParams();
+    const mode: ('sogra' | '') = searchParams.get("mode") === 'sogra' ? 'sogra' : '';
 
     useEffect(() => {
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
-        const mode = searchParams.get("mode");
-        const words = getRandomWords(day, 8, mode ?? "");
+        const words = getRandomWords(day, 8, mode);
         const savedDay = localStorage.getItem('day');
         const wordsHash = localStorage.getItem('wordsHash');
-        if (wordsHash && +wordsHash !== cyrb53(words.join(''))) {
+        const wordsHashSogra = localStorage.getItem('wordsHashSogra');
+        if (mode === '' && wordsHash && +wordsHash !== cyrb53(words.join(''))) {
             localStorage.removeItem('tries');
             localStorage.setItem('resultSended', 'false');
             localStorage.setItem('startSended', 'false');
         }
 
+        if (mode === 'sogra' && wordsHashSogra && +wordsHashSogra !== cyrb53(words.join(''))) {
+            localStorage.removeItem('triesSogra');
+            localStorage.setItem('resultSended', 'false');
+            localStorage.setItem('startSended', 'false');
+        }
+
         if (Number(savedDay) === day) {
-            const tries = localStorage.getItem('tries')?.split(' ');
+            const tries = localStorage.getItem(mode === 'sogra' ? 'triesSogra' : 'tries')?.split(' ');
             if (tries) {
                 dispatch(setTries(tries))
             }
         } else {
             localStorage.removeItem('day');
             localStorage.removeItem('tries');
+            localStorage.removeItem('triesSogra');
             localStorage.removeItem('seenNews');
             localStorage.setItem('resultSended', 'false');
             localStorage.setItem('startSended', 'false');
         }
         dispatch(setDay(day));
         dispatch(setWords(words));
-        localStorage.setItem('wordsHash', `${cyrb53(words.join(''))}`);
-    }, [dispatch, searchParams]);
+        const tries = localStorage.getItem(mode === 'sogra' ? 'triesSogra' : 'tries')?.split(' ');
+        dispatch(setTries(tries ?? []));
+        localStorage.setItem('wordsHash' + mode === 'sogra' ? 'Sogra' : '', `${cyrb53(words.join(''))}`);
+    }, [dispatch, mode]);
 
     const keyListener = useCallback((e: KeyboardEvent) => {
         if (e.code === 'Backspace') {
             dispatch(removeLetterFromCurrentInput());
         }
         if (e.code === 'Enter') {
-            dispatch(addCurrentInputToTries());
+            dispatch(addCurrentInputToTries(mode));
         }
         if (e.code === 'ArrowRight') {
             dispatch(moveChosenLetter(1));
@@ -70,7 +80,7 @@ export const GamePage = () => {
         if (isRussianLetter(e.key)) {
             dispatch(addLetterToCurrentInput(e.key));
         }
-    }, [dispatch]);
+    }, [dispatch, mode]);
 
     useEffect(() => {
         document.addEventListener('keydown', keyListener);
