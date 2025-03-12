@@ -4,6 +4,7 @@ import styles from './Keyboard.module.scss';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { addCurrentInputToTries, addLetterToCurrentInput, removeLetterFromCurrentInput, setChosenInput } from '@/store/slices/gameSlice';
 import { selectChangeDeleteAndEnter, selectChosenInput, selectKeyboardMask, selectWordsMask } from '@/store/selectors';
+import { useSearchParams } from 'next/navigation';
 
 const keys = [
     ['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ'],
@@ -16,6 +17,8 @@ export const Keyboard = () => {
     const keyboardMask = useAppSelector(selectKeyboardMask);
     const wordsMask = useAppSelector(selectWordsMask);
     const chosenInput = useAppSelector(selectChosenInput);
+    const searchParams = useSearchParams();
+    const mode: ('sogra' | '') = searchParams.get("mode") === 'sogra' ? 'sogra' : '';
 
     const changeDeleteAndEnter = useAppSelector(selectChangeDeleteAndEnter);
     if (changeDeleteAndEnter) {
@@ -47,7 +50,7 @@ export const Keyboard = () => {
                     if (c === 'del') {
                         return <div key={c} className={cn(styles.key, styles.funcKey)} onClick={() => {dispatch(removeLetterFromCurrentInput())}}>⌫</div>
                     } else if (c === 'enter') {
-                        return <div key={c} className={cn(styles.key, styles.funcKey)} onClick={() => {dispatch(addCurrentInputToTries())}}>⏎</div>
+                        return <div key={c} className={cn(styles.key, styles.funcKey)} onClick={() => {dispatch(addCurrentInputToTries(mode))}}>⏎</div>
                     } else {
                         return <div
                             className={cn(styles.key, keyboardMask[c] ? styles.pressedKey : '')}
