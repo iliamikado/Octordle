@@ -61,7 +61,7 @@ export const GamePage = () => {
         dispatch(setWords(words));
         const tries = localStorage.getItem(mode === 'sogra' ? 'triesSogra' : 'tries')?.split(' ');
         dispatch(setTries(tries ?? []));
-        localStorage.setItem('wordsHash' + mode === 'sogra' ? 'Sogra' : '', `${cyrb53(words.join(''))}`);
+        localStorage.setItem('wordsHash' + (mode === 'sogra' ? 'Sogra' : ''), `${cyrb53(words.join(''))}`);
     }, [dispatch, mode]);
 
     const keyListener = useCallback((e: KeyboardEvent) => {
