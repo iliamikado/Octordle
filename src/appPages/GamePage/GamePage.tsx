@@ -40,8 +40,8 @@ export const GamePage = () => {
 
         if (mode === 'sogra' && wordsHashSogra && +wordsHashSogra !== cyrb53(words.join(''))) {
             localStorage.removeItem('triesSogra');
-            localStorage.setItem('resultSended', 'false');
-            localStorage.setItem('startSended', 'false');
+            localStorage.setItem('resultSograSended', 'false');
+            localStorage.setItem('startSograSended', 'false');
         }
 
         if (Number(savedDay) === day) {
@@ -56,6 +56,8 @@ export const GamePage = () => {
             localStorage.removeItem('seenNews');
             localStorage.setItem('resultSended', 'false');
             localStorage.setItem('startSended', 'false');
+            localStorage.setItem('resultSograSended', 'false');
+            localStorage.setItem('startSograSended', 'false');
         }
         dispatch(setDay(day));
         dispatch(setWords(words));
@@ -94,13 +96,13 @@ export const GamePage = () => {
     }, [isGameEnd]);
 
     useEffect(() => {
-        const startSended = localStorage.getItem('startSended');
+        const startSended = localStorage.getItem(mode === '' ? 'startSended' : 'startSograSended');
         if (isGameStarted && startSended !== 'true') {
             postStart({day, word: isGameStarted, uuid}).then((data) => {
-                localStorage.setItem('startSended', 'true');
+                localStorage.setItem(mode === '' ? 'startSended' : 'startSograSended', 'true');
             }).catch(e => {});
         }
-    }, [day, isGameStarted, uuid]);
+    }, [day, isGameStarted, uuid, mode]);
 
     return <main className={styles.page}>
         <div className={styles.scrollContainer} id={'scrollContainer'}>
