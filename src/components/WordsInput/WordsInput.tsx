@@ -3,7 +3,7 @@ import cn from 'classnames';
 
 import styles from './WordsInput.module.scss';
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { isWordHard, isWordValid } from "@/wordsLogic/helpers";
+import { isWordNotGuess, isWordValid } from "@/wordsLogic/helpers";
 import { setChosenInput, setChosenLetter } from "@/store/slices/gameSlice";
 import { useSearchParams } from "next/navigation";
 
@@ -64,7 +64,8 @@ const CurrentInput = ({length}: {length: number}) => {
     const letterPlace = useAppSelector(selectChosenLetter);
     const invalidWord = letters.every(x => (x)) && letters.length === length && !isWordValid(letters.join(''));
     const searchParams = useSearchParams();
-    const hardWord = useAppSelector(selectHighlightHardWords) && isWordHard(letters.join('')) && searchParams.get('mode') !== 'sogra';
+    const mode = searchParams.get('mode') === 'sogra' ? 'sogra' : '';
+    const hardWord = useAppSelector(selectHighlightHardWords) && isWordNotGuess(letters.join(''), mode);
 
     const row = [];
     for (let i = 0; i < length; ++i) {

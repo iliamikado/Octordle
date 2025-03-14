@@ -1,15 +1,20 @@
 import vocab from './words.json';
-const {easyWords, hardWords} = vocab;
+const {easyWords, hardWords, badWords} = vocab;
 const words = easyWords.concat(hardWords);
-const wordsSet = new Set(words);
+const wordsSet = new Set([...easyWords, ...hardWords, ...badWords]);
 const hardWordsSet = new Set(hardWords);
+const badWordsSet = new Set(badWords);
 
 export function isWordValid(word: string) {
     return wordsSet.has(word);
 }
 
-export function isWordHard(word: string) {
-    return hardWordsSet.has(word);
+export function isWordNotGuess(word: string, mode: ('sogra' | '')) {
+    if (mode === 'sogra') {
+        return badWordsSet.has(word);
+    } else {
+        return hardWordsSet.has(word) || badWordsSet.has(word);
+    }
 }
 
 export function getRandomWords(seed: number, count: number, mode?: string) {

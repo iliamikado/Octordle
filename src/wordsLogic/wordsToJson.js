@@ -4,4 +4,5 @@ words.sort()
 console.log(words);
 const easyWords = words.filter(x => (x[1] === '1')).map(x => (x[0]));
 const hardWords = words.filter(x => (x[1] === '2')).map(x => (x[0]));
-fs.writeFileSync('src/wordsLogic/words.json', JSON.stringify({easyWords, hardWords}));
+const badWords = words.filter(x => (x[1] === '3')).map(x => x[0]);
+fs.writeFileSync('src/wordsLogic/words.json', JSON.stringify({easyWords, hardWords, badWords}));
