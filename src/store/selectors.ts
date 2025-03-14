@@ -8,6 +8,7 @@ export const selectTriesCount = ((state: RootState) => state.game.triesCount);
 export const selectCurrentInput = ((state: RootState) => state.game.currentInput);
 export const selectIsGameStarted = ((state: RootState) => (state.game.tries[0]));
 export const selectIsGameEnd = ((state: RootState) => (state.game.tries.length === state.game.triesCount || state.game.words.every((word) => (state.game.tries.indexOf(word) !== -1))));
+export const selectIsResultSended = ((state: RootState) => (state.game.resultSended));
 export const selectDay = ((state: RootState) => state.game.day);
 export const selectChosenInput = ((state: RootState) => state.game.chosenInput);
 export const selectChosenLetter = ((state: RootState) => state.game.chosenLetter);

@@ -1,10 +1,11 @@
-import { selectDay, selectTries, selectUuid, selectWords } from "@/store/selectors"
-import { useAppSelector } from "@/store/store"
+import { selectDay, selectIsResultSended, selectTries, selectUuid, selectWords } from "@/store/selectors"
+import { useAppDispatch, useAppSelector } from "@/store/store"
 
 import styles from './ResultBlock.module.scss';
 import { useCallback, useEffect, useState } from "react";
 import { getGameStat, postGameResult } from "@/service/service";
 import { useSearchParams } from "next/navigation";
+import { setResultSended } from "@/store/slices/gameSlice";
 
 const digits = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟', '🕚', '🕛', '🕐', '🕑', '🕒'];
 
@@ -17,6 +18,8 @@ export const ResultBlock = () => {
     const [copied, setCopied] = useState(false);
     const params = useSearchParams();
     const mode: ('sogra' | '') = params.get("mode") === 'sogra' ? 'sogra' : '';
+    const resultSended = useAppSelector(selectIsResultSended);
+    const dispatch = useAppDispatch();
 
     const res = words.map(word => (digits[tries.indexOf(word)] || '🟥'));
     const [attempts] = useState(words.map(word => (tries.indexOf(word))).map(x => x + 1));
@@ -60,10 +63,11 @@ export const ResultBlock = () => {
     }, [res, day, score, smile, betterThan, mode]);
 
     useEffect(() => {
-        const resultSended = localStorage.getItem(mode === '' ? 'resultSended' : 'resultSograSended') === 'true';
+        // const resultSended = localStorage.getItem(mode === '' ? 'resultSended' : 'resultSograSended') === 'true';
         if (!resultSended) {
             postGameResult({day, words: tries.join(' '), tries: attempts.join(' '), score, uuid, mode}).then(res => {
                 localStorage.setItem(mode === '' ? 'resultSended' : 'resultSograSended', 'true');
+                dispatch(setResultSended(true));
                 setBetterThan(res.betterThan)
             }).catch(e => {});
         } else {
@@ -71,12 +75,12 @@ export const ResultBlock = () => {
                 setBetterThan(res.betterThan)
             }).catch(e => {});
         }
-    }, [day, tries, attempts, score, uuid, mode]);
+    }, [day, tries, attempts, score, uuid, mode, resultSended, dispatch]);
 
     return <div className={styles.resultBlock}>
         <div className={styles.resultText}>
             <div className={styles.smiles}>
-                {res.map((c, i) => <span key={i}>{c}</span>)}
+                {res.map((c: string, i) => <span key={i}>{c}</span>)}
             </div>
             <div className={styles.answers}>
                 {words.map((word, i) => <span key={i}>{word}</span>)}

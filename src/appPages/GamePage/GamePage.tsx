@@ -2,7 +2,7 @@
 
 import { WordsInput } from "@/components/WordsInput/WordsInput";
 import { selectDay, selectIsGameEnd, selectIsGameStarted, selectUuid, selectWords } from "@/store/selectors";
-import { addCurrentInputToTries, addLetterToCurrentInput, moveChosenLetter, removeLetterFromCurrentInput, setDay, setTries, setWords } from "@/store/slices/gameSlice";
+import { addCurrentInputToTries, addLetterToCurrentInput, moveChosenLetter, removeLetterFromCurrentInput, setDay, setResultSended, setTries, setWords } from "@/store/slices/gameSlice";
 import { getRandomWords, isRussianLetter } from "@/wordsLogic/helpers";
 import { useCallback, useEffect } from "react"
 
@@ -64,6 +64,8 @@ export const GamePage = () => {
         const tries = localStorage.getItem(mode === 'sogra' ? 'triesSogra' : 'tries')?.split(' ');
         dispatch(setTries(tries ?? []));
         localStorage.setItem('wordsHash' + (mode === 'sogra' ? 'Sogra' : ''), `${cyrb53(words.join(''))}`);
+        const resultSended = localStorage.getItem(mode === 'sogra' ? 'resultSograSended' : 'resultSended') === 'true';
+        dispatch(setResultSended(resultSended));
     }, [dispatch, mode]);
 
     const keyListener = useCallback((e: KeyboardEvent) => {

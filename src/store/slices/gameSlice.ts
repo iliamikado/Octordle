@@ -9,7 +9,8 @@ const initialState = {
   currentInput: [] as string[],
   triesCount: 14,
   chosenInput: null as (null | number),
-  chosenLetter: 0
+  chosenLetter: 0,
+  resultSended: false
 }
 
 export const gameSlice = createSlice({
@@ -62,10 +63,13 @@ export const gameSlice = createSlice({
         state.currentInput = (new Array(state.words[0].length)).fill('');
         state.chosenLetter = 0;
       }
+    },
+    setResultSended: (state, action: PayloadAction<boolean>) => {
+      state.resultSended = action.payload
     }
   },
 })
 
-export const { setWords, setDay, setTries, setChosenInput, moveChosenLetter, setChosenLetter, addLetterToCurrentInput, removeLetterFromCurrentInput, addCurrentInputToTries } = gameSlice.actions
+export const { setWords, setDay, setTries, setChosenInput, moveChosenLetter, setChosenLetter, addLetterToCurrentInput, removeLetterFromCurrentInput, addCurrentInputToTries, setResultSended } = gameSlice.actions
 
 export default gameSlice.reducer
