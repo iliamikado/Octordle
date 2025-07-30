@@ -14,6 +14,7 @@
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "chart.js": "^4.4.0",
+    "chartjs-plugin-trendline": "^3.0.1",
     "classnames": "^2.3.2",
     "dotenv": "^16.3.1",
     "eslint": "8.48.0",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
+    "@types/chartjs-plugin-trendline": "^1.0.4",
     "@types/react-lottie": "^1.2.10",
     "@types/uuid": "^9.0.6"
   }

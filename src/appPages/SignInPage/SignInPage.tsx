@@ -7,11 +7,12 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { getFullStat, getUserInfo, googleAuth, linkEmailAndDevice } from '@/service/service';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { selectUserInfo, selectUuid } from '@/store/selectors';
+import { selectDay, selectUserInfo, selectUuid } from '@/store/selectors';
 import { setUserInfo, setUuid } from '@/store/slices/settingsSlice';
 import { v4 } from 'uuid';
 import { Chart, registerables } from 'chart.js';
-Chart.register(...registerables);
+import chartTrendline from 'chartjs-plugin-trendline';
+Chart.register(...registerables, chartTrendline);
 
 declare global {
     interface Window {
@@ -22,6 +23,7 @@ declare global {
 export const SignInPage = () => {
     const userInfo = useAppSelector(selectUserInfo);
     const dispath = useAppDispatch();
+    const day = useAppSelector(selectDay);
     const router = useRouter();
     const [stats, setStats] = useState<any>(null);
     const uuid = useAppSelector(selectUuid);
@@ -104,8 +106,24 @@ export const SignInPage = () => {
                 }
 
                 stats.personal.scores = stats.personal.scores.sort((a: [number, number], b: [number, number]) => (a[0] - b[0]));
+                let prevSum = 0, prevCount = 0;
+                stats.personal.scores
+                    .filter((x: [number, number]) => (x[0] < day - 30 && x[0] > day - 60))
+                    .forEach((x: [number, number]) => {prevSum += x[1]; prevCount++});
+                const scores = stats.personal.scores
+                    .filter((x: [number, number]) => (x[0] > day - 30))
+                    .map((x: [number, number]) => (x[1]));
+                const average = [];
+                for (let i = 0, sum = prevSum; i < scores.length; i++) {
+                    sum += scores[i];
+                    average.push(sum / (i + 1 + prevCount));
+                }
 
-                const scores = stats.personal.scores.map((x: [number, number]) => (x[1]));
+                if (scores.length == 0) {
+                    chartRef.current = undefined;
+                    return;
+                }
+                
                 if (chartRef.current) {
                     chartRef.current.destroy();
                 }
@@ -115,9 +133,25 @@ export const SignInPage = () => {
                         labels: scores.map(() => ('')),
                         datasets: [
                             {
+                                label: 'Баллы',
                                 data: scores,
                                 fill: false,
                                 borderColor: 'rgb(75, 192, 192)',
+                                tension: 0.1,
+                                pointStyle: false,
+                                // trendlineLinear: {
+                                //     colorMin: 'rgba(255,0,0,0.5)',
+                                //     colorMax: 'rgba(255,0,0,0.5)',
+                                //     lineStyle: 'solid', // 'solid', 'dotted', 'dashed'
+                                //     width: 2,          // толщина линии
+                                //     projection: false  // продлевать линию за пределы данных
+                                // }
+                            } as any,
+                            {
+                                label: 'Средний',
+                                data: average,
+                                fill: false,
+                                borderColor: 'rgb(192, 75, 75)',
                                 tension: 0.1,
                                 pointStyle: false
                             }
@@ -126,7 +160,7 @@ export const SignInPage = () => {
                     options: {
                         plugins: {
                             legend: {
-                                display: false,
+                                position: 'top'
                             },
                             tooltip: {
                                 enabled: false
@@ -139,7 +173,7 @@ export const SignInPage = () => {
             setStats({loading: false, error: true});
             console.log(e);
         });
-    }, [uuid, userInfo]);
+    }, [uuid, userInfo, day]);
 
     return <div className={styles.page}>
         <h1 className={styles.name}>Осьминогль</h1>
@@ -167,7 +201,7 @@ export const SignInPage = () => {
             <p>Игр сыграно: {stats.personal.played}</p>
             {stats.personal.played > 0 ? <>
                 <p>Средний балл: {stats.personal.average}</p>
-                <p>Баллы за все время:</p>
+                <p>Баллы за последние 30 дней:</p>
             </> : null}
         </div> : null}
         <canvas ref={chart} style={{width: '100%', height: '300px', display: stats?.personal?.played > 0 ? 'block' : 'none'}}></canvas>

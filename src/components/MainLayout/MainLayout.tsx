@@ -9,6 +9,7 @@ import { setHaveDailyNews, setSettings, setUserInfo, setUuid } from "@/store/sli
 import { selectDarkTheme } from "@/store/selectors";
 import { v4 } from 'uuid';
 import { getDayNews } from "@/service/service";
+import { setDay } from "@/store/slices/gameSlice";
 
 interface Props {
     children: ReactNode
@@ -41,6 +42,8 @@ export const MainLayout = ({children}: Props) => {
         </div>
     </Provider>
 }
+
+const START_DAY = 19612;
 
 const SetSettings = () => {
     const dispatch = useAppDispatch();
@@ -83,6 +86,11 @@ const SetSettings = () => {
                 dispatch(setHaveDailyNews(true))
             }
         }).catch(e => {})
+    }, [dispatch])
+
+    useEffect(() => {
+        const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
+        dispatch(setDay(day));
     }, [dispatch])
 
     return null;
