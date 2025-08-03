@@ -106,18 +106,18 @@ export const SignInPage = () => {
                 }
 
                 stats.personal.scores = stats.personal.scores.sort((a: [number, number], b: [number, number]) => (a[0] - b[0]));
-                let prevSum = 0, prevCount = 0;
-                stats.personal.scores
-                    .filter((x: [number, number]) => (x[0] < day - 30 && x[0] > day - 60))
-                    .forEach((x: [number, number]) => {prevSum += x[1]; prevCount++});
                 const scores = stats.personal.scores
                     .filter((x: [number, number]) => (x[0] > day - 30))
                     .map((x: [number, number]) => (x[1]));
-                const average = [];
-                for (let i = 0, sum = prevSum; i < scores.length; i++) {
-                    sum += scores[i];
-                    average.push(sum / (i + 1 + prevCount));
-                }
+                const average = stats.personal.scores
+                    .filter((x: [number, number]) => (x[0] > day - 30))
+                    .map((game: [number, number]) => {
+                        let sum = 0, count = 0;
+                        stats.personal.scores
+                            .filter((x: [number, number]) => (x[0] > game[0] - 30 && x[0] <= game[0]))
+                            .forEach((x: [number, number]) => {sum += x[1]; count++})
+                        return count === 0 ? 0 : sum / count;
+                    });
 
                 if (scores.length == 0) {
                     chartRef.current = undefined;
@@ -138,7 +138,7 @@ export const SignInPage = () => {
                                 fill: false,
                                 borderColor: 'rgb(75, 192, 192)',
                                 tension: 0.1,
-                                pointStyle: false,
+                                pointStyle: scores.length === 1,
                                 // trendlineLinear: {
                                 //     colorMin: 'rgba(255,0,0,0.5)',
                                 //     colorMax: 'rgba(255,0,0,0.5)',
@@ -153,7 +153,7 @@ export const SignInPage = () => {
                                 fill: false,
                                 borderColor: 'rgb(192, 75, 75)',
                                 tension: 0.1,
-                                pointStyle: false
+                                pointStyle: scores.length === 1,
                             }
                         ]
                     },
@@ -164,6 +164,22 @@ export const SignInPage = () => {
                             },
                             tooltip: {
                                 enabled: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: true, // показывать сетку по оси X
+                                    color: 'rgba(128, 115, 115, 0.73)', // цвет линий сетки
+                                    lineWidth: 1
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    display: true, // показывать сетку по оси Y
+                                    color: 'rgba(128, 115, 115, 0.73)',
+                                    lineWidth: 1
+                                }
                             }
                         }
                     }
