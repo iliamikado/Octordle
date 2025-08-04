@@ -20,12 +20,19 @@ declare global {
     }
 }
 
+interface ScoreData {
+    day: number,
+    score: number,
+    mode: string
+}
+
 export const SignInPage = () => {
     const userInfo = useAppSelector(selectUserInfo);
     const dispath = useAppDispatch();
     const day = useAppSelector(selectDay);
     const router = useRouter();
     const [stats, setStats] = useState<any>(null);
+    const [displayChart, setDisplayChart] = useState(false);
     const uuid = useAppSelector(selectUuid);
     const chart = useRef<HTMLCanvasElement>(null);
     const chartRef = useRef<Chart<"line", any, unknown>>();
@@ -105,25 +112,28 @@ export const SignInPage = () => {
                     return;
                 }
 
-                stats.personal.scores = stats.personal.scores.sort((a: [number, number], b: [number, number]) => (a[0] - b[0]));
+                stats.personal.scores = stats.personal.scores.sort((a: ScoreData, b: ScoreData) => (a.day - b.day));
                 const scores = stats.personal.scores
-                    .filter((x: [number, number]) => (x[0] > day - 30))
-                    .map((x: [number, number]) => (x[1]));
+                    .filter((x: ScoreData) => (x.mode == ''))
+                    .filter((x: ScoreData) => (x.day > day - 30))
+                    .map((x: ScoreData) => (x.score));
                 const average = stats.personal.scores
-                    .filter((x: [number, number]) => (x[0] > day - 30))
-                    .map((game: [number, number]) => {
+                    .filter((x: ScoreData) => (x.mode == ''))
+                    .filter((x: ScoreData) => (x.day > day - 30))
+                    .map((game: ScoreData) => {
                         let sum = 0, count = 0;
                         stats.personal.scores
-                            .filter((x: [number, number]) => (x[0] > game[0] - 30 && x[0] <= game[0]))
-                            .forEach((x: [number, number]) => {sum += x[1]; count++})
+                            .filter((x: ScoreData) => (x.mode == ''))
+                            .filter((x: ScoreData) => (x.day > game.day - 30 && x.day <= game.day))
+                            .forEach((x: ScoreData) => {sum += x.score; count++})
                         return count === 0 ? 0 : sum / count;
                     });
 
                 if (scores.length == 0) {
-                    chartRef.current = undefined;
                     return;
                 }
                 
+                setDisplayChart(true);
                 if (chartRef.current) {
                     chartRef.current.destroy();
                 }
@@ -217,9 +227,12 @@ export const SignInPage = () => {
             <p>Игр сыграно: {stats.personal.played}</p>
             {stats.personal.played > 0 ? <>
                 <p>Средний балл: {stats.personal.average}</p>
-                <p>Баллы за последние 30 дней:</p>
             </> : null}
+            {displayChart ? <p>Баллы за последние 30 дней:</p> : null}
         </div> : null}
-        <canvas ref={chart} style={{width: '100%', height: '300px', display: stats?.personal?.played > 0 ? 'block' : 'none'}}></canvas>
+        <canvas ref={chart} style={{width: '100%', height: '300px', display: displayChart ? 'block' : 'none'}}></canvas>
+        {displayChart ? <div className={styles.block}>
+            среднее - каждое значение на графике считается отдельно за предшествующие ему 30 дней. Пропуски игнорируются.
+        </div> : null}
     </div>
 }

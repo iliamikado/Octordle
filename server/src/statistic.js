@@ -51,7 +51,7 @@ class Statistic {
         games = games.map(x => (x.dataValues));
         console.log(games);
         resp.played = games.length;
-        resp.scores = games.map(({day, score}) => ([day, score]));
+        resp.scores = games.map(({day, score, mode}) => ({day, score, mode}));
         resp.average = Math.floor(games.reduce((x, {score}) => (x + score), 0) * 100 / games.length) / 100;
         return resp;
     }
@@ -108,13 +108,13 @@ class Statistic {
         const repeatedGames = new Map();
         const ans = [];
         for (let i = 0; i < games.length; ++i) {
-            const {day, score} = games[i];
-            if (repeatedGames.has(day)) {
-                if (score < ans[repeatedGames.get(day)].dataValues.score) {
-                    ans[repeatedGames.get(day)] = games[i];
+            const {day, score, mode} = games[i];
+            if (repeatedGames.has(day + mode)) {
+                if (score < ans[repeatedGames.get(day + mode)].dataValues.score) {
+                    ans[repeatedGames.get(day + mode)] = games[i];
                 }
             } else {
-                repeatedGames.set(day, ans.length);
+                repeatedGames.set(day + mode, ans.length);
                 ans.push(games[i]);
             }
         }
