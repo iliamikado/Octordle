@@ -1,10 +1,9 @@
-import { selectDay, selectIsResultSended, selectTries, selectUuid, selectWords } from "@/store/selectors"
+import { selectDay, selectIsResultSended, selectMode, selectTries, selectUuid, selectWords } from "@/store/selectors"
 import { useAppDispatch, useAppSelector } from "@/store/store"
 
 import styles from './ResultBlock.module.scss';
 import { useCallback, useEffect, useState } from "react";
 import { getGameStat, postGameResult } from "@/service/service";
-import { useSearchParams } from "next/navigation";
 import { setResultSended } from "@/store/slices/gameSlice";
 
 const digits = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟', '🕚', '🕛', '🕐', '🕑', '🕒'];
@@ -16,8 +15,7 @@ export const ResultBlock = () => {
     const uuid = useAppSelector(selectUuid);
     const [betterThan, setBetterThan] = useState(-1);
     const [copied, setCopied] = useState(false);
-    const params = useSearchParams();
-    const mode: ('sogra' | '') = params.get("mode") === 'sogra' ? 'sogra' : '';
+    const mode: ('sogra' | '') = useAppSelector(selectMode);
     const resultSended = useAppSelector(selectIsResultSended);
     const dispatch = useAppDispatch();
 

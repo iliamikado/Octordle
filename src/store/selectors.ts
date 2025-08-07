@@ -10,6 +10,7 @@ export const selectIsGameStarted = ((state: RootState) => (state.game.tries[0]))
 export const selectIsGameEnd = ((state: RootState) => (state.game.tries.length === state.game.triesCount || state.game.words.every((word) => (state.game.tries.indexOf(word) !== -1))));
 export const selectIsResultSended = ((state: RootState) => (state.game.resultSended));
 export const selectDay = ((state: RootState) => state.game.day);
+export const selectMode = ((state: RootState) => state.game.mode);
 export const selectChosenInput = ((state: RootState) => state.game.chosenInput);
 export const selectChosenLetter = ((state: RootState) => state.game.chosenLetter);
 export const selectKeyboardMask = createSelector([selectTries, selectWords, selectChosenInput], (tries, words, chosenInput) => {

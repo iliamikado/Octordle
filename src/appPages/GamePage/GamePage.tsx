@@ -1,8 +1,8 @@
 'use client'
 
 import { WordsInput } from "@/components/WordsInput/WordsInput";
-import { selectDay, selectIsGameEnd, selectIsGameStarted, selectUuid, selectWords } from "@/store/selectors";
-import { addCurrentInputToTries, addLetterToCurrentInput, moveChosenLetter, removeLetterFromCurrentInput, setDay, setResultSended, setTries, setWords } from "@/store/slices/gameSlice";
+import { selectDay, selectIsGameEnd, selectIsGameStarted, selectMode, selectUuid, selectWords } from "@/store/selectors";
+import { addCurrentInputToTries, addLetterToCurrentInput, moveChosenLetter, removeLetterFromCurrentInput, setDay, setMode, setResultSended, setTries, setWords } from "@/store/slices/gameSlice";
 import { getRandomWords, isRussianLetter } from "@/wordsLogic/helpers";
 import { useCallback, useEffect } from "react"
 
@@ -23,8 +23,13 @@ export const GamePage = () => {
     const isGameStarted = useAppSelector(selectIsGameStarted);
     const day = useAppSelector(selectDay);
     const uuid = useAppSelector(selectUuid);
+    const mode: ('sogra' | '') = useAppSelector(selectMode);
+
     const searchParams = useSearchParams();
-    const mode: ('sogra' | '') = searchParams.get("mode") === 'sogra' ? 'sogra' : '';
+    useEffect(() => {
+        const mode: ('sogra' | '') = searchParams.get("mode") === 'sogra' ? 'sogra' : '';
+        dispatch(setMode(mode));
+    }, [dispatch, searchParams])
 
     useEffect(() => {
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;

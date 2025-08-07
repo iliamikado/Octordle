@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { getFullStat, getUserInfo, googleAuth, linkEmailAndDevice } from '@/service/service';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { selectDay, selectUserInfo, selectUuid } from '@/store/selectors';
+import { selectDay, selectMode, selectUserInfo, selectUuid } from '@/store/selectors';
 import { setUserInfo, setUuid } from '@/store/slices/settingsSlice';
 import { v4 } from 'uuid';
 import { Chart, registerables } from 'chart.js';
@@ -36,6 +36,7 @@ export const SignInPage = () => {
     const uuid = useAppSelector(selectUuid);
     const chart = useRef<HTMLCanvasElement>(null);
     const chartRef = useRef<Chart<"line", any, unknown>>();
+    const mode = useAppSelector(selectMode);
 
     useEffect(() => {
         if (userInfo) {
@@ -114,16 +115,16 @@ export const SignInPage = () => {
 
                 stats.personal.scores = stats.personal.scores.sort((a: ScoreData, b: ScoreData) => (a.day - b.day));
                 const scores = stats.personal.scores
-                    .filter((x: ScoreData) => (x.mode == ''))
+                    .filter((x: ScoreData) => (x.mode == mode))
                     .filter((x: ScoreData) => (x.day > day - 30))
                     .map((x: ScoreData) => (x.score));
                 const average = stats.personal.scores
-                    .filter((x: ScoreData) => (x.mode == ''))
+                    .filter((x: ScoreData) => (x.mode == mode))
                     .filter((x: ScoreData) => (x.day > day - 30))
                     .map((game: ScoreData) => {
                         let sum = 0, count = 0;
                         stats.personal.scores
-                            .filter((x: ScoreData) => (x.mode == ''))
+                            .filter((x: ScoreData) => (x.mode == mode))
                             .filter((x: ScoreData) => (x.day > game.day - 30 && x.day <= game.day))
                             .forEach((x: ScoreData) => {sum += x.score; count++})
                         return count === 0 ? 0 : sum / count;
@@ -199,11 +200,13 @@ export const SignInPage = () => {
             setStats({loading: false, error: true});
             console.log(e);
         });
-    }, [uuid, userInfo, day]);
+    }, [uuid, userInfo, day, mode]);
 
     return <div className={styles.page}>
         <h1 className={styles.name}>Осьминогль</h1>
-        <button className={cn(styles.icon, styles.crossIcon)} onClick={() => {router.push('/')}}>
+        <button className={cn(styles.icon, styles.crossIcon)} onClick={() => {
+                router.push(mode ? `/?mode=${mode}` : '/')
+            }}>
             <CrossIcon/>
         </button>
 

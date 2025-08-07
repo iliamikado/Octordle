@@ -3,8 +3,7 @@ import cn from 'classnames';
 import styles from './Keyboard.module.scss';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { addCurrentInputToTries, addLetterToCurrentInput, removeLetterFromCurrentInput, setChosenInput } from '@/store/slices/gameSlice';
-import { selectChangeDeleteAndEnter, selectChosenInput, selectKeyboardMask, selectWordsMask } from '@/store/selectors';
-import { useSearchParams } from 'next/navigation';
+import { selectChangeDeleteAndEnter, selectChosenInput, selectKeyboardMask, selectMode, selectWordsMask } from '@/store/selectors';
 
 const keys = [
     ['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ'],
@@ -17,8 +16,7 @@ export const Keyboard = () => {
     const keyboardMask = useAppSelector(selectKeyboardMask);
     const wordsMask = useAppSelector(selectWordsMask);
     const chosenInput = useAppSelector(selectChosenInput);
-    const searchParams = useSearchParams();
-    const mode: ('sogra' | '') = searchParams.get("mode") === 'sogra' ? 'sogra' : '';
+    const mode: ('sogra' | '') = useAppSelector(selectMode);
 
     const changeDeleteAndEnter = useAppSelector(selectChangeDeleteAndEnter);
     if (changeDeleteAndEnter) {
