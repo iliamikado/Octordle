@@ -39,7 +39,7 @@ class Statistic {
     }
 
     async getPersonalStat(uuid, email) {
-        const resp = {};
+        const today = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
         let games = [];
         if (!email) {
             games = await GameInfo.findAll({
@@ -49,10 +49,24 @@ class Statistic {
             games = await this.getAllGamesForEmail(email);
         }
         games = games.map(x => (x.dataValues));
-        console.log(games);
+        games = games.sort((a, b) => (a.day - b.day));
+        const normGames = games.filter(({mode}) => (!mode));
+        const sograGames = games.filter(({mode}) => (mode === 'sogra'));
+        const resp = {
+            standart: {
+                count: normGames.length,
+                average: Math.floor(normGames.reduce((x, {score}) => (x + score), 0) * 100 / (normGames.length ?? 1)) / 100,
+                scores: normGames.map(({day, score, mode, createdAt}) => ({day, score, mode, createdAt})).filter(({day}) => (day >= today - 60)),
+            },
+            sogra: {
+                count: sograGames.length,
+                average: Math.floor(sograGames.reduce((x, {score}) => (x + score), 0) * 100 / (sograGames.length ?? 1)) / 100,
+                scores: sograGames.map(({day, score, mode, createdAt}) => ({day, score, mode, createdAt})).filter(({day}) => (day >= today - 60)),
+            }
+        }
         resp.played = games.length;
-        resp.scores = games.map(({day, score, mode}) => ({day, score, mode}));
         resp.average = Math.floor(games.reduce((x, {score}) => (x + score), 0) * 100 / games.length) / 100;
+        resp.scores = games.map(({day, score, mode, createdAt}) => ({day, score, mode, createdAt}));
         return resp;
     }
 
