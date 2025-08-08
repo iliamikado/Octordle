@@ -158,7 +158,7 @@ export const SignInPage = () => {
                         labels: games.map(({createdAt}) => (formatDate(createdAt))),
                         datasets: [
                             {
-                                label: 'Баллы',
+                                label: 'баллы',
                                 data: scores,
                                 fill: false,
                                 borderColor: 'rgb(75, 192, 192)',
@@ -173,7 +173,7 @@ export const SignInPage = () => {
                                 // }
                             } as any,
                             {
-                                label: 'Средний',
+                                label: 'среднее',
                                 data: average,
                                 fill: false,
                                 borderColor: 'rgb(192, 75, 75)',
@@ -239,7 +239,7 @@ export const SignInPage = () => {
         </div>}
 
         {stats ? <div className={styles.statsBlock}>
-            <h3 style={{margin: 0}}>Личная Статистика</h3>
+            <h4 style={{margin: 0, marginBottom: 10}}>Личная Статистика {mode === 'sogra' ? '(сложный режим согра)' : ''}</h4>
             <p>Игр сыграно: {stats.count}</p>
             {stats.count > 0 ? <>
                 <p>Средний балл: {stats.average}</p>
@@ -248,7 +248,7 @@ export const SignInPage = () => {
         </div> : null}
         <canvas ref={chart} style={{width: '100%', height: '300px', display: displayChart ? 'block' : 'none'}}></canvas>
         {displayChart ? <div className={styles.block}>
-            среднее - каждое значение на графике считается отдельно за предшествующие ему 30 дней. Пропуски игнорируются.
+            Среднее - каждое значение на графике считается отдельно за предшествующие ему 30 дней. Пропуски игнорируются.
         </div> : null}
     </div>
 }
