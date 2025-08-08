@@ -3,14 +3,14 @@
 import cn from 'classnames';
 import styles from './InfoPage.module.scss';
 import CrossIcon from './assets/cross.svg';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useParamsRouter } from '@/components/ParamsRouter/ParamsRouter';
 
 export const InfoPage = () => {
-    const router = useRouter()
+    const router = useParamsRouter()
     return <div className={styles.page}>
         <h1 className={styles.name}>Осьминогль</h1>
-        <button className={cn(styles.icon, styles.crossIcon)} onClick={() => {router.back()}}>
+        <button className={cn(styles.icon, styles.crossIcon)} onClick={() => {router.push('/')}}>
             <CrossIcon/>
         </button>
         <div className={styles.block}>

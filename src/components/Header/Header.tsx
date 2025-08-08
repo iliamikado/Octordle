@@ -7,14 +7,14 @@ import StatsIcon from './assets/stats.svg';
 import PersonIcon from './assets/person.svg';
 import BellIcon from './assets/bell.svg';
 import cn from 'classnames';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { NewsModal } from '../NewsModal/NewsModal';
 import Lottie from 'react-lottie';
 import BellAnimation from './assets/bellAnimation.json'
+import { useParamsRouter } from '../ParamsRouter/ParamsRouter';
 
 export const Header = () => {
-    const router = useRouter();
+    const router = useParamsRouter();
     const day = useAppSelector(selectDay);
     const [showNews, setShowNews] = useState(false);
     const [newNews, setNewNews] = useState(false);

@@ -9,7 +9,8 @@ import { setHaveDailyNews, setSettings, setUserInfo, setUuid } from "@/store/sli
 import { selectDarkTheme } from "@/store/selectors";
 import { v4 } from 'uuid';
 import { getDayNews } from "@/service/service";
-import { setDay } from "@/store/slices/gameSlice";
+import { setDay, setMode } from "@/store/slices/gameSlice";
+import { useSearchParams } from "next/navigation";
 
 interface Props {
     children: ReactNode
@@ -92,6 +93,12 @@ const SetSettings = () => {
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
         dispatch(setDay(day));
     }, [dispatch])
+
+    const searchParams = useSearchParams();
+    useEffect(() => {
+        const mode: ('sogra' | '') = searchParams.get("mode") === 'sogra' ? 'sogra' : '';
+        dispatch(setMode(mode));
+    }, [dispatch, searchParams])
 
     return null;
 }

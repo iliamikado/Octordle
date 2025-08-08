@@ -12,7 +12,6 @@ import { Header } from "@/components/Header/Header";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { ResultBlock } from "@/components/ResultBlock/ResultBlock";
 import { postStart } from "@/service/service";
-import { useSearchParams } from "next/navigation";
 
 const START_DAY = 19612;
 
@@ -24,12 +23,6 @@ export const GamePage = () => {
     const day = useAppSelector(selectDay);
     const uuid = useAppSelector(selectUuid);
     const mode: ('sogra' | '') = useAppSelector(selectMode);
-
-    const searchParams = useSearchParams();
-    useEffect(() => {
-        const mode: ('sogra' | '') = searchParams.get("mode") === 'sogra' ? 'sogra' : '';
-        dispatch(setMode(mode));
-    }, [dispatch, searchParams])
 
     useEffect(() => {
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;

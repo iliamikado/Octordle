@@ -3,13 +3,13 @@
 import cn from 'classnames';
 import styles from './StatsPage.module.scss';
 import CrossIcon from './assets/cross.svg';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getFullStat } from '@/service/service';
 import { useAppSelector } from '@/store/store';
 import { selectUserInfo, selectUuid } from '@/store/selectors';
 import Link from 'next/link';
 import { Tooltip } from '@/components/Tooltip/Tooltip';
+import { useParamsRouter } from '@/components/ParamsRouter/ParamsRouter';
 
 export const StatsPage = () => {
     const [stats, setStats] = useState<any>({loading: true, error: false});
@@ -28,10 +28,10 @@ export const StatsPage = () => {
         });
     }, [uuid, userInfo]);
 
-    const router = useRouter()
+    const router = useParamsRouter()
     return <div className={styles.page}>
         <h1 className={styles.name}>Осьминогль</h1>
-        <button className={cn(styles.icon, styles.crossIcon)} onClick={() => {router.back()}}>
+        <button className={cn(styles.icon, styles.crossIcon)} onClick={() => {router.push('/')}}>
             <CrossIcon/>
         </button>
         {stats.loading ? <div className={styles.log}>загрузка...</div> : stats.error ? <div className={styles.log}>сервер не отвечает</div> : <div>
