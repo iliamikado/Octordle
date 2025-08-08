@@ -23,7 +23,14 @@ declare global {
 interface ScoreData {
     day: number,
     score: number,
-    mode: string
+    mode: string,
+    createdAt: string,
+}
+
+interface Stats {
+    count: number,
+    average: number,
+    scores: ScoreData[]
 }
 
 export const SignInPage = () => {
@@ -31,7 +38,7 @@ export const SignInPage = () => {
     const dispath = useAppDispatch();
     const day = useAppSelector(selectDay);
     const router = useRouter();
-    const [stats, setStats] = useState<any>(null);
+    const [stats, setStats] = useState<Stats | null>(null);
     const [displayChart, setDisplayChart] = useState(false);
     const uuid = useAppSelector(selectUuid);
     const chart = useRef<HTMLCanvasElement>(null);
@@ -102,7 +109,11 @@ export const SignInPage = () => {
             return;
         }
         getFullStat(uuid, userInfo?.email).then((stats) => {
-            setStats(stats);
+            if (mode == 'sogra') {
+                setStats(stats.personal.sogra)
+            } else {
+                setStats(stats.personal.standart)
+            }
             setTimeout(() => {
                 if (!chart.current) {
                     return;
@@ -113,18 +124,21 @@ export const SignInPage = () => {
                     return;
                 }
 
-                stats.personal.scores = stats.personal.scores.sort((a: ScoreData, b: ScoreData) => (a.day - b.day));
-                const scores = stats.personal.scores
-                    .filter((x: ScoreData) => (x.mode == mode))
+                let games = [] as ScoreData[];
+                if (mode == 'sogra') {
+                    games = stats.personal.sogra.scores;
+                } else {
+                    games = stats.personal.standart.scores;
+                }
+
+                const scores = games
                     .filter((x: ScoreData) => (x.day > day - 30))
                     .map((x: ScoreData) => (x.score));
-                const average = stats.personal.scores
-                    .filter((x: ScoreData) => (x.mode == mode))
+                const average = games
                     .filter((x: ScoreData) => (x.day > day - 30))
                     .map((game: ScoreData) => {
                         let sum = 0, count = 0;
-                        stats.personal.scores
-                            .filter((x: ScoreData) => (x.mode == mode))
+                        games
                             .filter((x: ScoreData) => (x.day > game.day - 30 && x.day <= game.day))
                             .forEach((x: ScoreData) => {sum += x.score; count++})
                         return count === 0 ? 0 : sum / count;
@@ -141,7 +155,7 @@ export const SignInPage = () => {
                 chartRef.current = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: scores.map(() => ('')),
+                        labels: games.map(({createdAt}) => (formatDate(createdAt))),
                         datasets: [
                             {
                                 label: 'Баллы',
@@ -197,7 +211,6 @@ export const SignInPage = () => {
                 })
             }, 500)
         }).catch(e => {
-            setStats({loading: false, error: true});
             console.log(e);
         });
     }, [uuid, userInfo, day, mode]);
@@ -225,11 +238,11 @@ export const SignInPage = () => {
             <button onClick={() => {googleAuth()}} className={styles.googleAuth}>Sign in with google</button>
         </div>}
 
-        {stats && !stats.error ? <div className={styles.statsBlock}>
+        {stats ? <div className={styles.statsBlock}>
             <h3 style={{margin: 0}}>Личная Статистика</h3>
-            <p>Игр сыграно: {stats.personal.played}</p>
-            {stats.personal.played > 0 ? <>
-                <p>Средний балл: {stats.personal.average}</p>
+            <p>Игр сыграно: {stats.count}</p>
+            {stats.count > 0 ? <>
+                <p>Средний балл: {stats.average}</p>
             </> : null}
             {displayChart ? <p>Баллы за последние 30 дней:</p> : null}
         </div> : null}
@@ -238,4 +251,12 @@ export const SignInPage = () => {
             среднее - каждое значение на графике считается отдельно за предшествующие ему 30 дней. Пропуски игнорируются.
         </div> : null}
     </div>
+}
+
+function formatDate(date: string) {
+    const d = new Date(date);
+    return new Intl.DateTimeFormat('ru-RU', {
+        month: 'short',
+        day: 'numeric',
+    }).format(d).toString();
 }

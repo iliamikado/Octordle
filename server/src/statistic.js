@@ -64,9 +64,9 @@ class Statistic {
                 scores: sograGames.map(({day, score, mode, createdAt}) => ({day, score, mode, createdAt})).filter(({day}) => (day >= today - 60)),
             }
         }
-        resp.played = games.length;
-        resp.average = Math.floor(games.reduce((x, {score}) => (x + score), 0) * 100 / games.length) / 100;
-        resp.scores = games.map(({day, score, mode, createdAt}) => ({day, score, mode, createdAt}));
+        // resp.played = games.length;
+        // resp.average = Math.floor(games.reduce((x, {score}) => (x + score), 0) * 100 / games.length) / 100;
+        // resp.scores = games.map(({day, score, mode, createdAt}) => ({day, score, mode, createdAt}));
         return resp;
     }
 
