@@ -155,7 +155,7 @@ export const SignInPage = () => {
                 chartRef.current = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: games.map(({createdAt}) => (formatDate(createdAt))),
+                        labels: games.filter((x: ScoreData) => (x.day > day - 30)).map(({createdAt}) => (formatDate(createdAt))),
                         datasets: [
                             {
                                 label: 'баллы',
