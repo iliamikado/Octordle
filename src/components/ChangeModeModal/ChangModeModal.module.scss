@@ -1,0 +1,27 @@
+.content {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    max-height: 600px;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+        width: 0;
+    }
+    scrollbar-width: none;
+}
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.ok {
+    background-color: transparent;
+    color: var(--var-fontcolor);
+    border: solid 1px var(--var-fontcolor);
+    border-radius: 10px;
+    min-width: 50px;
+    min-height: 30px;
+    &:hover {
+        cursor: pointer;
+    }
+}

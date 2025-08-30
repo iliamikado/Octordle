@@ -7,9 +7,10 @@ import styles from "./Modal.module.scss";
 interface Props {
     children: ReactNode;
     onClose: () => void;
+    hideCross?: boolean;
 }
 
-export const Modal = ({ children, onClose }: Props) => {
+export const Modal = ({ children, onClose, hideCross }: Props) => {
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: "instant" });
         document.body.style.overflow = "hidden";
@@ -22,13 +23,15 @@ export const Modal = ({ children, onClose }: Props) => {
         <div className={styles.container}>
             <div className={styles.back} onClick={onClose}></div>
             <div className={styles.modal}>
-                <button
-                    className={styles.crossBtn}
-                    onClick={onClose}
-                    aria-label="Закрыть модальное окно"
-                >
-                    <Cross />
-                </button>
+                {hideCross ? null :
+                    <button
+                        className={styles.crossBtn}
+                        onClick={onClose}
+                        aria-label="Закрыть модальное окно"
+                    >
+                        <Cross />
+                    </button>
+                }
                 {children}
             </div>
         </div>,

@@ -51,6 +51,26 @@
     height: 35px;
 }
 
+.devilIcon {
+    left: calc(50% - 90px);
+    bottom: 2px;
+    width: 35px;
+    height: 35px;
+    path {
+        color: gray;
+    }
+    fill: gray;
+    stroke: gray;
+}
+
+.sograMode {
+    path {
+        color: red;
+    }
+    fill: red;
+    stroke: red;
+}
+
 .noNewNews {
     path {
         color: gray;

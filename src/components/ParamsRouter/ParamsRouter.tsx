@@ -7,6 +7,9 @@ export function useParamsRouter() {
     const myRouter = {
         push: (url: string) => {
             router.push(`${url}?${searchParams.toString()}`)
+        },
+        changeParams: (params: string) => {
+            router.push(`?${params}`)
         }
     }
 
