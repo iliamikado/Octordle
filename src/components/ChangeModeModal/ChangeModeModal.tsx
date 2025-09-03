@@ -2,7 +2,6 @@ import { useAppSelector } from "@/store/store"
 import { Modal } from "../Modal/Modal"
 import { selectMode } from "@/store/selectors"
 import styles from './ChangModeModal.module.scss'
-import cn from 'classnames'
 
 interface Props {
     onClose: () => void

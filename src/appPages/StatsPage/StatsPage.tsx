@@ -6,15 +6,17 @@ import CrossIcon from './assets/cross.svg';
 import { useEffect, useState } from 'react';
 import { getFullStat } from '@/service/service';
 import { useAppSelector } from '@/store/store';
-import { selectUserInfo, selectUuid } from '@/store/selectors';
+import { selectMode, selectUserInfo, selectUuid } from '@/store/selectors';
 import Link from 'next/link';
 import { Tooltip } from '@/components/Tooltip/Tooltip';
 import { useParamsRouter } from '@/components/ParamsRouter/ParamsRouter';
 
 export const StatsPage = () => {
     const [stats, setStats] = useState<any>({loading: true, error: false});
+    const [modeStats, setModeStats] = useState<any>();
     const uuid = useAppSelector(selectUuid);
     const userInfo = useAppSelector(selectUserInfo);
+    const mode = useAppSelector(selectMode);
 
     useEffect(() => {
         if (!uuid) {
@@ -27,6 +29,17 @@ export const StatsPage = () => {
             console.log(e);
         });
     }, [uuid, userInfo]);
+
+    useEffect(() => {
+        if (!stats || stats.loading || stats.error) {
+            return
+        }
+        if (mode == 'sogra') {
+            setModeStats(stats.sogra)
+        } else {
+            setModeStats(stats.standart)
+        }
+    }, [mode, stats])
 
     const router = useParamsRouter()
     return <div className={styles.page}>

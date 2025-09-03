@@ -86,28 +86,51 @@ class Statistic {
         games.sort((g1, g2) => (g1.score - g2.score));
         resp.median = games[Math.floor(games.length / 2)]?.score;
 
-        const userGame = games.find(({uuid: id}) => (id === uuid));
-        if (!userGame) {
-            return resp;
+        let userGame = games.find(({uuid: id, mode}) => (id === uuid && (mode == '' || mode == null)));
+        if (userGame) {
+            resp.standart = {}
+            resp.standart.score = userGame.score;
+            resp.standart.place = 1;
+            let losers = startedGames.length;
+            resp.standart.timePlace = 1;
+            games.filter(({mode}) => (mode == '' || mode == null)).forEach(({score, createdAt}) => {
+                if (score > userGame.score) {
+                    resp.standart.place++;
+                    losers--;
+                } else if (score === userGame.score && createdAt < userGame.createdAt) {
+                    resp.standart.place++;
+                }
+
+                if (createdAt < userGame.createdAt) {
+                    resp.standart.timePlace++;
+                }
+
+            });
+            resp.standart.betterThan = Math.floor(losers * 100 / startedGames.length);
         }
-        resp.score = userGame.score;
-        resp.place = 1;
-        let losers = startedGames.length;
-        resp.timePlace = 1;
-        games.forEach(({score, createdAt}) => {
-            if (score > userGame.score) {
-                resp.place++;
-                losers--;
-            } else if (score === userGame.score && createdAt < userGame.createdAt) {
-                resp.place++;
-            }
 
-            if (createdAt < userGame.createdAt) {
-                resp.timePlace++;
-            }
+        userGame = games.find(({uuid: id, mode}) => (id === uuid && mode == 'sogra'));
+        if (userGame) {
+            resp.sogra = {}
+            resp.sogra.score = userGame.score;
+            resp.sogra.place = 1;
+            let losers = startedGames.length;
+            resp.sogra.timePlace = 1;
+            games.filter(({mode}) => mode == 'sogra').forEach(({score, createdAt}) => {
+                if (score > userGame.score) {
+                    resp.sogra.place++;
+                    losers--;
+                } else if (score === userGame.score && createdAt < userGame.createdAt) {
+                    resp.sogra.place++;
+                }
 
-        });
-        resp.betterThan = Math.floor(losers * 100 / startedGames.length);
+                if (createdAt < userGame.createdAt) {
+                    resp.sogra.timePlace++;
+                }
+
+            });
+            resp.sogra.betterThan = Math.floor(losers * 100 / startedGames.length);
+        }
         return resp;
     }
 

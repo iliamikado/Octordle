@@ -20,9 +20,9 @@ export const ResultBlock = () => {
     const dispatch = useAppDispatch();
 
     const res = words.map(word => (digits[tries.indexOf(word)] || '🟥'));
-    const [attempts] = useState(words.map(word => (tries.indexOf(word))).map(x => x + 1));
-    const [scoreForWord] = useState(attempts.map(x => (x === 0 ? 0 : (20 - x))));
-    const [score] = useState(scoreForWord.reduce((sc, x) => (sc + x), 0));
+    const attempts = words.map(word => (tries.indexOf(word))).map(x => x + 1);
+    const scoreForWord = attempts.map(x => (x === 0 ? 0 : (20 - x)));
+    const score = scoreForWord.reduce((sc, x) => (sc + x), 0);
 
     let smile: string;
 
@@ -66,11 +66,11 @@ export const ResultBlock = () => {
             postGameResult({day, words: tries.join(' '), tries: attempts.join(' '), score, uuid, mode}).then(res => {
                 localStorage.setItem(mode === '' ? 'resultSended' : 'resultSograSended', 'true');
                 dispatch(setResultSended(true));
-                setBetterThan(res.betterThan)
+                setBetterThan(mode == 'sogra' ? res?.sogra?.betterThan : res?.standart?.betterThan)
             }).catch(e => {});
         } else {
             getGameStat({day, words: tries.join(' '), tries: attempts.join(' '), score, uuid}).then(res => {
-                setBetterThan(res.betterThan)
+                setBetterThan(mode == 'sogra' ? res?.sogra?.betterThan : res?.standart?.betterThan)
             }).catch(e => {});
         }
     }, [day, tries, attempts, score, uuid, mode, resultSended, dispatch]);
