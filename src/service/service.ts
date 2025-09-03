@@ -20,7 +20,7 @@ export function postStart(result: {day: number, word: string, uuid: string}) {
     }).then(data => (data.json()));
 }
 
-export function getGameStat(result: {day: number, words: string, tries: string, score: number, uuid: string}) {
+export function getGameStat(result: {day: number, words: string, tries: string, score: number, uuid: string, mode: string}) {
     return fetch(`${url}/get_game_stat?game=${JSON.stringify(result)}`).then(data => (data.json()));
 }
 

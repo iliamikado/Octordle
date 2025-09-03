@@ -66,11 +66,11 @@ export const ResultBlock = () => {
             postGameResult({day, words: tries.join(' '), tries: attempts.join(' '), score, uuid, mode}).then(res => {
                 localStorage.setItem(mode === '' ? 'resultSended' : 'resultSograSended', 'true');
                 dispatch(setResultSended(true));
-                setBetterThan(mode == 'sogra' ? res?.sogra?.betterThan : res?.standart?.betterThan)
+                setBetterThan(res.betterThan)
             }).catch(e => {});
         } else {
-            getGameStat({day, words: tries.join(' '), tries: attempts.join(' '), score, uuid}).then(res => {
-                setBetterThan(mode == 'sogra' ? res?.sogra?.betterThan : res?.standart?.betterThan)
+            getGameStat({day, words: tries.join(' '), tries: attempts.join(' '), score, uuid, mode}).then(res => {
+                setBetterThan(res.betterThan)
             }).catch(e => {});
         }
     }, [day, tries, attempts, score, uuid, mode, resultSended, dispatch]);

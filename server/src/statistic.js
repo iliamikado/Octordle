@@ -14,7 +14,7 @@ class Statistic {
 
     async getStatForGame(game) {
         const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
-        const games = (await GameInfo.findAll({where: {day}})).filter(({score}) => (score < 124));
+        const games = (await GameInfo.findAll({where: {day, mode: game.mode}})).filter(({score}) => (score < 124));
         const startedGames = (await StartedGame.findAll({where: {day}}));
         let losers = startedGames.length;
         games.forEach(({score}) => {
