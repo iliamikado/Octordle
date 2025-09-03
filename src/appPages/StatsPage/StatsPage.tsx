@@ -13,7 +13,6 @@ import { useParamsRouter } from '@/components/ParamsRouter/ParamsRouter';
 
 export const StatsPage = () => {
     const [stats, setStats] = useState<any>({loading: true, error: false});
-    const [modeStats, setModeStats] = useState<any>();
     const uuid = useAppSelector(selectUuid);
     const userInfo = useAppSelector(selectUserInfo);
     const mode = useAppSelector(selectMode);
@@ -23,6 +22,7 @@ export const StatsPage = () => {
             return;
         }
         getFullStat(uuid, userInfo?.email).then((stats) => {
+            console.log(stats);
             setStats(stats);
         }).catch(e => {
             setStats({loading: false, error: true});
@@ -34,14 +34,10 @@ export const StatsPage = () => {
         if (!stats || stats.loading || stats.error) {
             return
         }
-        if (mode == 'sogra') {
-            setModeStats(stats.sogra)
-        } else {
-            setModeStats(stats.standart)
-        }
     }, [mode, stats])
 
     const router = useParamsRouter()
+    const modeName = mode == '' ? 'standart' : 'sogra';
     return <div className={styles.page}>
         <h1 className={styles.name}>Осьминогль</h1>
         <button className={cn(styles.icon, styles.crossIcon)} onClick={() => {router.push('/')}}>
@@ -77,11 +73,11 @@ export const StatsPage = () => {
             </div> : null}
             <div className={styles.block}>
                 <h3 style={{margin: 0}}>Статистика за сегодня</h3>
-                <StatBlock stats={stats.today}/>
+                <StatBlock stats={stats.today} modeStats={stats.today[modeName]}/>
             </div>
             <div className={styles.block}>
                 <h3 style={{margin: 0}}>Статистика за вчера</h3>
-                <StatBlock stats={stats.yesterday}/>
+                <StatBlock stats={stats.yesterday} modeStats={stats.yesterday[modeName]}/>
             </div>
             {stats.leaderBoard.length > 0 ? <div className={styles.block}>
                 <p id='ps'>* - рейтинг среди <Link href='/login'>авторизованных</Link> пользователей</p>
@@ -91,7 +87,7 @@ export const StatsPage = () => {
     </div>
 }
 
-const StatBlock = ({stats}: {stats: any}) => {
+const StatBlock = ({stats, modeStats}: {stats: any, modeStats: any}) => {
     if (stats.finish === 0) {
         return <p>Пока никто не сыграл</p>
     }
@@ -102,11 +98,11 @@ const StatBlock = ({stats}: {stats: any}) => {
         <p>Минимальный балл: {stats.min}</p>
         <p>Средний балл: {stats.average}</p>
         <p>Медиана: {stats.median}</p>
-        {stats.place ? <>
-        <p>Ваш балл: {stats.score}</p>
-        <p>Ваше место: {stats.place}</p>
-        <p>Вы лучше чем {stats.betterThan}% игроков</p>
-        <p>Вы сыграли {stats.timePlace} по счету</p>
+        {modeStats ? <>
+        <p>Ваш балл: {modeStats.score}</p>
+        <p>Ваше место: {modeStats.place}</p>
+        <p>Вы лучше чем {modeStats.betterThan}% игроков</p>
+        <p>Вы сыграли {modeStats.timePlace} по счету</p>
         </> : null}
     </>
 }
