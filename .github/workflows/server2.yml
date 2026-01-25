@@ -39,10 +39,10 @@ jobs:
           docker save octordle_server:latest -o octordle_server.tar
           docker save octordle_client:latest -o octordle_client.tar
       - name: Copy files
-        run: scp -o StrictHostKeyChecking=no octordle_server.tar octordle_client.tar docker-compose.yml .env app.conf root@150.241.79.230:~
+        run: scp -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no octordle_server.tar octordle_client.tar docker-compose.yml .env app.conf root@150.241.79.230:~
       - name: load docker image
         run: |
-          ssh -o StrictHostKeyChecking=no root@150.241.79.230 'sudo docker load -i ~/octordle_server.tar'
-          ssh -o StrictHostKeyChecking=no 'sudo docker load -i ~/octordle_client.tar'
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@150.241.79.230 'sudo docker load -i ~/octordle_server.tar'
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no 'sudo docker load -i ~/octordle_client.tar'
       - name: docker restart
-        run: ssh -o StrictHostKeyChecking=no root@150.241.79.230 'sudo docker-compose up --build --force-recreate --no-deps -d'
+        run: ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@150.241.79.230 'sudo docker-compose up --build --force-recreate --no-deps -d'
