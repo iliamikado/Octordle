@@ -3,30 +3,33 @@ name: Deploy server to Senko
 on:
   push:
     branches: ["main"]
+
 jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: .
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-      - name: Change env file
+
+      - name: Create .env
         run: |
-          echo POSTGRES_USER="${{ secrets.POSTGRES_USER }}" >> ".env"
-          echo POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" >> ".env"
-          cat .env
+          cat > .env <<EOF
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          EOF
+
       - name: Build
-        run: | 
+        run: |
           docker build -t octordle_server:latest ./server
           docker build -t octordle_client:latest \
             --build-arg NEXT_PUBLIC_TG_TOKEN=${{ secrets.TG_BOT_TOCKEN }} \
@@ -34,15 +37,34 @@ jobs:
             --build-arg NEXT_PUBLIC_GOOGLE_ID=${{ secrets.GOOGLE_ID }} \
             --build-arg NEXT_PUBLIC_SERVER_URL=${{ vars.NEXT_PUBLIC_SERVER_URL }} \
             .
-      - name: Save docker image to file
+
+      - name: Save docker images to file
         run: |
           docker save octordle_server:latest -o octordle_server.tar
           docker save octordle_client:latest -o octordle_client.tar
-      - name: Copy files
-        run: scp -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no octordle_server.tar octordle_client.tar docker-compose.yml .env app.conf root@150.241.79.230:~
-      - name: load docker image
+
+      - name: Pack files into archive
         run: |
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@150.241.79.230 'sudo docker load -i ~/octordle_server.tar'
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no 'sudo docker load -i ~/octordle_client.tar'
-      - name: docker restart
-        run: ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@150.241.79.230 'sudo docker-compose up --build --force-recreate --no-deps -d'
+          tar -czf deploy.tar.gz \
+            octordle_server.tar \
+            octordle_client.tar \
+            docker-compose.yml \
+            .env \
+            app.conf
+
+      - name: Copy archive to server
+        run: |
+          scp -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no \
+            deploy.tar.gz root@150.241.79.230:~
+
+      - name: Load docker images
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@150.241.79.230 \
+            'tar -xzf ~/deploy.tar.gz -C ~ && \
+             sudo docker load -i ~/octordle_server.tar && \
+             sudo docker load -i ~/octordle_client.tar'
+
+      - name: Restart containers
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@150.241.79.230 \
+            'sudo docker-compose up -d --build --force-recreate'
