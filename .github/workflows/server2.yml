@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Setup SSH
         run: |
@@ -36,33 +36,24 @@ jobs:
             --build-arg NEXT_PUBLIC_SERVER_URL=${{ vars.NEXT_PUBLIC_SERVER_URL }} \
             .
 
-      - name: Save docker images to file
+      - name: Save docker images to archive
         run: |
-          docker save octordle_server:latest -o octordle_server.tar
-          docker save octordle_client:latest -o octordle_client.tar
+          docker save octordle_server:latest octordle_client:latest | gzip -1 > docker-images.tar.gz
 
-      - name: Pack files into archive
-        run: |
-          tar -czf deploy.tar.gz \
-            octordle_server.tar \
-            octordle_client.tar \
-            docker-compose.yml \
-            .env \
-            app.conf
-
-      - name: Copy archive to server
+      - name: Copy deploy files to server
         run: |
           scp -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no \
-            deploy.tar.gz root@150.241.79.230:~
+            docker-images.tar.gz docker-compose.yml .env app.conf root@150.241.79.230:~
 
-      - name: Load docker images
+      - name: Cleanup, load images and restart containers
         run: |
           ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@150.241.79.230 \
-            'tar -xzf ~/deploy.tar.gz -C ~ && \
-             sudo docker load -i ~/octordle_server.tar && \
-             sudo docker load -i ~/octordle_client.tar'
-
-      - name: Restart containers
-        run: |
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@150.241.79.230 \
-            'sudo docker-compose down && sudo docker-compose up -d --build'
+            'set -e
+             find ~ -maxdepth 1 -type f \( -name "*.zip" -o -name "*.tar.gz" -o -name "*.tar" \) -delete || true
+             sudo find /var/lib/docker/containers -type f -name "*-json.log" -exec truncate -s 0 {} \; || true
+             sudo find /var/log -type f \( -name "*.gz" -o -name "*.old" -o -name "*.1" \) -delete || true
+             sudo docker image prune -af || true
+             sudo docker builder prune -af || true
+             gunzip -c ~/docker-images.tar.gz | sudo docker load
+             rm -f ~/docker-images.tar.gz
+             sudo docker-compose up -d --force-recreate --remove-orphans'
