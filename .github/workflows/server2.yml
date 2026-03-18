@@ -55,4 +55,12 @@ jobs:
              sudo docker image prune -af || true
              gunzip -c ~/docker-images.tar.gz | sudo docker load
              rm -f ~/docker-images.tar.gz
-             sudo docker-compose up -d --force-recreate --remove-orphans'
+             if sudo docker compose version >/dev/null 2>&1; then
+               sudo docker compose down --remove-orphans || true
+               sudo docker rm -f octordle_nginx octordle_client octordle_server postgres 2>/dev/null || true
+               sudo docker compose up -d --remove-orphans
+             else
+               sudo docker-compose down --remove-orphans || true
+               sudo docker rm -f octordle_nginx octordle_client octordle_server postgres 2>/dev/null || true
+               sudo docker-compose up -d --remove-orphans
+             fi'
