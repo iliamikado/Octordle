@@ -51,6 +51,49 @@
     justify-content: center;
 }
 
+.leaderBoardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.leaderBoardControls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.arrowButton {
+    border: 1px solid var(--var-fontcolor);
+    background: transparent;
+    color: var(--var-fontcolor);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 18px;
+    line-height: 1;
+
+    &:hover:not(:disabled) {
+        cursor: pointer;
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: default;
+    }
+}
+
+.dayLabel {
+    min-width: 78px;
+    text-align: center;
+}
+
+.leaderBoardStatus {
+    margin-bottom: 8px;
+}
+
 .leaderBoard {
     width: 100%;
     th {
@@ -77,6 +120,13 @@
 
     .notAllWords {
         color: gray;
+    }
+}
+
+@media (max-width: 520px) {
+    .leaderBoardHeader {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
 

@@ -25,10 +25,23 @@ export function getGameStat(result: {day: number, words: string, tries: string, 
 }
 
 export function getFullStat(uuid: string, email?: string) {
+    const params = new URLSearchParams({uuid});
+
     if (email) {
-        return fetch(`${url}/get_full_stat?uuid=${uuid}&email=${email}`).then(data => data.json());
+        params.set('email', email);
     }
-    return fetch(`${url}/get_full_stat?uuid=${uuid}`).then(data => data.json());
+
+    return fetch(`${url}/get_full_stat?${params.toString()}`).then(data => data.json());
+}
+
+export function getLeaderBoard(day: number, email?: string) {
+    const params = new URLSearchParams({day: day.toString()});
+
+    if (email) {
+        params.set('email', email);
+    }
+
+    return fetch(`${url}/get_leader_board?${params.toString()}`).then(data => data.json());
 }
 
 export function getNews(lastNews: number) {

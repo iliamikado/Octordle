@@ -3,6 +3,20 @@ import { Device, GameInfo, StartedGame, User } from './db.js';
 const START_DAY = 19612;
 
 class Statistic {
+    getCurrentDay() {
+        return Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
+    }
+
+    normalizeDay(day) {
+        const parsedDay = Number(day);
+        const currentDay = this.getCurrentDay();
+
+        if (Number.isNaN(parsedDay)) {
+            return currentDay;
+        }
+
+        return Math.max(0, Math.min(Math.floor(parsedDay), currentDay));
+    }
 
     async addTodaysGame(game) {
         await GameInfo.create(game);
@@ -13,7 +27,7 @@ class Statistic {
     }
 
     async getStatForGame(game) {
-        const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
+        const day = this.getCurrentDay();
         const games = (await GameInfo.findAll({where: {day, mode: game.mode}})).filter(({score}) => (score < 124));
         const startedGames = (await StartedGame.findAll({where: {day}}));
         let losers = startedGames.length;
@@ -29,17 +43,29 @@ class Statistic {
     }
 
     async getFullStat(uuid, email) {
-        const day = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
+        const day = this.getCurrentDay();
         return {
+            currentDay: day,
             today: await this.getFullStatForDay(uuid, day, email),
             yesterday: await this.getFullStatForDay(uuid, day - 1, email),
             personal: await this.getPersonalStat(uuid, email),
+            leaderBoardDay: day,
             leaderBoard: await this.getLeaderBoard(day, email)
         }
     }
 
+    async getLeaderBoardForDay(day, userEmail) {
+        const leaderBoardDay = this.normalizeDay(day);
+
+        return {
+            currentDay: this.getCurrentDay(),
+            day: leaderBoardDay,
+            leaderBoard: await this.getLeaderBoard(leaderBoardDay, userEmail)
+        };
+    }
+
     async getPersonalStat(uuid, email) {
-        const today = Math.floor(Date.now() / 1000 / 60 / 60 / 24) - START_DAY;
+        const today = this.getCurrentDay();
         let games = [];
         if (!email) {
             games = await GameInfo.findAll({

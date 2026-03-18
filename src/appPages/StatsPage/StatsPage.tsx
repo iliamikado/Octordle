@@ -4,15 +4,31 @@ import cn from 'classnames';
 import styles from './StatsPage.module.scss';
 import CrossIcon from './assets/cross.svg';
 import { useEffect, useState } from 'react';
-import { getFullStat } from '@/service/service';
+import { getFullStat, getLeaderBoard } from '@/service/service';
 import { useAppSelector } from '@/store/store';
 import { selectMode, selectUserInfo, selectUuid } from '@/store/selectors';
 import Link from 'next/link';
 import { Tooltip } from '@/components/Tooltip/Tooltip';
 import { useParamsRouter } from '@/components/ParamsRouter/ParamsRouter';
 
+type LeaderBoardRow = {
+    name: string,
+    score: number,
+    users: boolean,
+    allWords: boolean,
+    tries: string,
+    mode: string,
+}
+
 export const StatsPage = () => {
     const [stats, setStats] = useState<any>({loading: true, error: false});
+    const [leaderBoard, setLeaderBoard] = useState({
+        loading: true,
+        error: false,
+        day: 0,
+        currentDay: 0,
+        items: [] as LeaderBoardRow[],
+    });
     const uuid = useAppSelector(selectUuid);
     const userInfo = useAppSelector(selectUserInfo);
     const mode = useAppSelector(selectMode);
@@ -21,22 +37,73 @@ export const StatsPage = () => {
         if (!uuid) {
             return;
         }
-        getFullStat(uuid, userInfo?.email).then((stats) => {
-            console.log(stats);
-            setStats(stats);
+        setStats({loading: true, error: false});
+        setLeaderBoard({
+            loading: true,
+            error: false,
+            day: 0,
+            currentDay: 0,
+            items: [],
+        });
+        getFullStat(uuid, userInfo?.email).then((nextStats) => {
+            setStats({
+                ...nextStats,
+                loading: false,
+                error: false,
+            });
+            setLeaderBoard({
+                loading: false,
+                error: false,
+                day: nextStats.leaderBoardDay ?? nextStats.currentDay ?? 0,
+                currentDay: nextStats.currentDay ?? 0,
+                items: nextStats.leaderBoard ?? [],
+            });
         }).catch(e => {
             setStats({loading: false, error: true});
-            console.log(e);
+            setLeaderBoard({
+                loading: false,
+                error: true,
+                day: 0,
+                currentDay: 0,
+                items: [],
+            });
         });
-    }, [uuid, userInfo]);
+    }, [uuid, userInfo?.email]);
 
-    useEffect(() => {
-        if (!stats || stats.loading || stats.error) {
-            return
+    const loadLeaderBoard = (day: number) => {
+        if (!uuid) {
+            return;
         }
-    }, [mode, stats])
 
-    const router = useParamsRouter()
+        const nextDay = Math.max(0, Math.min(day, leaderBoard.currentDay));
+        if (nextDay === leaderBoard.day) {
+            return;
+        }
+
+        setLeaderBoard(prev => ({
+            ...prev,
+            loading: true,
+            error: false,
+        }));
+
+        getLeaderBoard(nextDay, userInfo?.email).then((resp) => {
+            setLeaderBoard({
+                loading: false,
+                error: false,
+                day: resp.day,
+                currentDay: resp.currentDay,
+                items: resp.leaderBoard ?? [],
+            });
+        }).catch(() => {
+            setLeaderBoard(prev => ({
+                ...prev,
+                loading: false,
+                error: true,
+            }));
+        });
+    }
+
+    const router = useParamsRouter();
     const modeName = mode == '' ? 'standart' : 'sogra';
     return <div className={styles.page}>
         <h1 className={styles.name}>Осьминогль</h1>
@@ -44,9 +111,30 @@ export const StatsPage = () => {
             <CrossIcon/>
         </button>
         {stats.loading ? <div className={styles.log}>загрузка...</div> : stats.error ? <div className={styles.log}>сервер не отвечает</div> : <div>
-            {stats.leaderBoard.length > 0 ? <div className={styles.block}>
-                <h3 style={{margin: 0}}>Рейтинг <a href='#ps' style={{textDecoration: 'none'}}>*</a></h3>
-                <table className={styles.leaderBoard}>
+            <div className={styles.block}>
+                <div className={styles.leaderBoardHeader}>
+                    <h3 style={{margin: 0}}>Рейтинг <a href='#ps' style={{textDecoration: 'none'}}>*</a></h3>
+                    <div className={styles.leaderBoardControls}>
+                        <button
+                            className={styles.arrowButton}
+                            onClick={() => loadLeaderBoard(leaderBoard.day - 1)}
+                            disabled={leaderBoard.loading || leaderBoard.day <= 0}
+                        >
+                            ←
+                        </button>
+                        <span className={styles.dayLabel}>День: {leaderBoard.day}</span>
+                        <button
+                            className={styles.arrowButton}
+                            onClick={() => loadLeaderBoard(leaderBoard.day + 1)}
+                            disabled={leaderBoard.loading || leaderBoard.day >= leaderBoard.currentDay}
+                        >
+                            →
+                        </button>
+                    </div>
+                </div>
+                {leaderBoard.loading ? <div className={styles.leaderBoardStatus}>загрузка рейтинга...</div> : null}
+                {leaderBoard.error ? <div className={styles.leaderBoardStatus}>не удалось обновить рейтинг</div> : null}
+                {leaderBoard.items.length > 0 ? <table className={styles.leaderBoard}>
                     <thead>
                         <tr>
                             <th>#</th>
@@ -56,8 +144,8 @@ export const StatsPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {stats.leaderBoard.map(
-                            ({name, score, users, allWords, tries, mode}: {name: string, score: number, users: boolean, allWords: boolean, tries: string, mode: string}, id: number) => 
+                        {leaderBoard.items.map(
+                            ({name, score, users, allWords, tries, mode}: LeaderBoardRow, id: number) =>
                             (<tr key={id} className={users ? styles.self : !allWords ? styles.notAllWords : ''}>
                                 <td>{id + 1}</td>
                                 <td className={cn(styles.cell, styles.notCenter)}>
@@ -67,10 +155,10 @@ export const StatsPage = () => {
                                 </td>
                                 <td>{mode === 'sogra' ? '🧠' : ''}</td>
                                 <td className={styles.cell}>{score}</td>
-                        </tr>))}
+                            </tr>))}
                     </tbody>
-                </table>
-            </div> : null}
+                </table> : <p>В этот день пока никто не сыграл</p>}
+            </div>
             <div className={styles.block}>
                 <h3 style={{margin: 0}}>Статистика за сегодня</h3>
                 <StatBlock stats={stats.today} modeStats={stats.today[modeName]}/>
@@ -79,7 +167,7 @@ export const StatsPage = () => {
                 <h3 style={{margin: 0}}>Статистика за вчера</h3>
                 <StatBlock stats={stats.yesterday} modeStats={stats.yesterday[modeName]}/>
             </div>
-            {stats.leaderBoard.length > 0 ? <div className={styles.block}>
+            {leaderBoard.items.length > 0 ? <div className={styles.block}>
                 <p id='ps'>* - рейтинг среди <Link href='/login'>авторизованных</Link> пользователей</p>
                 <p id='sogra'>🧠 - усложненный режим игры <Link href='/?mode=sogra'>согра</Link></p>
             </div> : null}

@@ -84,6 +84,10 @@ app.get('/api/get_full_stat', async (req, res) => {
     res.json(await statistics.getFullStat(req.query.uuid, req.query.email));
 })
 
+app.get('/api/get_leader_board', async (req, res) => {
+    res.json(await statistics.getLeaderBoardForDay(req.query.day, req.query.email));
+})
+
 app.post('/api/login', async (req, res) => {
     const {uuid, email, name} = req.query;
 
