@@ -132,7 +132,6 @@ export const StatsPage = () => {
                         </button>
                     </div>
                 </div>
-                {leaderBoard.loading ? <div className={styles.leaderBoardStatus}>загрузка рейтинга...</div> : null}
                 {leaderBoard.error ? <div className={styles.leaderBoardStatus}>не удалось обновить рейтинг</div> : null}
                 {leaderBoard.items.length > 0 ? <table className={styles.leaderBoard}>
                     <thead>
