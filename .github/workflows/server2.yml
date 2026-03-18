@@ -49,11 +49,10 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@150.241.79.230 \
             'set -e
-             find ~ -maxdepth 1 -type f \( -name "*.zip" -o -name "*.tar.gz" -o -name "*.tar" \) -delete || true
+             find ~ -maxdepth 1 -type f \( -name "*.zip" -o -name "*.tar.gz" -o -name "*.tar" \) ! -name "docker-images.tar.gz" -delete || true
              sudo find /var/lib/docker/containers -type f -name "*-json.log" -exec truncate -s 0 {} \; || true
              sudo find /var/log -type f \( -name "*.gz" -o -name "*.old" -o -name "*.1" \) -delete || true
              sudo docker image prune -af || true
-             sudo docker builder prune -af || true
              gunzip -c ~/docker-images.tar.gz | sudo docker load
              rm -f ~/docker-images.tar.gz
              sudo docker-compose up -d --force-recreate --remove-orphans'
