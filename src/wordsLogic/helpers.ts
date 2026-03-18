@@ -17,17 +17,25 @@ export function isWordNotGuess(word: string, mode: ('sogra' | '')) {
     }
 }
 
+function createRandom(seed: number) {
+    let value = seed >>> 0;
+
+    return () => {
+        value += 0x6D2B79F5;
+        let t = value;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+}
+
 export function getRandomWords(seed: number, count: number, mode?: string) {
-    const ans = [];
-    for (let i = 0; i < count; ++i) {
-        seed = seed * 16807 % 2147483647;
-        if (mode === 'sogra') {
-            ans.push(words[seed % words.length]);
-        } else {
-            ans.push(easyWords[seed % easyWords.length]);
-        }
-    }
-    return ans;
+    const dictionary = mode === 'sogra' ? words : easyWords;
+    const random = createRandom(seed);
+
+    return Array.from({length: count}, () => {
+        return dictionary[Math.floor(random() * dictionary.length)];
+    });
 }
 
 export function isRussianLetter(s: string) {
