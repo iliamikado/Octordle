@@ -33,9 +33,7 @@ Test the hooks before enabling automation:
 Run a dry run:
 
 ```bash
-certbot renew --dry-run \
-  --pre-hook '/path/to/repo/scripts/renew-cert.sh --pre-hook' \
-  --post-hook '/path/to/repo/scripts/renew-cert.sh --post-hook'
+/path/to/repo/scripts/renew-cert.sh --dry-run
 ```
 
 Example `cron` entry for a daily check at `03:00`:
@@ -43,3 +41,7 @@ Example `cron` entry for a daily check at `03:00`:
 ```cron
 0 3 * * * /path/to/repo/scripts/renew-cert.sh
 ```
+
+The deployment workflow copies the script to `/root/scripts/renew-cert.sh`,
+disables the built-in `certbot.timer`, and installs the `cron` entry above on
+the server.

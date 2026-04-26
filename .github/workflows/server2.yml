@@ -54,6 +54,15 @@ jobs:
           ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@150.241.79.230 \
             'set -e
              chmod +x ~/scripts/renew-cert.sh
+             if command -v systemctl >/dev/null 2>&1; then
+               sudo systemctl disable --now certbot.timer || true
+               sudo systemctl stop certbot.service || true
+               sudo systemctl enable --now cron >/dev/null 2>&1 || sudo systemctl enable --now crond >/dev/null 2>&1 || true
+             fi
+             (
+               sudo crontab -l 2>/dev/null | grep -v "/root/scripts/renew-cert.sh" || true
+               echo "0 3 * * * /root/scripts/renew-cert.sh >> /var/log/renew-cert.log 2>&1"
+             ) | sudo crontab -
              find ~ -maxdepth 1 -type f \( -name "*.zip" -o -name "*.tar.gz" -o -name "*.tar" \) ! -name "docker-images.tar.gz" -delete || true
              sudo find /var/lib/docker/containers -type f -name "*-json.log" -exec truncate -s 0 {} \; || true
              sudo find /var/log -type f \( -name "*.gz" -o -name "*.old" -o -name "*.1" \) -delete || true
