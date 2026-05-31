@@ -1,7 +1,11 @@
 import { Sequelize, DataTypes } from "sequelize";
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+
+const envPath = fileURLToPath(new URL('../../.env', import.meta.url));
+
 dotenv.config({
-    path: '../.env'
+    path: envPath
 });
 
 export const sequelize = new Sequelize(

@@ -98,3 +98,23 @@ export function linkEmailAndDevice(email: string, uuid: string, name: string) {
         method: 'POST'
     });
 }
+
+export function sendWordOffer(action: 'add' | 'delete', word: string, userName?: string) {
+    return fetch(`${url}/send_word_offer`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify({
+            action,
+            word,
+            userName
+        })
+    }).then(async (response) => {
+        if (!response.ok) {
+            throw new Error(await response.text());
+        }
+
+        return response.json();
+    });
+}
