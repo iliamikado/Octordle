@@ -50,7 +50,6 @@ app.get('/api/get_day_news', async (req, res) => {
             }
         }
     })
-    console.log(allNews)
     const ans = {
         haveNext: false,
         news: null
@@ -74,7 +73,6 @@ app.post('/api/post_game', async (req, res) => {
 });
 
 app.post('/api/post_start', async (req, res) => {
-    console.log(req.body);
     const gameStart = req.body;
     await statistics.addStartedGame(gameStart);
     res.json({status: 200});
@@ -179,7 +177,6 @@ app.post('/api/login', async (req, res) => {
         userId: id,
         uuid: uuid
     });
-    console.log(id);
     res.json({message: 'link created'});
 })
 

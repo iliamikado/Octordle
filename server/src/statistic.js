@@ -165,7 +165,6 @@ class Statistic {
         const user = (await User.findAll({where: {email: email}}))[0];
         const devices = await Device.findAll({where: {userId: user.dataValues.id}});
         for (let {uuid} of devices) {
-            console.log(uuid);
             games.push(...(await GameInfo.findAll({where: {uuid: uuid}})));
         }
         const repeatedGames = new Map();

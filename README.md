@@ -10,6 +10,30 @@ Play online: https://octordle.ru
 docker compose up
 ```
 
+## Production safeguards
+
+`docker-compose.yml` limits each container, rotates Docker logs (three files of
+at most 10 MB per container), restarts stopped application containers, and keeps
+PostgreSQL and the API on the private Docker network. Only Nginx exposes ports
+`80` and `443` to the host.
+
+On a new or existing small VM, run the host provisioning script once as root:
+
+```bash
+chmod +x scripts/provision-vm.sh
+sudo ./scripts/provision-vm.sh
+```
+
+It creates a 1 GB swap file, caps persistent system logs at 100 MB, rotates the
+failed-login log (`btmp`), and installs/enables fail2ban for SSH. This script
+does not disable SSH password login automatically: first create and test a
+non-root sudo user with an SSH key, then disable root/password login manually.
+
+The game history is intentionally retained because personal totals and averages
+use all historical `game_info` rows. The current incident was caused by host
+logs and memory pressure, not by PostgreSQL data. Add a data-retention policy
+only after deciding how many days of personal history must be preserved.
+
 ## Certificate Renewal
 
 For the current `certbot --standalone` setup, renewal needs the `80` port to be
