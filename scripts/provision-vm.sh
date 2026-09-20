@@ -49,7 +49,7 @@ cat > /etc/logrotate.d/octordle-auth <<'EOF'
 EOF
 
 apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get install -y fail2ban
+DEBIAN_FRONTEND=noninteractive apt-get install -y fail2ban logrotate
 cat > /etc/fail2ban/jail.d/sshd.local <<'EOF'
 [sshd]
 enabled = true
