@@ -47,13 +47,17 @@ jobs:
           scp -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no \
             docker-images.tar.gz docker-compose.yml .env app.conf root@150.241.79.230:~
           scp -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no \
-            scripts/renew-cert.sh root@150.241.79.230:~/scripts/renew-cert.sh
+            scripts/renew-cert.sh scripts/provision-vm.sh root@150.241.79.230:~/scripts/
 
       - name: Cleanup, load images and restart containers
         run: |
           ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@150.241.79.230 \
             'set -e
              chmod +x ~/scripts/renew-cert.sh
+             chmod +x ~/scripts/provision-vm.sh
+             if ! sudo swapon --show --noheadings | grep -q .; then
+               sudo ~/scripts/provision-vm.sh
+             fi
              if command -v systemctl >/dev/null 2>&1; then
                sudo systemctl disable --now certbot.timer || true
                sudo systemctl stop certbot.service || true
