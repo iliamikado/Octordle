@@ -53,6 +53,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y fail2ban logrotate
 cat > /etc/fail2ban/jail.d/sshd.local <<'EOF'
 [sshd]
 enabled = true
+backend = systemd
 maxretry = 5
 findtime = 10m
 bantime = 1h
