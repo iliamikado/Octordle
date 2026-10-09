@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Setup SSH
         run: |
@@ -25,44 +25,60 @@ jobs:
         run: |
           echo POSTGRES_USER="${{ secrets.POSTGRES_USER }}" >> ".env"
           echo POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" >> ".env"
+          echo TG_BOT_TOKEN="${{ secrets.TG_BOT_TOKEN || secrets.TG_BOT_TOCKEN }}" >> ".env"
+          echo TELEGRAM_CHAT_ID="${{ secrets.CHAT_ID }}" >> ".env"
 
       - name: Build
         run: |
           docker build -t octordle_server:latest ./server
           docker build -t octordle_client:latest \
-            --build-arg NEXT_PUBLIC_TG_TOKEN=${{ secrets.TG_BOT_TOCKEN }} \
-            --build-arg NEXT_PUBLIC_CHAT_ID=${{ secrets.CHAT_ID }} \
             --build-arg NEXT_PUBLIC_GOOGLE_ID=${{ secrets.GOOGLE_ID }} \
             --build-arg NEXT_PUBLIC_SERVER_URL=${{ vars.NEXT_PUBLIC_SERVER_URL }} \
             .
 
-      - name: Save docker images to file
+      - name: Save docker images to archive
         run: |
-          docker save octordle_server:latest -o octordle_server.tar
-          docker save octordle_client:latest -o octordle_client.tar
+          docker save octordle_server:latest octordle_client:latest | gzip -1 > docker-images.tar.gz
 
-      - name: Pack files into archive
+      - name: Copy deploy files to server
         run: |
-          tar -czf deploy.tar.gz \
-            octordle_server.tar \
-            octordle_client.tar \
-            docker-compose.yml \
-            .env \
-            app.conf
-
-      - name: Copy archive to server
-        run: |
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@150.241.79.230 \
+            'mkdir -p ~/scripts'
           scp -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no \
-            deploy.tar.gz root@150.241.79.230:~
+            docker-images.tar.gz docker-compose.yml .env app.conf root@150.241.79.230:~
+          scp -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no \
+            scripts/renew-cert.sh scripts/provision-vm.sh root@150.241.79.230:~/scripts/
 
-      - name: Load docker images
+      - name: Cleanup, load images and restart containers
         run: |
           ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@150.241.79.230 \
-            'tar -xzf ~/deploy.tar.gz -C ~ && \
-             sudo docker load -i ~/octordle_server.tar && \
-             sudo docker load -i ~/octordle_client.tar'
-
-      - name: Restart containers
-        run: |
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@150.241.79.230 \
-            'sudo docker-compose down && sudo docker-compose up -d --build'
+            'set -e
+             chmod +x ~/scripts/renew-cert.sh
+             chmod +x ~/scripts/provision-vm.sh
+             if ! sudo swapon --show --noheadings | grep -q .; then
+               sudo ~/scripts/provision-vm.sh
+             fi
+             if command -v systemctl >/dev/null 2>&1; then
+               sudo systemctl disable --now certbot.timer || true
+               sudo systemctl stop certbot.service || true
+               sudo systemctl enable --now cron >/dev/null 2>&1 || sudo systemctl enable --now crond >/dev/null 2>&1 || true
+             fi
+             (
+               sudo crontab -l 2>/dev/null | grep -v "/root/scripts/renew-cert.sh" || true
+               echo "0 3 * * * /root/scripts/renew-cert.sh >> /var/log/renew-cert.log 2>&1"
+             ) | sudo crontab -
+             find ~ -maxdepth 1 -type f \( -name "*.zip" -o -name "*.tar.gz" -o -name "*.tar" \) ! -name "docker-images.tar.gz" -delete || true
+             sudo find /var/lib/docker/containers -type f -name "*-json.log" -exec truncate -s 0 {} \; || true
+             sudo find /var/log -type f \( -name "*.gz" -o -name "*.old" -o -name "*.1" \) -delete || true
+             sudo docker image prune -af || true
+             gunzip -c ~/docker-images.tar.gz | sudo docker load
+             rm -f ~/docker-images.tar.gz
+             if sudo docker compose version >/dev/null 2>&1; then
+               sudo docker compose down --remove-orphans || true
+               sudo docker rm -f octordle_nginx octordle_client octordle_server postgres 2>/dev/null || true
+               sudo docker compose up -d --remove-orphans
+             else
+               sudo docker-compose down --remove-orphans || true
+               sudo docker rm -f octordle_nginx octordle_client octordle_server postgres 2>/dev/null || true
+               sudo docker-compose up -d --remove-orphans
+             fi'

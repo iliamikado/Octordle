@@ -1,6 +1,10 @@
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+
+const envPath = fileURLToPath(new URL('../../.env', import.meta.url));
+
 dotenv.config({
-    path: '../.env'
+    path: envPath
 });
 import express from 'express';
 import { NewsWatch, sequelize } from './db.js';
@@ -46,7 +50,6 @@ app.get('/api/get_day_news', async (req, res) => {
             }
         }
     })
-    console.log(allNews)
     const ans = {
         haveNext: false,
         news: null
@@ -70,10 +73,58 @@ app.post('/api/post_game', async (req, res) => {
 });
 
 app.post('/api/post_start', async (req, res) => {
-    console.log(req.body);
     const gameStart = req.body;
     await statistics.addStartedGame(gameStart);
     res.json({status: 200});
+})
+
+app.post('/api/send_word_offer', async (req, res) => {
+    const { action, word, userName } = req.body ?? {};
+
+    if (!['add', 'delete'].includes(action)) {
+        res.status(400).json({ message: 'Invalid action' });
+        return;
+    }
+
+    if (typeof word !== 'string' || !/^[а-я]{5}$/u.test(word)) {
+        res.status(400).json({ message: 'Invalid word' });
+        return;
+    }
+
+    const token = process.env.TG_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+
+    if (!token || !chatId) {
+        res.status(500).json({ message: 'Telegram credentials are not configured' });
+        return;
+    }
+
+    const text = `${action} ${word}${userName ? ` (${userName})` : ''}`;
+
+    try {
+        const telegramResponse = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text
+            })
+        });
+
+        if (!telegramResponse.ok) {
+            const errorText = await telegramResponse.text();
+            console.error('Telegram API error:', telegramResponse.status, errorText);
+            res.status(502).json({ message: 'Failed to send message to Telegram' });
+            return;
+        }
+
+        res.json({ status: 200 });
+    } catch (error) {
+        console.error('Telegram request failed:', error);
+        res.status(502).json({ message: 'Failed to send message to Telegram' });
+    }
 })
 
 app.get('/api/get_game_stat', async (req, res) => {
@@ -82,6 +133,10 @@ app.get('/api/get_game_stat', async (req, res) => {
 
 app.get('/api/get_full_stat', async (req, res) => {
     res.json(await statistics.getFullStat(req.query.uuid, req.query.email));
+})
+
+app.get('/api/get_leader_board', async (req, res) => {
+    res.json(await statistics.getLeaderBoardForDay(req.query.day, req.query.email));
 })
 
 app.post('/api/login', async (req, res) => {
@@ -122,14 +177,11 @@ app.post('/api/login', async (req, res) => {
         userId: id,
         uuid: uuid
     });
-    console.log(id);
     res.json({message: 'link created'});
 })
 
 
 const start = async () => {
-    console.log(process.env);
-
     try {
         await sequelize.authenticate();
         await sequelize.sync();

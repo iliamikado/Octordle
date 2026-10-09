@@ -9,6 +9,7 @@ import { selectChangeDeleteAndEnter, selectDarkTheme, selectHighlightHardWords, 
 import { toggleChangeDeleteAndEnter, toggleDarkTheme, toggleHighlightHardWords } from '@/store/slices/settingsSlice';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useParamsRouter } from '@/components/ParamsRouter/ParamsRouter';
+import { sendWordOffer } from '@/service/service';
 
 export const SettingsPage = () => {
     const router = useParamsRouter();
@@ -28,6 +29,8 @@ export const SettingsPage = () => {
     }, [changeDeleteAndEnter, darkTheme, highlightHardWords]);
     const [word, setWord] = useState('');
     const [sended, setSended] = useState<'not' | 'delete' | 'add'>('not');
+    const [isSending, setIsSending] = useState(false);
+
     const changeWord = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         const input = e.target.value;
         if (input.length > 5) {
@@ -46,22 +49,33 @@ export const SettingsPage = () => {
         setWord(ans);
     }, [])
 
-    const onSend = useCallback((s: ('delete' | 'add')) => {
-        if (word.length === 5) {
-            sendToTg(s + ' ' + word + (userName ? ` (${userName})` : ''));
-            setSended(s);
-            const wordCopy = word;
-            setTimeout(() => {
-                setWord((word) => {
-                    if (word === wordCopy) {
-                        return '';
-                    }
-                    return word;
-                })
-                setSended('not');
-            }, 5000);
+    const onSend = useCallback(async (s: ('delete' | 'add')) => {
+        if (isSending) {
+            return;
         }
-    }, [word, userName]);
+
+        if (word.length === 5) {
+            try {
+                setIsSending(true);
+                await sendWordOffer(s, word, userName);
+                setSended(s);
+                const wordCopy = word;
+                setTimeout(() => {
+                    setWord((word) => {
+                        if (word === wordCopy) {
+                            return '';
+                        }
+                        return word;
+                    })
+                    setSended('not');
+                }, 5000);
+            } catch (error) {
+                console.error('Failed to send word offer', error);
+            } finally {
+                setIsSending(false);
+            }
+        }
+    }, [isSending, word, userName]);
 
     return <div className={styles.page}>
         <h1 className={styles.name}>Осьминогль</h1>
@@ -84,25 +98,10 @@ export const SettingsPage = () => {
             Наш словарь неполный и постоянно пополняется. Если вы знаете слово, которого нет в игре, можете предложить добавить его.<br/>
             Если же вас возмутило загаданное слово и вы считаете его неподходящим для игры, предложите удалить его.<br/><br/>
             <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', gap: '5px'}}>
-                <button className={styles.deleteButton} disabled={sended !== 'not'} onClick={() => onSend('delete')}>{sended === 'delete' ? '✓' : 'Удалить'}</button>
+                <button className={styles.deleteButton} disabled={sended !== 'not' || isSending} onClick={() => onSend('delete')}>{sended === 'delete' ? '✓' : 'Удалить'}</button>
                 <input placeholder='слово' type='text' className={styles.wordInput} value={word} onChange={changeWord}/>
-                <button className={styles.offerButton} disabled={sended !== 'not'} onClick={() => onSend('add')}>{sended === 'add' ? '✓' : 'Добавить'}</button>
+                <button className={styles.offerButton} disabled={sended !== 'not' || isSending} onClick={() => onSend('add')}>{sended === 'add' ? '✓' : 'Добавить'}</button>
             </div>
         </div>
     </div>
-}
-
-function sendToTg(word: string) {
-    const chat_id = process.env.NEXT_PUBLIC_CHAT_ID;
-    const token = process.env.NEXT_PUBLIC_TG_TOKEN;
-    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: JSON.stringify({
-            chat_id,
-            text: word
-        })
-    });
 }
